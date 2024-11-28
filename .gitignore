@@ -22,6 +22,9 @@ prisma/dev.db
 .env.production
 .env.fly.production
 
+!.env.example
+!.env.fly.example
+
 .idea
 api/index.js.map
 app/styles/app.css
