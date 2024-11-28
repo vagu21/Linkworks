@@ -4,6 +4,7 @@ import { EntitySimple } from "~/utils/db/entities/entities.db.server";
 import { TFunction } from "i18next";
 import { EntityGroupWithDetails } from "~/utils/db/entities/entityGroups.db.server";
 import { AppConfiguration } from "~/utils/db/appConfiguration.db.server";
+import { getEntityPermission } from "~/utils/helpers/PermissionsHelper";
 
 type Props = {
   t: TFunction;
@@ -60,7 +61,7 @@ export const AppSidebar = ({ t, tenantId, entities, entityGroups, appConfigurati
         entityIcon: entity.icon,
         // tenantUserTypes: [TenantUserType.OWNER, TenantUserType.ADMIN],
         path: `${currentTenantUrl}/` + entity.slug,
-        // permission: getEntityPermission(entity, "view"),
+        permission: getEntityPermission(entity, "view"),
         // side: isDebugMode && SideText({ text: modelProperties.length > 0 ? "DB Model" : "Custom" }),
       });
     });
