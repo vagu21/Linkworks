@@ -8,14 +8,19 @@ import { getAvailableTenantInboundAddress } from "~/utils/services/emailService"
 import { seedRolesAndPermissions } from "~/utils/services/rolesAndPermissionsService";
 const db = new PrismaClient();
 
-const ADMIN_EMAIL = "admin@email.com";
+const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL);
 
 async function seed() {
+
+  if(!ADMIN_EMAIL || !process.env.ADMIN_SECRET) {
+    throw new Error('❌ Seeding admin user failed, please check admin account\'s email or password is configured in the .env file');
+  }
+
   console.log("🌱 Seeding admin user", 1);
-  const admin = await createUser("Admin", "User", ADMIN_EMAIL, "password", TenantUserType.OWNER);
+  const admin = await createUser("Admin", "User", ADMIN_EMAIL, String(process.env.ADMIN_SECRET), TenantUserType.OWNER);
 
   console.log("🌱 Creating users with tenants", 2);
-  const user1 = await createUser("John", "Doe", "john.doe@company.com", "password");
+  const user1 = await createUser("John", "Doe", "john.doe@company.com", String(process.env.ADMIN_SECRET) + "password");
   const user2 = await createUser("Luna", "Davis", "luna.davis@company.com", "password");
 
   console.log("🌱 Creating tenants", 2);
