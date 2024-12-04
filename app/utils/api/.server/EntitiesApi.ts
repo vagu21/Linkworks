@@ -5,9 +5,10 @@ import { getUserPermission } from "../../helpers/.server/PermissionsService";
 import { getPlanFeatureUsage } from "../../services/.server/subscriptionService";
 import { getMyTenants } from "../../db/tenants.db.server";
 import { getTenantRelationshipsFromByUserTenants } from "../../db/tenants/tenantRelationships.db.server";
-import { Entity } from "@prisma/client";
+import { Entity, PropertyOption } from "@prisma/client";
 import { Params } from "@remix-run/react";
 import { getBaseURL } from "../../url.server";
+import { adminGetAllUsersNames } from "~/utils/db/users.db.server";
 
 export namespace EntitiesApi {
   export type GetEntityData = {
@@ -42,6 +43,7 @@ export namespace EntitiesApi {
     }
 
     const featureUsageEntity = tenantId ? await getPlanFeatureUsage(tenantId, item.name) : undefined;
+    await fillSystemProperties({ entity: item, tenantId, userId });
     const data: GetEntityData = {
       entity: item,
       featureUsageEntity,
@@ -170,5 +172,24 @@ export namespace EntitiesApi {
       publicUrl: getBaseURL(request) + `/public/:entity/:id`,
     };
     return routes;
+  }
+  
+  export async function fillSystemProperties({
+    entity,
+    tenantId,
+    userId,
+  }: {
+    entity: EntityWithDetails;
+    tenantId: string | null | undefined;
+    userId: string | undefined;
+  }) {
+    const userProp = entity.properties.find((f) => f.name === "user");
+    if (userProp) {
+      const users = await adminGetAllUsersNames();
+      userProp.options = users.map((f) => ({
+        value: f.email,
+        name: f.email,
+      })) as PropertyOption[];
+    }
   }
 }

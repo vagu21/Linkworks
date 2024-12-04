@@ -44,6 +44,7 @@ import { EntityViewsApi } from "./EntityViewsApi";
 import { DefaultAppRoles } from "~/application/dtos/shared/DefaultAppRoles";
 import { getUserRoleInTenant } from "~/utils/db/permissions/userRoles.db.server";
 import { json } from "@remix-run/node";
+import { EntitiesApi } from "./EntitiesApi";
 
 export namespace RowsApi {
   export type GetRowsData = {
@@ -226,6 +227,7 @@ export namespace RowsApi {
     await RowHooks.onAfterGet({ id, entity: rowEntity, tenantId, userId, item });
     const promptFlows = allPromptFlows.filter((f) => f.inputEntityId === rowEntity!.id || f.outputs.find((o) => o.entityId === rowEntity!.id));
     cleanDuplicatedNestedRows(item);
+    await EntitiesApi.fillSystemProperties({ entity: rowEntity, tenantId, userId });
     const data: GetRowData = {
       item,
       entity: rowEntity,

@@ -6,6 +6,7 @@ export const defaultThemes: { name: string; value: string }[] = [
   { name: "Zinc", value: "zinc" },
   { name: "Blue", value: "blue" },
   { name: "Violet", value: "violet" },
+  { name: "Material", value: "material" },
   // { name: "Slate", value: "slate" },
   // { name: "Stone", value: "stone" },
   // { name: "Gray", value: "gray" },

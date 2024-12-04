@@ -746,3 +746,75 @@
   --ring: 271 91% 65.1%;
   --radius: 0.6rem;
 }
+
+.theme-material {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 5% 45%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+
+  --primary: 240 8% 25%; /* Adjusted to resemble Material UI's primary blue tones */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 6% 95%;
+  --secondary-foreground: 240 8% 25%;
+
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 8% 25%;
+
+  --destructive: 0 80% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --ring: 240 8% 25%; /* Matches primary for a cohesive appearance */
+
+  --radius: 0; /* Removed rounded corners */
+  --shadow-small: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-large: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark .theme-material {
+  --background: 240 10% 6%; /* Material UI's dark background is slightly softer */
+  --foreground: 0 0% 98%;
+
+  --muted: 240 4% 18%;
+  --muted-foreground: 240 6% 70%;
+
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
+
+  --card: 240 10% 6%;
+  --card-foreground: 0 0% 98%;
+
+  --border: 240 4% 18%;
+  --input: 240 4% 18%;
+
+  --primary: 0 0% 100%;
+  --primary-foreground: 240 8% 25%;
+
+  --secondary: 240 4% 18%;
+  --secondary-foreground: 0 0% 98%;
+
+  --accent: 240 4% 18%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --ring: 240 6% 18%;
+
+  --shadow-small: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-large: 0px 10px 15px rgba(0, 0, 0, 0.3);
+}
+

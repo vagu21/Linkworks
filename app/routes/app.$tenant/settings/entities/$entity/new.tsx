@@ -75,9 +75,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     return JSON.parse(f.toString());
   });
 
-  if ([PropertyType.SELECT, PropertyType.MULTI_SELECT].includes(type) && options.length === 0) {
-    return badRequest({ error: "Add at least one option" });
-  }
+  // if ([PropertyType.SELECT, PropertyType.MULTI_SELECT].includes(type) && options.length === 0) {
+  //   return badRequest({ error: "Add at least one option" });
+  // }
 
   if (type !== PropertyType.FORMULA) {
     formulaId = null;
