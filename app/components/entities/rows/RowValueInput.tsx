@@ -23,7 +23,7 @@ import InputTextSubtype from "~/components/ui/input/subtypes/InputTextSubtype";
 import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db.server";
 import InputSelect from "~/components/ui/input/InputSelect";
 import InputRadioGroupCards from "~/components/ui/input/InputRadioGroupCards";
-
+import { states, country_arr } from "./CountryUtils";
 export interface RefRowValueInput {
   focus: () => void;
 }
@@ -48,6 +48,9 @@ interface Props {
   className?: string;
   autoFocus?: boolean;
   promptFlows?: { rowId: string | undefined; prompts: PromptFlowWithDetails[] } | undefined;
+  statesArr?: string[];
+  setStatesArr?: React.Dispatch<React.SetStateAction<string[]>>;
+  hasCountry?: boolean;
 }
 
 const RowValueInput = (
@@ -71,6 +74,9 @@ const RowValueInput = (
     readOnly,
     autoFocus,
     promptFlows,
+    statesArr,
+    setStatesArr,
+    hasCountry,
   }: Props,
   ref: Ref<RefRowValueInput>
 ) => {
@@ -81,10 +87,22 @@ const RowValueInput = (
   const numberInput = useRef<RefInputNumber>(null);
   const textInput = useRef<RefInputText>(null);
   const dateInput = useRef<RefInputDate>(null);
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const multipleInput = useRef<RefInputMultiText>(null);
 
   const [media, setMedia] = useState<MediaDto[]>([]);
-
+  useEffect(() => {
+    setSelectedState("");
+    handleStates(selectedCountry);
+  }, [selectedCountry]);
+  function handleStates(country: string | undefined) {
+    if (country && setStatesArr) {
+      let index = country_arr.indexOf(country);
+      let curstates = states[index + 1].split("|");
+      setStatesArr(curstates);
+    }
+  }
   function focus() {
     if (selected?.type === PropertyType.TEXT) {
       textInput.current?.input.current?.focus();
@@ -271,6 +289,99 @@ const RowValueInput = (
                 }
               }}
             />
+          ) : selected.subtype == "country" ? (
+            <>
+              {" "}
+              <InputSelect
+                name={selected.name}
+                title={t(selected.title)}
+                required={selected.isRequired}
+                value={selectedCountry || initialOption}
+                defaultValue={textValue}
+                setValue={(e) => {
+                  if (onChange) {
+                    onChange(e?.toString() ?? "");
+                  }
+                  if (onChangeOption) {
+                    setSelectedCountry(e?.toString() ?? "");
+                    onChangeOption(e?.toString());
+                    handleStates(e?.toString());
+                  }
+                }}
+                disabled={readOnly}
+                className={className}
+                hint={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HintText) ?? "")}
+                help={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HelpText) ?? "")}
+                autoFocus={autoFocus}
+                options={country_arr.map((f, index) => ({
+                  name: f,
+                  value: f,
+                }))}
+              />
+            </>
+          ) : selected.subtype == "state" && selected.hasCountry && "hasCountry" in selected ? (
+            <>
+              <InputSelect
+                name={selected.name}
+                key={selectedState}
+                title={selected.title}
+                required={selected.isRequired}
+                value={selectedState || initialOption}
+                defaultValue={textValue}
+                setValue={(e) => {
+                  if (onChange) {
+                    onChange(e?.toString() ?? "");
+                  }
+                  if (onChangeOption) {
+                    setSelectedState(e?.toString() ?? "");
+                    onChangeOption(e?.toString());
+                  }
+                }}
+                disabled={readOnly}
+                className={className}
+                hint={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HintText) ?? "")}
+                help={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HelpText) ?? "")}
+                autoFocus={autoFocus}
+                options={
+                  statesArr
+                    ? statesArr.map((f) => ({
+                        name: f,
+                        value: f,
+                      }))
+                    : []
+                }
+              />
+            </>
+          ) : selected.subtype == "state" && !selected.hasCountry && "hasCountry" in selected ? (
+            <>
+              <InputTextSubtype
+                subtype={"singleLine"}
+                name={selected.name}
+                title={t(selected.title)}
+                value={textValue}
+                setValue={(e) => (onChange ? onChange(e.toString()) : undefined)}
+                required={selected.isRequired}
+                className={className}
+                readOnly={readOnly}
+                disabled={readOnly}
+                pattern={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.Pattern)}
+                minLength={PropertyAttributeHelper.getPropertyAttributeValue_Number(selected, PropertyAttributeName.Min)}
+                maxLength={PropertyAttributeHelper.getPropertyAttributeValue_Number(selected, PropertyAttributeName.Max)}
+                rows={PropertyAttributeHelper.getPropertyAttributeValue_Number(selected, PropertyAttributeName.Rows)}
+                placeholder={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.Placeholder)}
+                hint={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HintText) ?? "")}
+                help={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HelpText) ?? "")}
+                icon={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.Icon)}
+                uppercase={PropertyAttributeHelper.getPropertyAttributeValue_Boolean(selected, PropertyAttributeName.Uppercase)}
+                lowercase={PropertyAttributeHelper.getPropertyAttributeValue_Boolean(selected, PropertyAttributeName.Lowercase)}
+                password={PropertyAttributeHelper.getPropertyAttributeValue_Boolean(selected, PropertyAttributeName.Password)}
+                editor={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.Editor)}
+                editorLanguage={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.EditorLanguage)}
+                editorSize={PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.EditorSize) as any}
+                autoFocus={autoFocus}
+                promptFlows={promptFlows}
+              />
+            </>
           ) : null}
         </>
       ) : selected?.type === PropertyType.BOOLEAN ? (

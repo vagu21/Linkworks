@@ -60,6 +60,8 @@ interface Props {
   customSearchParams?: URLSearchParams;
   promptFlows?: PromptFlowWithDetails[];
   template?: { title: string; config: string } | null;
+  statesArr?: string[];
+  setStatesArr?: Dispatch<SetStateAction<string[]>>;
 }
 
 const RowForm = (
@@ -89,6 +91,8 @@ const RowForm = (
     customSearchParams,
     promptFlows,
     template,
+    statesArr,
+    setStatesArr,
   }: Props,
   ref: Ref<RefRowForm>
 ) => {
@@ -99,7 +103,6 @@ const RowForm = (
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
 
   const formGroup = useRef<RefFormGroup>(null);
-
   const [searchParams] = useSearchParams();
   const [searchingRelationshipRows, setSearchingRelationshipRows] = useState<EntityRelationshipWithDetails>();
   const [selectedRelatedEntity, setSelectedRelatedEntity] = useState<{
@@ -788,7 +791,7 @@ function RowGroups({
 }) {
   const { t } = useTranslation();
   const rowValueInput = useRef<RefRowValueInput>(null);
-
+  const [statesArr, setStatesArr] = useState<string[]>([]);
   const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
 
   useEffect(() => {
@@ -814,6 +817,38 @@ function RowGroups({
     setGroups(groups);
   }, [groups.length, rowValues]);
 
+  useEffect(() => {
+    if (groups.length > 0 && groups[0].headers.length > 0) {
+      console.log("groups", groups);
+      addHasCountryToState();
+    }
+  }, [groups]);
+
+  function addHasCountryToState() {
+    groups.forEach((group) => {
+      let countryFound = false;
+
+      group.headers.forEach((header) => {
+        if (header.property.subtype === "country") {
+          countryFound = true;
+        }
+      });
+      console.log("countryFound", countryFound);
+      if (countryFound) {
+        group.headers.forEach((header) => {
+          if (header.property.subtype === "state") {
+            header.property.hasCountry = true;
+          }
+        });
+      } else {
+        group.headers.forEach((header) => {
+          if (header.property.subtype === "state") {
+            header.property.hasCountry = false;
+          }
+        });
+      }
+    });
+  }
   function getPropertyColumnSpan(property: PropertyWithDetails) {
     const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
     if (columns === undefined || isNaN(columns) || (columns < 1 && columns > 12)) {
@@ -843,6 +878,8 @@ function RowGroups({
                     <RowValueInput
                       ref={rowValueInput}
                       entity={entity}
+                      statesArr={statesArr}
+                      setStatesArr={setStatesArr}
                       textValue={detailValue.textValue}
                       numberValue={detailValue.numberValue}
                       dateValue={detailValue.dateValue}

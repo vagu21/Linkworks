@@ -66,6 +66,7 @@ const defaultTemplates: { title: string; template: EntitiesTemplateDto }[] = [
   { title: "Example: Employee", template: DefaultEntityTemplates.EMPLOYEES_ENTITIES_TEMPLATE },
   { title: "Example: Contracts", template: DefaultEntityTemplates.CONTRACTS_ENTITIES_TEMPLATE },
   { title: "Example: All Property Types Entity", template: DefaultEntityTemplates.ALL_PROPERTY_TYPES_ENTITY_TEMPLATE },
+  { title: "Example: Address Entity", template: DefaultEntityTemplates.ADDRESS_ENTITY },
 ];
 
 export default function AdminEntityTemplatesManual() {

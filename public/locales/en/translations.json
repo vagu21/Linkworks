@@ -2050,6 +2050,8 @@
       "BOOLEAN": "Boolean",
       "MULTI_SELECT": "Multi Select",
       "MULTI_TEXT": "Multi Text",
+      "COUNTRY":"Country",
+      "STATE":"State",
       "RANGE_NUMBER": "Number Range",
       "RANGE_DATE": "Date Range"
     },
@@ -2058,6 +2060,8 @@
       "multiLine": "Multi-line",
       "email": "Email",
       "phone": "Phone",
+      "country":"Country",
+      "state":"State",
       "url": "URL",
       "dropdown": "Dropdown",
       "combobox": "Combobox",

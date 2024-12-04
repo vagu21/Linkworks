@@ -9,7 +9,7 @@ import RowHelper from "~/utils/helpers/RowHelper";
 import { RowValueDto } from "~/application/dtos/entities/RowValueDto";
 import { getFormProperties } from "~/utils/helpers/PropertyHelper";
 import { RowDto } from "~/modules/rows/repositories/RowDto";
-
+import { useEffect} from "react";
 export default function RowProperties({
   entity,
   item,
@@ -41,7 +41,7 @@ export default function RowProperties({
       };
     })
   );
-
+  const [statesArr, setStatesArr] = useState<string[]>([]);
   function getPropertyColumnSpan(property: PropertyWithDetails) {
     const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
     if (!columns || columns === undefined) {
@@ -67,6 +67,8 @@ export default function RowProperties({
             <RowValueInput
               entity={entity}
               textValue={values[idxDetailValue].textValue}
+              statesArr={statesArr}
+              setStatesArr={setStatesArr}
               numberValue={values[idxDetailValue].numberValue}
               dateValue={values[idxDetailValue].dateValue}
               booleanValue={values[idxDetailValue].booleanValue}

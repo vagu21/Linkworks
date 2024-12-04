@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate, useParams } from "@remix-run/react";
 import RowForm from "~/components/entities/rows/RowForm";
@@ -33,6 +33,7 @@ export default function RowEditRoute({ rowFormChildren, options }: Props) {
   const appOrAdminData = useAppOrAdminData();
   const navigate = useNavigate();
   const params = useParams();
+  const [statesArr, setStatesArr] = useState<string[]>([]);
   const { t } = useTranslation();
 
   return (
@@ -44,6 +45,8 @@ export default function RowEditRoute({ rowFormChildren, options }: Props) {
         allEntities={allEntities}
         entity={rowData.entity}
         routes={routes}
+        statesArr={statesArr}
+        setStatesArr={setStatesArr}
         item={rowData.item}
         editing={true}
         canDelete={

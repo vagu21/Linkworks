@@ -52,6 +52,7 @@ export type PropertyWithDetails = Property & {
   options: PropertyOption[];
   parent?: PropertyWithDetails;
   formula: { name: string; resultAs: string; calculationTrigger: string } | null;
+  hasCountry?: boolean;
 };
 
 // const includeEntityWithDetails = {
