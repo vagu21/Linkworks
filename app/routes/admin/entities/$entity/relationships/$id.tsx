@@ -53,6 +53,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const required = Boolean(form.get("required"));
   const cascade = Boolean(form.get("cascade"));
   const readOnly = Boolean(form.get("readOnly"));
+  const distinct = Boolean(form.get("distinct"));
   const hiddenIfEmpty = Boolean(form.get("hiddenIfEmpty"));
   const childEntityViewId = form.get("childEntityViewId")?.toString() ?? null;
   const parentEntityViewId = form.get("parentEntityViewId")?.toString() ?? null;
@@ -73,6 +74,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         required,
         cascade,
         readOnly,
+        distinct,
         hiddenIfEmpty,
         childEntityViewId: childEntityViewId?.length ? childEntityViewId : null,
         parentEntityViewId: parentEntityViewId?.length ? parentEntityViewId : null,
