@@ -31,6 +31,7 @@ export default function EntityRelationshipForm({ entity, entities, item }: Props
   const [cascade, setCascade] = useState(item ? item.cascade : false);
   const [readOnly, setReadOnly] = useState(item ? item.readOnly : false);
   const [hiddenIfEmpty, setHiddenIfEmpty] = useState(item ? item.hiddenIfEmpty : false);
+  const [distinct, setdistinct] = useState(item ? item.distinct : false);
   const [childEntityViewId, setChildEntityViewId] = useState(item?.childEntityViewId ?? undefined);
   const [parentEntityViewId, setParentEntityViewId] = useState(item?.parentEntityViewId ?? undefined);
 
@@ -220,6 +221,15 @@ export default function EntityRelationshipForm({ entity, entities, item }: Props
             description="Hide the field if there are no children"
             value={hiddenIfEmpty}
             setValue={(e) => setHiddenIfEmpty(Boolean(e))}
+          />
+          <InputCheckboxWithDescription
+            className="col-span-2"
+            name="distinct"
+            title="Distinct"
+            description="Want to display rows?"
+            value={distinct}
+            setValue={(e) => setdistinct(Boolean(e))}
+            disabled={relationshipType !== "one-to-one"}
           />
           <InputText className="col-span-2" name="title" title="Title (optional)" value={title} setValue={(e) => setTitle(e)} />
         </div>

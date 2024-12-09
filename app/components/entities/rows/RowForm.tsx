@@ -64,6 +64,8 @@ interface Props {
   setStatesArr?: Dispatch<SetStateAction<string[]>>;
 }
 
+
+
 const RowForm = (
   {
     entity,
@@ -81,6 +83,7 @@ const RowForm = (
     onCreatedRedirect,
     allEntities,
     onDelete,
+    distinct,
     relationshipRows,
     hiddenProperties,
     hiddenFields,
@@ -101,7 +104,6 @@ const RowForm = (
   const navigation = useNavigation();
   const params = useParams();
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
-
   const formGroup = useRef<RefFormGroup>(null);
   const [searchParams] = useSearchParams();
   const [searchingRelationshipRows, setSearchingRelationshipRows] = useState<EntityRelationshipWithDetails>();
@@ -122,6 +124,7 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
+
 
   useEffect(() => {
     loadInitialFields();
@@ -249,12 +252,14 @@ const RowForm = (
         }
       });
     }
-
+    const dis = (f: EntityRelationshipWithDetails) => {
+      return f.distinct ? true : false;
+    };
+    
     const allChildren = entity.childEntities.filter((f) => childEntityVisible(f) && allEntities.find((x) => x.id === f.childId));
     setChildrenEntities(getVisibleRelatedEntities(allChildren, relatedRows));
     const allParents = entity.parentEntities.filter((f) => f.parentId !== parentEntity?.id && allEntities.find((x) => x.id === f.parentId));
     setParentEntities(getVisibleRelatedEntities(allParents, relatedRows));
-
     setHeaders(initial);
     setRelatedRows(relatedRows);
   }
@@ -393,6 +398,8 @@ const RowForm = (
     // }
   }
 
+  
+  // Function to get distinct values from relationships
   return (
     <>
       <FormGroup
@@ -545,10 +552,10 @@ const RowForm = (
             onSelected={(rows) => {
               addRelationshipRow(searchingRelationshipRows, rows);
               setSearchingRelationshipRows(undefined);
-            }}
+            } }
             multipleSelection={selectedRelatedEntity.multiple}
-            allEntities={allEntities}
-          />
+            allEntities={allEntities} 
+            distinct={searchingRelationshipRows.distinct}       />
         )}
       </SlideOverWideEmpty>
       {/* // </OpenModal> */}
