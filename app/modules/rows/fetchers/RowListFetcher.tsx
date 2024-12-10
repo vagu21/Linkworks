@@ -48,7 +48,6 @@ export default function RowListFetcher({
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    console.log("distinct:", distinct);
     if (distinct) {
       
       fetcher.load(listUrl);
