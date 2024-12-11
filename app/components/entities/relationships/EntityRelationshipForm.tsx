@@ -229,7 +229,6 @@ export default function EntityRelationshipForm({ entity, entities, item }: Props
             description="Want to display rows?"
             value={distinct}
             setValue={(e) => setdistinct(Boolean(e))}
-            disabled={relationshipType !== "one-to-one" || "one-to-many"}
           />
           <InputText className="col-span-2" name="title" title="Title (optional)" value={title} setValue={(e) => setTitle(e)} />
         </div>
