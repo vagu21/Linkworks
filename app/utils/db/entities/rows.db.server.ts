@@ -84,18 +84,6 @@ export async function getAllRows(entityId: string): Promise<RowWithDetails[]> {
   });
 }
 
-async function isUserAdmin(userId: string) {
-  const userRoles = await db.userRole.findMany({
-    where: {
-      userId,
-      role: {
-        name: 'admin',
-      },
-    },
-  });
-  return userRoles.length > 0;
-}
-
 export async function getRows({
   entityId,
   entityName,
