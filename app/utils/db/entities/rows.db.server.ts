@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Prisma,
   Row,
@@ -79,18 +80,6 @@ export async function getAllRows(entityId: string): Promise<RowWithDetails[]> {
     },
     include: RowModelHelper.includeRowDetails,
   });
-}
-
-async function isUserAdmin(userId: string) {
-  const userRoles = await db.userRole.findMany({
-    where: {
-      userId,
-      role: {
-        name: 'admin',
-      },
-    },
-  });
-  return userRoles.length > 0;
 }
 
 export async function getRows({
@@ -410,7 +399,7 @@ export async function createRow({
     });
 
     return row;
-  } catch (error) {
+  } catch (error:any) {
     console.error("Failed to create row:", error);
     throw new Error(`Failed to create row: ${error.message}`);
   }
@@ -640,7 +629,7 @@ export async function updateRowMedia(
   });
 }
 // This function fetches the entity name by its ID from the database.
-async function getEntityNameById(entityId) {
+async function getEntityNameById(entityId:any) {
   try {
     const entity = await db.entity.findUnique({
       where: { id: entityId },
@@ -654,7 +643,7 @@ async function getEntityNameById(entityId) {
 }
 
 // This function determines access filters based on user role and entity.
-async function getAccessFilters({ tenantId, userId, entityId }) {
+async function getAccessFilters({ tenantId, userId, entityId }:any) {
   console.log(`Access Filter Request: TenantID: ${tenantId}, UserID: ${userId}, EntityID: ${entityId}`);
 
   // Retrieve the entity name using the ID provided
@@ -686,7 +675,7 @@ async function getAccessFilters({ tenantId, userId, entityId }) {
 }
 
 // Check if the user has the 'supplier' role.
-async function isUserSupplier(userId) {
+async function isUserSupplier(userId:any) {
   const userRoles = await db.userRole.findMany({
     where: {
       userId,
