@@ -37,3 +37,5 @@ vite.config.ts.timestamp*
 openai/files
 aws-lightsail-containers.json
 tsconfig.tsbuildinfo
+
+.DS_Store

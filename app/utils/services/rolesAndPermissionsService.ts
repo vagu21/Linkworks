@@ -32,6 +32,9 @@ export const defaultAppRoles: CreateRoleDto[] = [
   { name: DefaultAppRoles.Admin, description: "Has all app permissions but account deletion", type: "app", assignToNewUsers: false },
   { name: DefaultAppRoles.BillingAdmin, description: "Has subscription permissions", type: "app", assignToNewUsers: false },
   { name: DefaultAppRoles.User, description: "Has regular permissions", type: "app", assignToNewUsers: true },
+  { name: DefaultAppRoles.CompanyAdmin, description: "Can manage company details and Recruitment module", type: "app", assignToNewUsers: false },
+  { name: DefaultAppRoles.CompanyMember, description: "Can manage Recruitment module", type: "app", assignToNewUsers: false },
+  { name: DefaultAppRoles.Supplier, description: "Can Manage supplier module", type: "app", assignToNewUsers: false },
 ];
 
 export interface CreatePermissionDto {

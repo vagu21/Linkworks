@@ -6,36 +6,77 @@ import { TenantUserType } from "~/application/enums/tenants/TenantUserType";
 import { TenantUserStatus } from "~/application/enums/tenants/TenantUserStatus";
 import { getAvailableTenantInboundAddress } from "~/utils/services/emailService";
 import { seedRolesAndPermissions } from "~/utils/services/rolesAndPermissionsService";
+import RecruitmentCRMTemplate from "./templates/recruitment-crm";
+
 const db = new PrismaClient();
 
 const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL);
 
 async function seed() {
-
-  if(!ADMIN_EMAIL || !process.env.ADMIN_SECRET) {
-    throw new Error('❌ Seeding admin user failed, please check admin account\'s email or password is configured in the .env file');
+  if (!ADMIN_EMAIL || !process.env.ADMIN_SECRET) {
+    throw new Error("❌ Seeding admin user failed, please check admin account's email or password is configured in the .env file");
   }
 
   console.log("🌱 Seeding admin user", 1);
-  const admin = await createUser("Admin", "User", ADMIN_EMAIL, String(process.env.ADMIN_SECRET), TenantUserType.OWNER);
+  const admin = await createUser("Pavaneswar", "Nidamanuri", ADMIN_EMAIL, String(process.env.ADMIN_SECRET), TenantUserType.OWNER);
 
   console.log("🌱 Creating users with tenants", 2);
-  const user1 = await createUser("John", "Doe", "john.doe@company.com", String(process.env.ADMIN_SECRET) + "password");
-  const user2 = await createUser("Luna", "Davis", "luna.davis@company.com", "password");
+  const user1 = await createUser("Shubham", "Vyas", "svyas@linkfields.com", "password");
+  const user2 = await createUser("Ayush", "Goyal", "agoyal@linkfields.com", "password");
 
-  console.log("🌱 Creating tenants", 2);
-  await createTenant("acme-corp-1", "Acme Corp 1", [
-    { ...admin, type: TenantUserType.ADMIN },
-    { ...user1, type: TenantUserType.ADMIN },
-    { ...user2, type: TenantUserType.MEMBER },
-  ]);
-  await createTenant("acme-corp-2", "Acme Corp 2", [
-    { ...user1, type: TenantUserType.OWNER },
-    { ...user2, type: TenantUserType.MEMBER },
-  ]);
+  const tenants = [
+    {
+      id: "lfi-india",
+      name: "LFI India",
+      users: [
+        { ...admin, type: TenantUserType.ADMIN },
+        { ...user1, type: TenantUserType.ADMIN },
+        { ...user2, type: TenantUserType.MEMBER },
+      ],
+    },
+    {
+      id: "lfi-south-africa",
+      name: "LFI SA",
+      users: [
+        { ...user1, type: TenantUserType.OWNER },
+        { ...user2, type: TenantUserType.MEMBER },
+      ],
+    },
+    {
+      id: "lfi-usa",
+      name: "LFI USA",
+      users: [
+        { ...user1, type: TenantUserType.OWNER },
+        { ...user2, type: TenantUserType.MEMBER },
+      ],
+    },
+    {
+      id: "lfi-uae",
+      name: "LFI UAE",
+      users: [
+        { ...user1, type: TenantUserType.OWNER },
+        { ...user2, type: TenantUserType.MEMBER },
+      ],
+    },
+    {
+      id: "lfi-au",
+      name: "LFI AU",
+      users: [
+        { ...user1, type: TenantUserType.OWNER },
+        { ...user2, type: TenantUserType.MEMBER },
+      ],
+    },
+  ];
+
+  console.log("🌱 Creating tenants", tenants.length);
+  await Promise.all(tenants.map((tenant) => createTenant(tenant.id, tenant.name, tenant.users)));
+
+  await RecruitmentCRMTemplate.seedEntities(admin);
 
   // Permissions
   await seedRolesAndPermissions(ADMIN_EMAIL);
+
+  await RecruitmentCRMTemplate.seedRolePermissions(admin);
 }
 
 async function createUser(firstName: string, lastName: string, email: string, password: string, adminRole?: TenantUserType) {

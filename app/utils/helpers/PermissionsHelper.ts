@@ -3,18 +3,29 @@ import { AppOrAdminData } from "../data/useAppOrAdminData";
 import { DefaultPermission } from "~/application/dtos/shared/DefaultPermissions";
 import { RowPermissionsWithDetails } from "../db/permissions/rowPermissions.db.server";
 
-export function getEntityPermissions(entity: Entity): { name: string; description: string }[] {
+export type PermissionType = "view" | "read" | "create" | "update" | "delete" ;
+
+export function getEntityPermissions(entity: Entity): { name: string; description: string, type: PermissionType  }[] {
   return [
-    { name: getEntityPermission(entity, "view"), description: `View ${entity.name} page` },
-    { name: getEntityPermission(entity, "read"), description: `View ${entity.name} records` },
-    { name: getEntityPermission(entity, "create"), description: `Create ${entity.name}` },
-    { name: getEntityPermission(entity, "update"), description: `Update ${entity.name}` },
-    { name: getEntityPermission(entity, "delete"), description: `Delete ${entity.name}` },
+    { type: 'view', name: getEntityPermission(entity, "view"), description: `View ${entity.name} page` },
+    { type: 'read', name: getEntityPermission(entity, "read"), description: `View ${entity.name} records` },
+    { type: 'create', name: getEntityPermission(entity, "create"), description: `Create ${entity.name}` },
+    { type: 'update', name: getEntityPermission(entity, "update"), description: `Update ${entity.name}` },
+    { type: 'delete', name: getEntityPermission(entity, "delete"), description: `Delete ${entity.name}` },
   ];
 }
 
-export function getEntityPermission(entity: { name: string }, permission: "view" | "read" | "create" | "update" | "delete"): DefaultPermission {
+export function getAllowedEntityPermissions(entity: Entity, allowedType: PermissionType[]) {
+  const allCRUDPermissions = getEntityPermissions(entity);
+  return allCRUDPermissions.filter(permission => allowedType.includes(permission.type))
+}
+
+export function getEntityPermission(entity: { name: string }, permission: PermissionType ): DefaultPermission {
   return `entity.${entity.name}.${permission}` as DefaultPermission;
+}
+
+export function getEntityPermissionsByName(name: string, permissions: PermissionType[]) {
+  return permissions.map(permission => ({ type: permission, name: getEntityPermission({name}, permission), description: `${permission.toUpperCase()} ${name}` }))
 }
 
 export function getUserHasPermission(appOrAdminData: AppOrAdminData, permission: DefaultPermission) {
