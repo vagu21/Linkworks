@@ -819,7 +819,6 @@ function RowGroups({
 
   useEffect(() => {
     if (groups.length > 0 && groups[0].headers.length > 0) {
-      console.log("groups", groups);
       addHasCountryToState();
     }
   }, [groups]);
@@ -833,7 +832,6 @@ function RowGroups({
           countryFound = true;
         }
       });
-      console.log("countryFound", countryFound);
       if (countryFound) {
         group.headers.forEach((header) => {
           if (header.property.subtype === "state") {
