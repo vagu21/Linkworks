@@ -275,6 +275,7 @@ model Role {
   description      String
   type             String
   assignToNewUsers Boolean
+  visible          Boolean
   isDefault        Boolean
   order            Int
   permissions      RolePermission[]

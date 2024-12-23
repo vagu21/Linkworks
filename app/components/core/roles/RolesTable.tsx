@@ -80,6 +80,14 @@ export default function RolesTable({ items, canUpdate = true, tenantId = null }:
         formattedValue: (i) => (i.assignToNewUsers ? <CheckIcon className="h-4 w-4 text-teal-500" /> : <XIcon className="h-4 w-4 text-gray-300" />),
       });
     }
+    if (!tenantId) {
+      headers.push({
+        name: "visible",
+        title: t("models.role.visible"),
+        value: (i) => i.visible,
+        formattedValue: (i) => (i.visible ? <CheckIcon className="h-4 w-4 text-teal-500" /> : <XIcon className="h-4 w-4 text-gray-300" />),
+      });
+    }
     setHeaders(headers);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canUpdate]);

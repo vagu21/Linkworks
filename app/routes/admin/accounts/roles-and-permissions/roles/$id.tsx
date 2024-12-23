@@ -58,12 +58,14 @@ export const action: ActionFunction = async ({ request, params }) => {
     const name = form.get("name")?.toString() ?? "";
     const description = form.get("description")?.toString() ?? "";
     const assignToNewUsers = Boolean(form.get("assign-to-new-users"));
+    const visible = Boolean(form.get("visible"));
     const type: "admin" | "app" = form.get("type")?.toString() === "admin" ? "admin" : "app";
     const permissions = form.getAll("permissions[]").map((f) => f.toString());
     const data = {
       name,
       description,
       assignToNewUsers,
+      visible,
       type,
     };
     try {

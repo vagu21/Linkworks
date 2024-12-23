@@ -24,6 +24,7 @@ export default function RoleForm({ item, permissions, onCancel, canUpdate = true
   const [rolePermissions, setRolePermissions] = useState<string[]>([]);
   const [type, setType] = useState<string | number | undefined>(item?.type ?? "admin");
   const [assignToNewUsers, setAssignToNewUsers] = useState(item?.assignToNewUsers ?? false);
+  const [visible, setvisible] = useState(item?.visible ?? false);
 
   const [searchInput, setSearchInput] = useState("");
 
@@ -45,6 +46,8 @@ export default function RoleForm({ item, permissions, onCancel, canUpdate = true
   function hasPermission(permission: PermissionWithRoles) {
     return rolePermissions.includes(permission.name);
   }
+  
+
 
   function setPermission(permission: PermissionWithRoles, add: any) {
     if (add) {
@@ -80,6 +83,15 @@ export default function RoleForm({ item, permissions, onCancel, canUpdate = true
         value={assignToNewUsers}
         setValue={setAssignToNewUsers}
       />
+      <InputCheckboxInline
+        disabled={!canUpdate}
+        description={<span className="pl-1 font-light text-gray-500"> - View only rows created by him</span>}
+        name="visible"
+        title={t("models.role.visible")}
+        value={visible}
+        setValue={setvisible}
+      />
+
       <InputRadioGroup
         name="type"
         title={t("models.role.type")}

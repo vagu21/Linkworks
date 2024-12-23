@@ -1,59 +1,47 @@
 import { db } from "../../db.server";
 
-
-export async function isUserSupplier(userId:any) {
-      const userRoles = await db.userRole.findMany({
-        where: {
-          userId,
-          role: {
-            name: 'supplier',
-          },
-        },
-      });
-      return userRoles.length > 0;
-    }
-
-async function getEntityNameById(entityId:any) {
-    try {
-      const entity = await db.entity.findUnique({
-        where: { id: entityId },
-        select: { name: true }
-      });
-      return entity ? entity.name : null;
-    } catch (error) {
-      console.error("Error fetching entity name:", error);
-      return null;
-    }
-  }
-export async function getAccessFilters({ tenantId, userId, entityId }:any) {
-//   console.log(`Access Filter Request: TenantID: ${tenantId}, UserID: ${userId}, EntityID: ${entityId}`);
-
-  // Retrieve the entity name using the ID provided
-  const entityName = entityId ? await getEntityNameById(entityId) : null;
-//   console.log(`Entity Name: ${entityName}`);
-
-  const isSupplier = await isUserSupplier(userId);
-//   console.log(`Is user a supplier? ${isSupplier}`);
-
-  // Normalize entity name for comparison if it's not null or undefined
-  const normalizedEntityName = entityName ? entityName.toLowerCase() : '';
-//   console.log("Normalized Entity Name:", normalizedEntityName);
-
-  // Special handling for 'jobs' entity name assuming 'jobs' is the correct name to check
-  if (isSupplier && normalizedEntityName === 'job') {
-    // console.log('Supplier accessing Jobs entity, no restrictions applied.');
-    return {}; // No restrictions for suppliers on the 'jobs' entity
-  }
-  
-
-  if (isSupplier) {
-    // console.log('Supplier accessing non-jobs entity or undefined entity name, restricting to own rows.');
-    return { createdByUserId: userId }; // Restrict access to rows created by the supplier
-  }
-
-  // Default filter for non-suppliers or if tenantId is specified
-  const defaultFilters = tenantId ? { tenantId } : {};
-//   console.log(`Default filters applied: ${JSON.stringify(defaultFilters)}`);
-  return defaultFilters;
+// Function to check if any of the user's roles are visible
+export async function isVisible(userId: any) {
+  const userRoles = await db.userRole.findMany({
+    where: {
+      userId,
+      role: {
+        visible: true,
+      },
+    },
+  });
+  return userRoles.length > 0;
 }
 
+// Function to retrieve the entity name using its ID
+async function getEntityNameById(entityId: any) {
+  try {
+    const entity = await db.entity.findUnique({
+      where: { id: entityId },
+      select: { name: true }
+    });
+    return entity ? entity.name : null;
+  } catch (error) {
+    // console.error("Error fetching entity name:", error);
+    return null;
+  }
+}
+
+// Function to determine access filters based on user roles and entity visibility
+export async function getAccessFilters({ tenantId, userId, entityId }: any) {
+  const entityName = entityId ? await getEntityNameById(entityId) : null;
+  const visible = await isVisible(userId);
+  const normalizedEntityName = entityName ? entityName.toLowerCase() : '';
+
+  if (visible && normalizedEntityName === 'job') {
+    return {}; // No restrictions for visible roles on the 'jobs' entity
+  }
+
+  if (visible) {
+    return { createdByUserId: userId }; // Restrict access to rows created by the user if the role is visible
+  }
+
+  // Default filter for non-visible roles or if tenantId is specified
+  const defaultFilters = tenantId ? { tenantId } : {};
+  return defaultFilters;
+}
