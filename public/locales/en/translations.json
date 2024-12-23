@@ -349,50 +349,50 @@
     }
   },
   "front": {
-    "navbar": {
-      "product": "Product",
-      "pricing": "Pricing",
-      "contact": "Contact",
-      "blog": "Blog",
-      "newsletter": "Newsletter",
-      "terms": "Terms and Conditions",
-      "privacy": "Privacy Policy",
-      "about": "About",
-      "affiliates": "Affiliate program"
-    },
-    "hero": {
-      "headline1": "The Remix SaaS Boilerplate (Enterprise Edition Demo)",
-      "headline2": "Launch production-ready SaaS apps with +25 built-in features, such as: Admin dashboard, App portal, Stripe, Blog, Page Builder, Knowledge Base, Workflows, Analytics, Entity Builder, Email Marketing, Notifications, Onboarding, Feature Flags, Cache and Metrics.",
-      "headline3": "",
-      "subheadline1": "Build → Market → Manage your SaaS",
-      "hint": "This site uses {{0}} Enterprise Edition",
-      "buy": "Get started",
-      "features": "Features",
-      "docs": "Documentation",
-      "components": "Components",
-      "blog": "Blog",
-      "contact": "Contact us",
-      "startHint": "This demo is hosted on Vercel + Supabase.",
-      "cta": "Get started",
-      "changelog": "Changelog"
-    },
-    "pricing": {
-      "title": "Pricing",
-      "headline": "Plans designed for organizations of all sizes."
-    },
-    "newsletter": {
-      "title": "Stay up to date",
-      "headline": "Subscribe to the newsletter to get product updates",
-      "email": "Email address",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing",
-      "subscribed": "You're subscribed!",
-      "checkEmail": "Subscribed! Check your email to confirm your subscription.",
-      "weCare": "We care about the protection of your data."
-    },
-    "contact": {
+      "navbar": {
+        "product": "Product",
+        "pricing": "Pricing",
+        "contact": "Contact",
+        "blog": "Blog",
+        "newsletter": "Newsletter",
+        "terms": "Terms and Conditions",
+        "privacy": "Privacy Policy",
+        "about": "About Linkfields",
+        "affiliates": "Affiliate Program"
+      },
+      "hero": {
+        "headline1": "LinkWorks",
+        "headline2": "Streamline your operations with our tailored solutions designed to boost productivity and improve decision-making through advanced automation and analytics.",
+        "headline3": "Enhance your business capabilities with Linkfields.",
+        "subheadline1": "Driving Innovation and Transformation in Your Industry",
+        "hint": "This platform is powered by LinkWorks Enterprise Edition.",
+        "buy": "Get Started Now",
+        "features": "Explore Features",
+        "docs": "View Documentation",
+        "components": "Discover Components",
+        "blog": "Read Our Blog",
+        "contact": "Contact Us Today",
+        "startHint": "Hosted on state-of-the-art cloud infrastructure for optimal performance.",
+        "cta": "Join Us",
+        "changelog": "Latest Updates"
+      },
+      "pricing": {
+        "title": "Flexible Pricing Plans",
+        "headline": "Choose the plan that best fits your business needs."
+      },
+      "newsletter": {
+        "title": "Stay Informed",
+        "headline": "Subscribe to our newsletter for the latest updates and insights.",
+        "email": "Your Email Address",
+        "firstName": "Your First Name",
+        "lastName": "Your Last Name",
+        "subscribe": "Subscribe Now",
+        "subscribing": "Subscribing...",
+        "subscribed": "Thank you for subscribing!",
+        "checkEmail": "Check your email to confirm your subscription.",
+        "weCare": "We value your privacy and data security."
+      },
+      "contact": {
       "title": "Contact us",
       "headline": "We'd love to know how we can add value to your company",
       "firstName": "First name",
@@ -407,158 +407,91 @@
       "success": "Thanks for reaching out {{0}}! We'll get back to you shortly.",
       "error": "Oops! Something went wrong. Please try again."
     },
-    "brand": {
-      "title": "Brand",
-      "description": "Brand assets and usage guidelines."
-    },
-    "changelog": {
-      "title": "Changelog",
-      "headline": "Stay up to date with the latest features and bug fixes."
-    },
-    "roadmap": {
-      "title": "Roadmap",
-      "headline": "Learn more about SaasRock's current status."
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "headline": "Add your own questions and answers to help your users understand your SaaS.",
-      "subheadline": "Common questions and answers about SaasRock.",
-      "questions": {
-        "q1": "How do I get the code after purchasing?",
-        "a1": "You will be invited to the saasrock repository on GitHub. If you bought SaasRock Enterprise you will also be invited to the saasrock-enterprise repository.",
-        "q2": "Can I get a refund?",
-        "a2": "Due to the nature of software development being a custom service, we do not offer refunds."
-      }
-    },
-    "footer": {
-      "headline": "Start building your SaaS.",
-      "copyright": "2024, All rights reserved.",
-      "builtWith": "Built with",
-      "application": "Application",
-      "product": "Product",
-      "pricing": "Pricing",
-      "signIn": "Sign in",
-      "signUp": "Sign up",
-      "blog": "Blog",
-      "docs": "Docs",
-      "contact": "Contact",
-      "newsletter": "Newsletter",
-      "changelog": "Changelog",
-      "termsAndConditions": "Terms and Conditions",
-      "privacyPolicy": "Privacy Policy",
-      "features": "Features"
-    },
-    "terms": {
-      "title": "Terms and Conditions"
-    },
-    "privacy": {
-      "title": "Privacy Policy"
-    },
-    "joinNow": {
-      "title": "Download this template",
-      "headline": "Start building your own SaaS application. Or learn how it's done in React, React, React and Svelte.",
-      "cta": "Get codebase!"
-    },
-    "logoClouds": {
-      "title": "Leverage the power of web fundamentals, utility-first CSS, and a top-tier ORM."
-    },
-    "features": {
-      "frontend": {
-        "hint": "React + Tailwind CSS",
-        "title": "Frontend Features",
-        "headline": "Everything you need get started building a complete SaaS application.",
-        "components": {
-          "title": "Components",
-          "description": "Buttons, Links, Breadcrumbs, Modals, Image/Document Uploaders, Banners and more.",
-          "viewAll": "View all components."
-        },
-        "routes": {
-          "title": "SaaS pages/routes/views",
-          "front": "Front",
-          "frontPages": "(Landing, Pricing...)",
-          "account": "Account",
-          "accountPages": "(Login, Register...)",
-          "admin": "Admin",
-          "adminPages": "(Organizations, Users...)",
-          "core": "Core",
-          "corePages": "(Dashboard, Settings...)",
-          "app": "and Sample app",
-          "appPages": "(Contracts, Employees...)",
-          "views": "views.",
-          "viewAll": "Explore all views."
-        },
-        "i18n": {
-          "title": "i18n",
-          "description": "Localize your app, comes with English and Spanish locale keys. Recommended extension: "
-        },
-        "store": {
-          "title": "Persisted Store",
-          "description": "Modular persisted store to remember your users previous state."
-        },
-        "tailwindcss": {
-          "title": "Tailwind CSS",
-          "description": "Improve the current design with your own design skills. Comes with a custom theme color and "
-        },
-        "classComponents": {
-          "title": "React Hooks",
-          "description": "Functional components + React Hooks."
-        },
-        "fakeApi": {
-          "title": "Fake API (sandbox env)",
-          "description": "Love the design-first approach? Just set your environment to sandbox and call fake API implementations."
-        },
-        "eslint": {
-          "title": "ESLint",
-          "description": "Lint your code with your own rules, using"
+      "brand": {
+        "title": "Our Brand",
+        "description": "Learn about Linkfields' mission, vision, and values."
+      },
+      "changelog": {
+        "title": "Changelog",
+        "headline": "Keep up with the latest enhancements and fixes."
+      },
+      "roadmap": {
+        "title": "Product Roadmap",
+        "headline": "See what's next for LinkWorks and how it can benefit your organization."
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "headline": "Quick answers to common questions about our services.",
+        "subheadline": "Helpful information for new and existing customers.",
+        "questions": {
+          "q1": "How does LinkWorks integrate with existing systems?",
+          "a1": "LinkWorks seamlessly integrates with various platforms and services to ensure a smooth workflow.",
+          "q2": "What are the support options for LinkWorks?",
+          "a2": "We offer 24/7 support to ensure your operations are always running smoothly."
         }
       },
-      "backend": {
-        "hint": "Remix",
-        "title": "Backend Features",
-        "description": "Multi-organizations/tenants, clean architecture, integration tests, Stripe subscriptions and Postmark Emails.",
-        "features": {
-          "net": {
-            "title": "Remix",
-            "description": "Web API built on top of Microsoft's framework, .NET."
+      "footer": {
+        "headline": "Empower Your Business With LinkWorks",
+        "copyright": "2024 Linkfields, All rights reserved.",
+        "builtWith": "Proudly built using the latest technologies",
+        "application": "LinkWorks",
+        "product": "Our Product",
+        "pricing": "Pricing Options",
+        "signIn": "Sign In",
+        "signUp": "Register Now",
+        "blog": "Latest Blog Posts",
+        "docs": "Documentation",
+        "contact": "Contact Us",
+        "newsletter": "Newsletter Sign-Up",
+        "changelog": "View Changelog",
+        "termsAndConditions": "Terms and Conditions",
+        "privacyPolicy": "Privacy Policy",
+        "features": "Product Features"
+      },
+      "terms": {
+        "title": "Terms and Conditions"
+      },
+      "privacy": {
+        "title": "Privacy Policy"
+      },
+      "joinNow": {
+        "title": "Get Started with LinkWorks",
+        "headline": "Start enhancing your business with our comprehensive solutions.",
+        "cta": "Sign Up Today!"
+      },
+      "logoClouds": {
+        "title": "Powered by Linkfields",
+        "description": "Utilizing cutting-edge technology to deliver exceptional solutions."
+      },
+      "features": {
+        "frontend": {
+          "hint": "Built with modern technology",
+          "title": "Frontend Features",
+          "headline": "Robust and intuitive user interfaces for all your business needs.",
+          "components": {
+            "title": "UI Components",
+            "description": "Wide range of customizable UI elements to enhance user experience.",
+            "viewAll": "View All UI Components"
           },
-          "cleanArchitecture": {
-            "title": "Clean Architecture",
-            "description": "Solution split the project into multiple 'layers': Domain, Application, Infrastructre, Tests and ClientApp (frontend)."
-          },
-          "tests": {
-            "title": "Integration Tests",
-            "description": "Almost every controller method has its own integration test."
-          },
-          "multiTenant": {
-            "title": "Multi-tenant/organization",
-            "description": "Designed to have tenants per account/subscription."
-          },
-          "memberManagement": {
-            "title": "Member management",
-            "description": "Invite users as Owner, Admin, or Member. Or add your custom roles."
-          },
-          "stripe": {
-            "title": "Stripe Subscriptions",
-            "description": "Configure your plans and pricing the way it makes sense for your SaaS.",
-            "setup": "Click here to setup."
-          },
-          "postmark": {
-            "title": "Postmark Emails",
-            "description": "Setup your custom email tempaltes with Postmark.",
-            "setup": "Click here to setup."
-          },
-          "ef": {
-            "title": "Entity Framework",
-            "description": "EF Core supported databases. Current implementation: PostgreSql."
+          "routes": {
+            "title": "Key Features",
+            "front": "User-Friendly Frontend",
+            "frontPages": "Home, About, Contact",
+            "account": "Account Management",
+            "accountPages": "Login, Registration",
+            "admin": "Admin Tools",
+            "adminPages": "Dashboard, User Management",
+            "core": "Core Functionality",
+            "corePages": "Reports, Analytics",
+            "app": "Application Modules",
+            "appPages": "Task Management, CRM",
+            "views": "and more.",
+            "viewAll": "Explore All Features"
           }
         }
       }
     },
-    "components": {
-      "title": "Components",
-      "description": "All the components you need to build a complete SaaS application."
-    }
-  },
+  
   "pricing": {
     "startTrial": "Start {{0}}-day trial",
     "subscribe": "Subscribe",

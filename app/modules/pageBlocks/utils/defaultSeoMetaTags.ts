@@ -12,7 +12,7 @@ type SiteTags = {
 };
 export function getDefaultSiteTags(): SiteTags {
   return {
-    title: "SaasRock Demo {Enterprise}",
+    title: "LinkWorks",
     description:
       "Build, Market, Manage your SaaS. Launch your MVP with built-in SaaS features: Authentication, Pricing & Subscriptions, Admin & App portals, Entity Builder (CRUD, API, Webhooks, Permissions, Logs...), Blogging, CRM, Email Marketing, Page Block Builder, Notifications, Onboarding, and more.",
     keywords: "remix,saas,tailwindcss,prisma,react,typescript,boilerplate,saas-kit,saas-boilerplate,stripe,postmark,admin-portal,app-dashboard,multi-tenancy",
