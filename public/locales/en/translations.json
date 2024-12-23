@@ -1533,6 +1533,7 @@
       "isDefault": "Is default",
       "type": "Type",
       "assignToNewUsers": "Assign to new users",
+      "visible": "Assign to users who can see only their rows",
       "permissions": "Permissions",
       "adminRoles": "Admin Users",
       "userRoles": "App Users"

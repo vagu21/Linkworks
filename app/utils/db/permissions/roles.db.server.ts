@@ -223,6 +223,7 @@ export async function createRole(data: {
   description: string;
   type: "admin" | "app";
   assignToNewUsers: boolean;
+  visible: boolean;
   isDefault: boolean;
 }) {
   return await db.role
@@ -235,7 +236,7 @@ export async function createRole(data: {
     });
 }
 
-export async function updateRole(id: string, data: { name: string; description: string; type: "admin" | "app"; assignToNewUsers: boolean }) {
+export async function updateRole(id: string, data: { name: string; description: string; type: "admin" | "app"; assignToNewUsers: boolean; visible: boolean }) {
   return await db.role
     .update({
       where: { id },
