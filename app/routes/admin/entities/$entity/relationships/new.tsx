@@ -70,6 +70,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         cascade,
         readOnly,
         distinct,
+        hiddenIfEmpty,
         childEntityViewId: childEntityViewId?.length ? childEntityViewId : null,
         parentEntityViewId: parentEntityViewId?.length ? parentEntityViewId : null,
       });
