@@ -92,7 +92,7 @@ export default function RowListFetcher({
   
   // Conditional rendering based on the `distinct` prop
   if (distinct) {
-    console.log("Rendering RowNewFetcher"); // For debugging
+    // console.log("Rendering RowNewFetcher"); // For debugging
     return (
       <RowNewFetcher
         url={newUrl}
@@ -106,7 +106,7 @@ export default function RowListFetcher({
       />
     );
   } else {
-    console.log("Rendering Rows List"); // For debugging
+    // console.log("Rendering Rows List"); // For debugging
     return (
       <div>
         {!fetcher.data ? (
