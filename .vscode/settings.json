@@ -24,5 +24,8 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "vite.autoStart": false
+  "vite.autoStart": false,
+  "cSpell.words": [
+    "setvisible"
+  ]
 }

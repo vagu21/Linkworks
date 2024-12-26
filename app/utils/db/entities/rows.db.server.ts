@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Prisma,
   Row,
@@ -24,6 +25,8 @@ import { getRowPermissionsCondition } from "~/utils/helpers/.server/PermissionsS
 import { RowValueMultipleDto } from "~/application/dtos/entities/RowValueMultipleDto";
 import { RowValueRangeDto } from "~/application/dtos/entities/RowValueRangeDto";
 import RowModelHelper from "~/utils/helpers/models/RowModelHelper";
+import { getAccessFilters } from "./accessControlHelpers";
+
 
 export type RowValueWithDetails = RowValue & {
   media: RowMedia[];
@@ -85,7 +88,6 @@ export async function getRows({
   entityId,
   entityName,
   tenantId,
-
   userId,
   take,
   skip,
@@ -98,8 +100,7 @@ export async function getRows({
   entityId?: string;
   entityName?: string;
   tenantId?: string | null;
-
-  userId?: string;
+  userId: string;
   take?: number;
   skip?: number;
   orderBy?: Prisma.RowOrderByWithRelationInput[];
@@ -116,7 +117,7 @@ export async function getRows({
     filterEntity = { entity: { name: entityName } };
   }
 
-  const accessFilters = await getAccessFilters({ tenantId });
+  const accessFilters = await getAccessFilters({ tenantId, userId, entityId: entityId || entityName });
   const where: Prisma.RowWhereInput = {
     AND: [
       { deletedAt: null },
@@ -125,9 +126,9 @@ export async function getRows({
       { id: { in: ids } },
       { ...filterEntity },
       { ...accessFilters },
-      // ...getSearchCondition(filters?.query),
     ],
   };
+
   return await db.row.findMany({
     take,
     skip,
@@ -136,6 +137,9 @@ export async function getRows({
     orderBy,
   });
 }
+
+
+
 
 export async function getRowsBetween(name: string, tenantId: string | null, startDate: Date, endDate: Date): Promise<RowWithDetails[]> {
   return await db.row.findMany({
@@ -176,7 +180,6 @@ export async function countRows({
   entityId,
   entityName,
   tenantId,
-
   userId,
   filters,
   rowWhere,
@@ -185,8 +188,7 @@ export async function countRows({
   entityId?: string;
   entityName?: string;
   tenantId?: string | null;
-
-  userId?: string | undefined;
+  userId?: string;
   filters?: RowFiltersDto;
   rowWhere?: Prisma.RowWhereInput;
   includePublic?: boolean;
@@ -199,16 +201,15 @@ export async function countRows({
     filterEntity = { entity: { name: entityName } };
   }
 
-  const accessFilters = await getAccessFilters({ tenantId });
+  const accessFilters = await getAccessFilters({ tenantId, userId });
+  console.log(JSON.stringify(accessFilters)); // Debugging output
   const where: Prisma.RowWhereInput = {
     AND: [
       { deletedAt: null },
       { ...rowWhere },
       whereFilters,
-      // { id: { in: ids } },
       { ...filterEntity },
       { ...accessFilters },
-      // ...getSearchCondition(filters?.query),
     ],
   };
   return await db.row.count({
@@ -216,8 +217,8 @@ export async function countRows({
   });
 }
 
-export async function getRow({ entityId, id, tenantId }: { entityId: string; id: string; tenantId?: string | null }): Promise<RowWithDetails | null> {
-  const accessFilters = await getAccessFilters({ tenantId });
+export async function getRow({ entityId, id, tenantId, userId }: { entityId: string; id: string; tenantId?: string | null; userId?: string | null; }): Promise<RowWithDetails | null> {
+  const accessFilters = await getAccessFilters({ tenantId, userId });
   return await db.row.findFirst({
     where: {
       deletedAt: null,
@@ -290,7 +291,6 @@ export async function createRow({
   entity: EntityWithDetails;
   data: {
     tenantId: string | null;
-
     createdByUserId?: string | null;
     createdByApiKeyId?: string | null;
     properties: any;
@@ -313,33 +313,34 @@ export async function createRow({
   nextOrder?: number | undefined;
 }) {
   let folio = nextFolio ?? 1;
-  if (!nextFolio) {
-    const maxFolio = await getMaxRowFolio({ tenantId: data.tenantId, entityId: entity.id });
-    if (maxFolio && maxFolio._max.folio !== null) {
-      folio = maxFolio._max.folio + 1;
-    }
-  }
-
   let order = nextOrder ?? 1;
-  if (!nextOrder) {
-    const maxOrder = await getMaxRowOrder({ tenantId: data.tenantId, entityId: entity.id });
-    if (maxOrder && maxOrder._max.order !== null) {
-      order = maxOrder._max.order + 1;
-    }
-  }
 
-  const createInput: Prisma.XOR<Prisma.RowCreateInput, Prisma.RowUncheckedCreateInput> = {
-    folio,
-    order,
-    entityId: entity.id,
-    tenantId: data.tenantId,
-    createdByUserId: data.createdByUserId ?? null,
-    createdByApiKeyId: data.createdByApiKeyId ?? null,
-    ...data.properties,
-    values: {
-      create: data.dynamicProperties
-        // .filter((f) => !f.id)
-        ?.map((value) => {
+  try {
+    // Calculating next folio and order if not provided
+    if (!nextFolio) {
+      const maxFolio = await getMaxRowFolio({ tenantId: data.tenantId, entityId: entity.id });
+      if (maxFolio && maxFolio._max.folio !== null) {
+        folio = maxFolio._max.folio + 1;
+      }
+    }
+    if (!nextOrder) {
+      const maxOrder = await getMaxRowOrder({ tenantId: data.tenantId, entityId: entity.id });
+      if (maxOrder && maxOrder._max.order !== null) {
+        order = maxOrder._max.order + 1;
+      }
+    }
+
+    // Creating the row with all the detailed inputs
+    const createInput: Prisma.XOR<Prisma.RowCreateInput, Prisma.RowUncheckedCreateInput> = {
+      folio,
+      order,
+      entityId: entity.id,
+      tenantId: data.tenantId,
+      createdByUserId: data.createdByUserId ?? null,
+      createdByApiKeyId: data.createdByApiKeyId ?? null,
+      ...data.properties,
+      values: {
+        create: data.dynamicProperties?.map((value) => {
           return {
             propertyId: value.propertyId,
             textValue: value.textValue,
@@ -366,40 +367,46 @@ export async function createRow({
               }),
             },
             range: {
-              create: {
-                numberMin: value.range?.numberMin,
-                numberMax: value.range?.numberMax,
-                dateMin: value.range?.dateMin,
-                dateMax: value.range?.dateMax,
-              },
+              create: value.range ? {
+                numberMin: value.range.numberMin,
+                numberMax: value.range.numberMax,
+                dateMin: value.range.dateMin,
+                dateMax: value.range.dateMax,
+              } : undefined,
             },
           };
         }),
-    },
-    parentRows: {
-      create: data.parentRows?.map(({ relationshipId, parentId }) => {
-        return {
-          relationshipId,
-          parentId,
-        };
-      }),
-    },
-    childRows: {
-      create: data.childRows?.map(({ relationshipId, childId }) => {
-        return {
-          relationshipId,
-          childId,
-        };
-      }),
-    },
-    ...data.rowCreateInput,
-  };
-  const row = await db.row.create({
-    data: createInput,
-  });
+      },
+      parentRows: {
+        create: data.parentRows?.map(({ relationshipId, parentId }) => {
+          return {
+            relationshipId,
+            parentId,
+          };
+        }),
+      },
+      childRows: {
+        create: data.childRows?.map(({ relationshipId, childId }) => {
+          return {
+            relationshipId,
+            childId,
+          };
+        }),
+      },
+      ...data.rowCreateInput,
+    };
 
-  return row;
+    const row = await db.row.create({
+      data: createInput,
+    });
+
+    return row;
+  } catch (error:any) {
+    console.error("Failed to create row:", error);
+    throw new Error(`Failed to create row: ${error.message}`);
+  }
 }
+
 
 export async function updateRow(
   id: string,
@@ -607,6 +614,7 @@ export async function deleteRowsInIds(ids: string[]) {
     where: { id: { in: ids } },
   });
 }
+// Function to check if a user has the "supplier" role
 
 export async function updateRowMedia(
   id: string,
@@ -622,18 +630,58 @@ export async function updateRowMedia(
     data,
   });
 }
+// async function getEntityNameById(entityId:any) {
+//   try {
+//     const entity = await db.entity.findUnique({
+//       where: { id: entityId },
+//       select: { name: true }
+//     });
+//     return entity ? entity.name : null;
+//   } catch (error) {
+//     console.error("Error fetching entity name:", error);
+//     return null;
+//   }
+// }
 
-async function getAccessFilters({ tenantId, userId }: { tenantId?: string | null; userId?: string }) {
-  let tenantFilters: Prisma.RowWhereInput | undefined = undefined;
-  let userPermissionFilters: Prisma.RowWhereInput | undefined = undefined;
-  if (tenantId !== undefined) {
-    tenantFilters = TenantHelper.tenantCondition({ tenantId });
-  }
-  if (userId) {
-    userPermissionFilters = await getRowPermissionsCondition({ tenantId, userId });
-  }
-  const filters: Prisma.RowWhereInput = {
-    AND: [{ ...tenantFilters }, { ...userPermissionFilters }],
-  };
-  return filters;
-}
+// async function getAccessFilters({ tenantId, userId, entityId }:any) {
+//   console.log(`Access Filter Request: TenantID: ${tenantId}, UserID: ${userId}, EntityID: ${entityId}`);
+
+//   // Retrieve the entity name using the ID provided
+//   const entityName = entityId ? await getEntityNameById(entityId) : null;
+//   console.log(`Entity Name: ${entityName}`);
+
+//   const isSupplier = await isUserSupplier(userId);
+//   console.log(`Is user a supplier? ${isSupplier}`);
+
+//   // Normalize entity name for comparison if it's not null or undefined
+//   const normalizedEntityName = entityName ? entityName.toLowerCase() : '';
+//   console.log("Normalized Entity Name:", normalizedEntityName);
+
+//   // Special handling for 'jobs' entity name assuming 'jobs' is the correct name to check
+//   if (isSupplier && normalizedEntityName === 'job') {
+//     console.log('Supplier accessing Jobs entity, no restrictions applied.');
+//     return {}; // No restrictions for suppliers on the 'jobs' entity
+//   }
+
+//   if (isSupplier) {
+//     console.log('Supplier accessing non-jobs entity or undefined entity name, restricting to own rows.');
+//     return { createdByUserId: userId }; // Restrict access to rows created by the supplier
+//   }
+
+//   // Default filter for non-suppliers or if tenantId is specified
+//   const defaultFilters = tenantId ? { tenantId } : {};
+//   console.log(`Default filters applied: ${JSON.stringify(defaultFilters)}`);
+//   return defaultFilters;
+// }
+
+// async function isUserSupplier(userId:any) {
+//   const userRoles = await db.userRole.findMany({
+//     where: {
+//       userId,
+//       role: {
+//         name: 'supplier',
+//       },
+//     },
+//   });
+//   return userRoles.length > 0;
+// }

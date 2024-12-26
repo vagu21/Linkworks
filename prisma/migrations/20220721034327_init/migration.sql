@@ -65,6 +65,7 @@ CREATE TABLE "Role" (
     "description" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "assignToNewUsers" BOOLEAN NOT NULL,
+    "visible" BOOLEAN NOT NULL,
     "isDefault" BOOLEAN NOT NULL,
     "order" INTEGER NOT NULL,
 

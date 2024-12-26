@@ -39,6 +39,7 @@ interface Props {
   item?: RowWithDetails | null;
   editing?: boolean;
   adding?: boolean;
+  distinct?: boolean;
   linkedAccounts?: LinkedAccountWithDetailsAndMembers[];
   onSubmit?: (formData: FormData) => void;
   canUpdate?: boolean;
@@ -64,6 +65,8 @@ interface Props {
   setStatesArr?: Dispatch<SetStateAction<string[]>>;
 }
 
+
+
 const RowForm = (
   {
     entity,
@@ -81,6 +84,7 @@ const RowForm = (
     onCreatedRedirect,
     allEntities,
     onDelete,
+    distinct,
     relationshipRows,
     hiddenProperties,
     hiddenFields,
@@ -101,7 +105,6 @@ const RowForm = (
   const navigation = useNavigation();
   const params = useParams();
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
-
   const formGroup = useRef<RefFormGroup>(null);
   const [searchParams] = useSearchParams();
   const [searchingRelationshipRows, setSearchingRelationshipRows] = useState<EntityRelationshipWithDetails>();
@@ -122,6 +125,7 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
+
 
   useEffect(() => {
     loadInitialFields();
@@ -249,12 +253,14 @@ const RowForm = (
         }
       });
     }
-
+    const dis = (f: EntityRelationshipWithDetails) => {
+      return f.distinct ? true : false;
+    };
+    
     const allChildren = entity.childEntities.filter((f) => childEntityVisible(f) && allEntities.find((x) => x.id === f.childId));
     setChildrenEntities(getVisibleRelatedEntities(allChildren, relatedRows));
     const allParents = entity.parentEntities.filter((f) => f.parentId !== parentEntity?.id && allEntities.find((x) => x.id === f.parentId));
     setParentEntities(getVisibleRelatedEntities(allParents, relatedRows));
-
     setHeaders(initial);
     setRelatedRows(relatedRows);
   }
@@ -393,6 +399,8 @@ const RowForm = (
     // }
   }
 
+  
+  // Function to get distinct values from relationships
   return (
     <>
       <FormGroup
@@ -545,10 +553,10 @@ const RowForm = (
             onSelected={(rows) => {
               addRelationshipRow(searchingRelationshipRows, rows);
               setSearchingRelationshipRows(undefined);
-            }}
+            } }
             multipleSelection={selectedRelatedEntity.multiple}
-            allEntities={allEntities}
-          />
+            allEntities={allEntities} 
+            distinct={searchingRelationshipRows.distinct}       />
         )}
       </SlideOverWideEmpty>
       {/* // </OpenModal> */}
@@ -823,6 +831,16 @@ function RowGroups({
     }
   }, [groups]);
 
+  function isVisible(rowValue: RowValueDto) {
+         if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument" ) {
+          const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
+          if (!firstNameValue) {
+             return false;
+           }
+         }
+        return true;
+       }
+
   function addHasCountryToState() {
     groups.forEach((group) => {
       let countryFound = false;
@@ -871,6 +889,9 @@ function RowGroups({
           <InputGroup key={idx} title={group ? t(group) : t("shared.details")}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
               {headers.map((detailValue, idxDetailValue) => {
+                if (!isVisible(detailValue)) {
+                          return null;
+                      }
                 return (
                   <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
                     <RowValueInput

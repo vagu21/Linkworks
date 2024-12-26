@@ -23,7 +23,6 @@ export default function EntityRelationshipsTable({
           title: "Order",
           value: (_item, idx) => (
             <div>
-              {/* {item.order} */}
               <OrderListButtons index={idx} items={items.map((f) => ({ ...f, order: f.order ?? 0 }))} editable={true} />
             </div>
           ),
@@ -80,6 +79,11 @@ export default function EntityRelationshipsTable({
           name: "hiddenIfEmpty",
           title: "Hidden if empty",
           value: (item) => <div>{item.hiddenIfEmpty ? <CheckIcon className="h-5 w-5 text-teal-500" /> : <XIcon className="h-5 w-5 text-gray-500" />}</div>,
+        },
+        {
+          name: "distinct",
+          title: "Distinct",
+          value: (item) => <div>{item.distinct ? <CheckIcon className="h-5 w-5 text-teal-500" /> : <XIcon className="h-5 w-5 text-gray-500" />}</div>,
         },
         {
           name: "title",

@@ -8,6 +8,7 @@ import SlideOverWideEmpty from "~/components/ui/slideOvers/SlideOverWideEmpty";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import { RowsApi } from "~/utils/api/.server/RowsApi";
 import { EntityWithDetails } from "~/utils/db/entities/entities.db.server";
+import { EntityRelationshipWithDetails } from "~/utils/db/entities/entityRelationships.db.server";
 import { RowWithDetails } from "~/utils/db/entities/rows.db.server";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import RowNewFetcher from "./RowNewFetcher";
@@ -25,8 +26,19 @@ interface Props {
   onSelected: (rows: RowWithDetails[]) => void;
   multipleSelection?: boolean;
   allEntities: EntityWithDetails[];
+  distinct: boolean;  
 }
-export default function RowListFetcher({ currentView, listUrl, newUrl, parentEntity, onSelected, multipleSelection, allEntities }: Props) {
+
+export default function RowListFetcher({
+  currentView,
+  listUrl,
+  newUrl,
+  parentEntity,
+  onSelected,
+  multipleSelection,
+  allEntities,
+  distinct= distinct ?? false,  
+}: Props) {
   const { t } = useTranslation();
   const fetcher = useTypedFetcher<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
   const [data, setData] = useState<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
@@ -36,9 +48,17 @@ export default function RowListFetcher({ currentView, listUrl, newUrl, parentEnt
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    fetcher.load(listUrl);
+    if (distinct) {
+      
+      fetcher.load(listUrl);
+      setAdding(true); 
+    } else {
+      
+      fetcher.load(listUrl);
+      setAdding(false); 
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listUrl]);
+  }, [listUrl, distinct]);
 
   useEffect(() => {
     if (currentView) {
@@ -69,69 +89,85 @@ export default function RowListFetcher({ currentView, listUrl, newUrl, parentEnt
   function onConfirm(rows: RowWithDetails[]) {
     onSelected(rows);
   }
-
-  return (
-    <div>
-      {!fetcher.data ? (
-        <Loading small loading />
-      ) : !data?.rowsData?.entity ? (
-        <div className="relative block w-full cursor-not-allowed rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
-          {t("shared.loading")}...
-        </div>
-      ) : !data?.rowsData ? (
-        <div>No data</div>
-      ) : data?.rowsData ? (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between space-x-2">
-            {/* <div className="text-lg font-bold text-gray-800">{t(data.rowsData?.entity.titlePlural)}</div> */}
-            <ButtonPrimary type="button" onClick={() => onConfirm(selectedRows)} disabled={selectedRows.length > 1 && !multipleSelection}>
-              {selectedRows.length === 1 ? (
-                <div className="flex space-x-1">
-                  <div>{t("shared.select")} 1</div>
-                  <div className="lowercase">{t(data.rowsData?.entity.title)}</div>
-                </div>
-              ) : (
-                <div className="flex space-x-1">
-                  <div>
-                    {t("shared.select")} {selectedRows.length}
-                  </div>
-                  <div className="lowercase">{t(data.rowsData?.entity.titlePlural)}</div>
-                </div>
-              )}
-            </ButtonPrimary>
-            <div className="flex space-x-2">
-              <InputFilters filters={EntityHelper.getFilters({ t, entity: data.rowsData.entity })} />
-              <ButtonSecondary type="button" onClick={() => setAdding(true)}>
-                +
-                {/* {t("shared.new")}
-              <span className="ml-1 lowercase">{t(data.rowsData?.entity.title)}</span> */}
-              </ButtonSecondary>
-            </div>
+  
+  // Conditional rendering based on the `distinct` prop
+  if (distinct) {
+    // console.log("Rendering RowNewFetcher"); // For debugging
+    return (
+      <RowNewFetcher
+        url={newUrl}
+        parentEntity={parentEntity}
+        onCreated={(newRow) => {
+          // Immediately save after row creation
+          onSelected([newRow]);
+          setAdding(false); // Close the dialog
+        }}
+        allEntities={allEntities}
+      />
+    );
+  } else {
+    // console.log("Rendering Rows List"); // For debugging
+    return (
+      <div>
+        {!fetcher.data ? (
+          <Loading small loading />
+        ) : !data?.rowsData?.entity ? (
+          <div className="relative block w-full cursor-not-allowed rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
+            {t("shared.loading")}...
           </div>
-          <RowsList
-            view={(currentView?.layout ?? "table") as "table" | "board" | "grid" | "card"}
-            currentView={currentView}
-            entity={data.rowsData.entity}
-            items={rows}
-            pagination={data.rowsData.pagination}
-            selectedRows={selectedRows}
-            onSelected={onRowsSelected}
-            readOnly={true}
-            // routes={data.routes}
-            ignoreColumns={[RowDisplayDefaultProperty.FOLIO]}
-          />
-        </div>
-      ) : (
-        <div>{t("shared.unknownError")}</div>
-      )}
-      <SlideOverWideEmpty
-        title={t("shared.create") + " " + t(data?.rowsData?.entity.title ?? "")}
-        className="max-w-md"
-        open={adding}
-        onClose={() => setAdding(false)}
-      >
-        <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} allEntities={allEntities} />
-      </SlideOverWideEmpty>
-    </div>
-  );
+        ) : !data?.rowsData ? (
+          <div>No data</div>
+        ) : data?.rowsData ? (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between space-x-2">
+              <ButtonPrimary
+                type="button"
+                onClick={() => onConfirm(selectedRows)}
+                disabled={selectedRows.length === 0 || (selectedRows.length > 1 && !multipleSelection)}
+              >
+                {selectedRows.length === 1 ? (
+                  <div className="flex space-x-1">
+                    <div>{t("shared.select")} 1</div>
+                    <div className="lowercase">{t(data.rowsData?.entity.title)}</div>
+                  </div>
+                ) : (
+                  <div className="flex space-x-1">
+                    <div>{t("shared.select")} {selectedRows.length}</div>
+                    <div className="lowercase">{t(data.rowsData?.entity.titlePlural)}</div>
+                  </div>
+                )}
+              </ButtonPrimary>
+              <div className="flex space-x-2">
+                <InputFilters filters={EntityHelper.getFilters({ t, entity: data.rowsData.entity })} />
+                <ButtonSecondary type="button" onClick={() => setAdding(true)}>
+                  +
+                </ButtonSecondary>
+              </div>
+            </div>
+            <RowsList
+              view={(currentView?.layout ?? "table") as "table" | "board" | "grid" | "card"}
+              currentView={currentView}
+              entity={data.rowsData.entity}
+              items={rows}
+              pagination={data.rowsData.pagination}
+              selectedRows={selectedRows}
+              onSelected={onRowsSelected}
+              readOnly={true}
+              ignoreColumns={[RowDisplayDefaultProperty.FOLIO]}
+            />
+          </div>
+        ) : (
+          <div>{t("shared.unknownError")}</div>
+        )}
+        <SlideOverWideEmpty
+          title={t("shared.create") + " " + t(data?.rowsData?.entity.title ?? "")}
+          className="max-w-md"
+          open={adding}
+          onClose={() => setAdding(false)}
+        >
+          <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} allEntities={allEntities} />
+        </SlideOverWideEmpty>
+      </div>
+    );
+  }
 }

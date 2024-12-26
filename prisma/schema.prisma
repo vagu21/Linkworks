@@ -275,6 +275,7 @@ model Role {
   description      String
   type             String
   assignToNewUsers Boolean
+  visible          Boolean
   isDefault        Boolean
   order            Int
   permissions      RolePermission[]
@@ -835,6 +836,7 @@ model EntityRelationship {
   required           Boolean           @default(false)
   cascade            Boolean           @default(false)
   readOnly           Boolean           @default(false)
+  distinct           Boolean           @default(false)
   hiddenIfEmpty      Boolean           @default(false)
   childEntityViewId  String?
   childEntityView    EntityView?       @relation(name: "childEntityView", fields: [childEntityViewId], references: [id], onDelete: Cascade)
