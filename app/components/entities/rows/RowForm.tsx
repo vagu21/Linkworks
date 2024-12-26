@@ -39,6 +39,7 @@ interface Props {
   item?: RowWithDetails | null;
   editing?: boolean;
   adding?: boolean;
+  distinct?: boolean;
   linkedAccounts?: LinkedAccountWithDetailsAndMembers[];
   onSubmit?: (formData: FormData) => void;
   canUpdate?: boolean;
@@ -830,6 +831,16 @@ function RowGroups({
     }
   }, [groups]);
 
+  function isVisible(rowValue: RowValueDto) {
+         if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument" ) {
+          const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
+          if (!firstNameValue) {
+             return false;
+           }
+         }
+        return true;
+       }
+
   function addHasCountryToState() {
     groups.forEach((group) => {
       let countryFound = false;
@@ -878,6 +889,9 @@ function RowGroups({
           <InputGroup key={idx} title={group ? t(group) : t("shared.details")}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
               {headers.map((detailValue, idxDetailValue) => {
+                if (!isVisible(detailValue)) {
+                          return null;
+                      }
                 return (
                   <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
                     <RowValueInput
