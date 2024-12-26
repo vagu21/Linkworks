@@ -14,8 +14,8 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
       banner: {
         style: "top",
         text: "Linkfields Site",
-        textMd: "This is lfi site.",
-        cta: [{ text: "SaasRock", href: "https://linkfields.com", isPrimary: true, target: "_blank" }],
+        textMd: "This is linlfields site.",
+        cta: [{ text: "Linkfields", href: "https://linkfields.com", isPrimary: true, target: "_blank" }],
       },
     },
     // Header

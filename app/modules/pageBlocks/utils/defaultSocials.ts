@@ -1,10 +1,10 @@
 import { SocialsBlockDto } from "~/modules/pageBlocks/components/blocks/shared/socials/SocialsBlockDto";
 
 export const defaultSocials: SocialsBlockDto = {
-  instagram: "https://www.instagram.com/saas_rock",
-  twitter: "https://twitter.com/AlexandroMtzG",
-  github: "https://github.com/AlexandroMtzG",
-  discord: "https://discord.com/invite/KMkjU2BFn9",
-  twitterCreator: "https://twitter.com/AlexandroMtzG",
-  youtube: "https://www.youtube.com/@saasrock",
+  instagram: "https://www.linkedin.com/company/linkfieldsinnovations",
+  twitter: "https://x.com/LinkfieldsI",
+  github: "https://www.linkedin.com/company/linkfieldsinnovations",
+  discord: "https://www.linkedin.com/company/linkfieldsinnovations",
+  twitterCreator: "https://www.linkedin.com/company/linkfieldsinnovations",
+  youtube: "https://www.youtube.com/channel/UCiSaCEnC7Gtu7YkanoA6mpg?themeRefresh=1",
 };
