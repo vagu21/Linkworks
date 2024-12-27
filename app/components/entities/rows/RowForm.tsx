@@ -31,6 +31,31 @@ import { generateJsonFromContent } from "~/utils/openaiUtils";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useNavigate } from "react-router-dom";
 import { saveCandidateEntity, saveEducationHistory, saveEmploymentInformation, saveRelationship, updateCandidateEntity } from "~/utils/apiClient";
+import NewMember from "~/components/core/settings/members/NewMember";
+import { redirect, useTypedLoaderData } from "remix-typedjson";
+import NewMemberRoute, { NewMemberLoaderData } from "~/routes/app.$tenant/settings/members/new";
+import InputCheckboxWithDescription from "~/components/ui/input/InputCheckboxWithDescription";
+// import { getUserByEmail } from "~/utils/db/users.db.server";
+// import { getTenant, getTenantMember } from "~/utils/db/tenants.db.server";
+import { createUserInvitation } from "~/utils/db/tenantUserInvitations.db.server";
+import { getTenantIdFromUrl } from "~/utils/services/.server/urlService";
+import EventsService from "~/modules/events/services/.server/EventsService";
+import { TenantUserType } from "~/application/enums/tenants/TenantUserType";
+import { MemberInvitationCreatedDto } from "~/modules/events/dtos/MemberInvitationCreatedDto";
+import { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
+import { verifyUserHasPermission } from "~/utils/helpers/.server/PermissionsService";
+import { getUserInfo } from "~/utils/session.server";
+import { getUser, getUserByEmail } from "~/utils/db/users.db.server";
+import { getTenant, getTenantMember } from "~/utils/db/tenants.db.server";
+import { sendEmail } from "~/utils/email.server";
+import { getBaseURL } from "~/utils/url.server";
+import { getTranslations } from "~/locale/i18next.server";
+import { getPlanFeatureUsage } from "~/utils/services/.server/subscriptionService";
+import { DefaultFeatures } from "~/application/dtos/shared/DefaultFeatures";
+import { useFetcher } from "@remix-run/react";
+import CompanyMemberTable from "~/custom/components/companyMemberTable";
+import { toast } from "~/components/ui/use-toast";
+import { country_arr, states } from "./CountryUtils";
 
 export interface RefRowForm {
   save: () => void;
@@ -67,6 +92,15 @@ interface Props {
   template?: { title: string; config: string } | null;
   statesArr?: string[];
   setStatesArr?: Dispatch<SetStateAction<string[]>>;
+  companyUserFormValues?: any;
+  setCompanyUserFormValues?: (values: any) => void;
+}
+interface formDataCompany extends FormData {
+     
+    userEmail?:"string",
+    firstName?:"string",
+    lastName?:"string",
+    sendInvitationEmail?:boolean
 }
 
 
@@ -101,6 +135,8 @@ const RowForm = (
     template,
     statesArr,
     setStatesArr,
+    companyUserFormValues,
+    setCompanyUserFormValues
   }: Props,
   ref: Ref<RefRowForm>
 ) => {
@@ -131,6 +167,7 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
+  const [showMemberForm, setShowMemberForm] = useState(false);
 
   const [candidateId, setCandidateId] = useState<string | null>(null);
   const [updatedCandidateData, setUpdatedCandidateData] = useState({
@@ -345,24 +382,55 @@ const RowForm = (
   //   }
   // }
 
-  function submitForm(formData: FormData) {
+  // 
+  
+  function submitForm(formData: formDataCompany) {
     if (entity.name === "Candidates" && candidateId && updatedCandidateData) {
+      // Handle candidate update
       updateCandidateEntity(candidateId, updatedCandidateData)
         .then((updateResponse) => {
           if (updateResponse) {
-            navigate(-1);
+            navigate(-1); // Navigate back upon successful update
           }
+        })
+        .catch((error) => {
+          // console.error("Error updating candidate entity:", error);
         });
+    } else if (entity.name === "companies") {
+      // Handle company-related submission
+      if (!companyUserFormValues || companyUserFormValues.length === 0) {
+        alert("No company user found! Please add at least one company user.");
+        return;
+      }
+  
+      const user = companyUserFormValues[0]; // Use the first user in the array
+      if (!user.email || !user.firstName || !user.lastName) {
+        console.error("Missing required fields in company user data:", user);
+        alert("Please provide valid company user details.");
+        return;
+      }
+  
+      // Append company user data to FormData
+      if (formData instanceof FormData) {
+        formData.append("userEmail", user.email);
+        formData.append("firstName", user.firstName);
+        formData.append("lastName", user.lastName);
+        formData.append("sendInvitationEmail", user.sendInvitationEmail ? "true" : "false");
+      }
+  
+      submit(formData, { method: "post" })
+        
     } else {
+      // Default submission
       if (onSubmit) {
         onSubmit(formData);
       } else {
-        submit(formData, {
-          method: "post",
-        });
+        submit(formData, { method: "post" })
+         
       }
     }
   }
+  
   
 
   function isPropertyVisible(f: PropertyWithDetails) {
@@ -445,6 +513,18 @@ const RowForm = (
     //   formGroup.current?.submitForm();
     // }
   }
+
+  function handleRemove(index: number) {
+    if (setCompanyUserFormValues)
+      setCompanyUserFormValues(companyUserFormValues?.filter((f: any, i: any) => i !== index));
+  }
+  // console.log(companyUserFormValues, "companyUserFormValues")
+  const data = useTypedLoaderData<NewMemberLoaderData>();
+  const [sendEmail, setSendEmail] = useState(false);
+  const inputEmail = useRef<HTMLInputElement>(null);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  // console.log(companyUserFormValues, "companyUserFormValues");
 
   
   // Function to get distinct values from relationships
@@ -590,6 +670,56 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
+        {entity.name == 'companies' && (
+          <div onClick={() => setShowMemberForm(!showMemberForm)}>
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700 ">
+              Company Member
+            </label>
+            <div
+              className="mt-1 h-12 flex items-center w-full border-2 border-dashed bg-white border-gray-300 rounded-md text-gray-400 px-4 cursor-pointer"
+            >
+              <span className="text-sm">Add Company Member</span>
+            </div>
+          </div>
+        )
+        }
+        {
+          showMemberForm && (<>
+            <CompanyMemberTable companyUserFormValues={companyUserFormValues} setCompanyUserFormValues={setCompanyUserFormValues} />
+          </>)
+        }
+        <div className="grid grid-cols-2 gap-4 ">
+          {companyUserFormValues?.map((item: any, index: number) => {
+            return (
+              <div key={index} className="relative bg-white p-4 rounded-lg shadow-md">
+                {/* Cross button in the top-right corner */}
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  aria-label="Remove"
+                >
+                  &times; {/* Cross symbol */}
+                </button>
+                {/* Item Details */}
+                <p>Email: {item?.email}</p>
+                <p>First Name: {item?.firstName}</p>
+                <p>Last Name: {item?.lastName}</p>
+                <p>Send Invitation Email: {item?.sendInvitationEmail ? "Yes" : "No"}</p>
+              </div>
+            );
+          })}
+        </div>
+        {/* {companyUserFormValues?.map(({item, index}:any) => (
+   (<>
+   <div className="flex">
+    <div>test</div>
+  <div>{item?.email}</div>
+  <div>{item?.firstName}</div>
+  <div>{item?.lastName}</div>
+  </div>
+  
+  </>)
+))} */}
       </FormGroup>
       {/* // <OpenModal className="sm:max-w-4xl" onClose={() => setSearchingRelationshipRows(undefined)}> */}
       <SlideOverWideEmpty
@@ -863,6 +993,7 @@ function RowGroups({
   const [statesArr, setStatesArr] = useState<string[]>([]);
   const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
 
+
   useEffect(() => {
     const groups: { group?: string; headers: RowValueDto[] }[] = [];
     rowValues.forEach((header) => {
@@ -888,30 +1019,23 @@ function RowGroups({
 
   useEffect(() => {
     if (groups.length > 0 && groups[0].headers.length > 0) {
+      // console.log("groups", groups);
       addHasCountryToState();
     }
   }, [groups]);
-
-  function isVisible(rowValue: RowValueDto) {
-         if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument" ) {
-          const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
-          if (!firstNameValue) {
-             return false;
-           }
-         }
-        return true;
-       }
-
   function addHasCountryToState() {
+    let countryName = '' as string | undefined;
     groups.forEach((group) => {
       let countryFound = false;
-
       group.headers.forEach((header) => {
         if (header.property.subtype === "country") {
           countryFound = true;
+          countryName = header.textValue;
         }
       });
+      // console.log("countryFound", countryFound);
       if (countryFound) {
+        populateInitialStates(countryName);
         group.headers.forEach((header) => {
           if (header.property.subtype === "state") {
             header.property.hasCountry = true;
@@ -926,6 +1050,48 @@ function RowGroups({
       }
     });
   }
+  function populateInitialStates(country: string | undefined) {
+    if (country && statesArr.length == 0) {
+      let index = country_arr.indexOf(country);
+      let curstates = states[index + 1].split("|");
+      setStatesArr(curstates);
+    }
+  }
+
+  function isVisible(rowValue: RowValueDto) {
+         if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument" ) {
+          const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
+          if (!firstNameValue) {
+             return false;
+           }
+         }
+        return true;
+       }
+
+  // function addHasCountryToState() {
+  //   groups.forEach((group) => {
+  //     let countryFound = false;
+
+  //     group.headers.forEach((header) => {
+  //       if (header.property.subtype === "country") {
+  //         countryFound = true;
+  //       }
+  //     });
+  //     if (countryFound) {
+  //       group.headers.forEach((header) => {
+  //         if (header.property.subtype === "state") {
+  //           header.property.hasCountry = true;
+  //         }
+  //       });
+  //     } else {
+  //       group.headers.forEach((header) => {
+  //         if (header.property.subtype === "state") {
+  //           header.property.hasCountry = false;
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
   function getPropertyColumnSpan(property: PropertyWithDetails) {
     const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
     if (columns === undefined || isNaN(columns) || (columns < 1 && columns > 12)) {
@@ -950,6 +1116,8 @@ function RowGroups({
           <InputGroup key={idx} title={group ? t(group) : t("shared.details")}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
               {headers.map((detailValue, idxDetailValue) => {
+              detailValue.property.subtype == 'country' && addHasCountryToState() 
+
                 if (!isVisible(detailValue)) {
                           return null;
                       }

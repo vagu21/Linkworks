@@ -31,6 +31,7 @@ export async function createUserInvitation(
     email: string;
     firstName: string;
     lastName: string;
+    companyId?: string | null;
     type: TenantUserType;
     fromUserId: string | null;
   }
