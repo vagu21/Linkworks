@@ -13,9 +13,9 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
     {
       banner: {
         style: "top",
-        text: "SaasRock demo site.",
-        textMd: "This is the SaasRock demo site.",
-        cta: [{ text: "SaasRock", href: "https://saasrock.com/?ref=demo.saasrock.com", isPrimary: true, target: "_blank" }],
+        text: "Linkfields Site",
+        textMd: "This is linlfields site.",
+        cta: [{ text: "Linkfields", href: "https://linkfields.com", isPrimary: true, target: "_blank" }],
       },
     },
     // Header
@@ -93,9 +93,9 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
     {
       features: {
         style: "cards",
-        topText: "Powered by the best tools",
-        headline: "The Remix SaaS Boilerplate",
-        subheadline: "Launch a SaaS MVP (Minimum Viable Product) using a battle-tested tech stack.",
+        topText: "Powered by Linkfields Innovation",
+        headline: "The Linkworks",
+        subheadline: "All in one solution for crms, job posting, managing candidates,etc.",
         cta: [
           { text: "Pricing", isPrimary: true, href: "/pricing" },
           { text: "Contact", isPrimary: false, href: "/contact" },
@@ -219,7 +219,7 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
     {
       community: {
         style: "simple",
-        headline: "Join the SaasRock community!",
+        headline: "Join the Linkfields Community!",
         subheadline: "We're all looking to build successful SaaS applications.",
         withName: false,
         // grid: {
