@@ -353,6 +353,7 @@ model TenantUserInvitation {
   id            String  @id @default(cuid())
   tenantId      String
   email         String
+  companyId     String?
   firstName     String
   lastName      String
   type          Int

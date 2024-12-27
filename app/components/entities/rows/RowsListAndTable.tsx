@@ -11,6 +11,9 @@ import { RowHeaderActionDto } from "~/application/dtos/data/RowHeaderActionDto";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
+import  { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
+import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
+import { DownloadIcon } from "lucide-react";
 
 interface Props {
   entity: EntityWithDetails;
@@ -96,6 +99,21 @@ export default function RowsListAndTable({
         onClick: (_, item) => onRemove(item),
         firstColumn: true,
       });
+    }
+
+    if(entity.name=="Candidates")
+      {
+      actions.push({
+        title: (
+          <div>
+            <ButtonSecondary className="gap-2">
+            Concise Resume
+              <DownloadIcon className="h-4 w-4 text-gray-500 " />
+            </ButtonSecondary>
+          </div>
+        ),
+        onClick: (_, item) => downloadResumeAction(item),
+      })
     }
     setActions(actions);
   }, [editable, entity, onEditClick, onRemove, routes, t]);

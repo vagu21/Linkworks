@@ -7,7 +7,7 @@ export const saveEmploymentInformation = async (employment : any) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-Api-key": apiKey,
+        "x-Api-key": `${apiKey}`,
       },
       body: JSON.stringify(employment),
     });
@@ -25,7 +25,7 @@ export const saveEmploymentInformation = async (employment : any) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-Api-key": apiKey,
+          "x-Api-key": `${apiKey}`,
         },
         body: JSON.stringify(candidate),
       });
@@ -42,7 +42,7 @@ export const saveEmploymentInformation = async (employment : any) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-Api-key": apiKey, 
+          "x-Api-key": `${apiKey}`, 
 
         },
         body: JSON.stringify(relationship),
@@ -60,7 +60,7 @@ export const saveEmploymentInformation = async (employment : any) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "x-Api-key": apiKey,
+                "x-Api-key": `${apiKey}`,
             },
             body: JSON.stringify(updatedCandidateData),
         });
@@ -77,7 +77,7 @@ export const saveEducationHistory = async (education: any) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-Api-key": apiKey,
+        "x-Api-key": `${apiKey}`,
       },
       body: JSON.stringify(education),
     });

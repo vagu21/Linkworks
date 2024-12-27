@@ -25,6 +25,7 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
   const data = useTypedLoaderData<Rows_New.LoaderData>();
   const params = useParams();
   const { t } = useTranslation();
+  const [companyUserFormValues, setCompanyUserFormValues] = useState([]);
   const actionData = useTypedActionData<Rows_New.ActionData>();
 
   const [selectedTemplate, setSelectedTemplate] = useState<{ title: string; config: string } | null>(null);
@@ -89,6 +90,8 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
           ) : (
             <CheckPlanFeatureLimit item={data.entityData.featureUsageEntity}>
               <RowForm
+              companyUserFormValues={companyUserFormValues}
+              setCompanyUserFormValues={setCompanyUserFormValues}
                 key={actionData?.newRow?.id || selectedTemplate?.title}
                 entity={data.entityData.entity}
                 routes={data.routes}

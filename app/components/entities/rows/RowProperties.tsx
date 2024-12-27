@@ -3,13 +3,13 @@ import RowValueInput from "./RowValueInput";
 import clsx from "clsx";
 import PropertyAttributeHelper from "~/utils/helpers/PropertyAttributeHelper";
 import { PropertyAttributeName } from "~/application/enums/entities/PropertyAttributeName";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { updateItemByIdx } from "~/utils/shared/ObjectUtils";
 import RowHelper from "~/utils/helpers/RowHelper";
 import { RowValueDto } from "~/application/dtos/entities/RowValueDto";
 import { getFormProperties } from "~/utils/helpers/PropertyHelper";
 import { RowDto } from "~/modules/rows/repositories/RowDto";
-import { useEffect} from "react";
+
 export default function RowProperties({
   entity,
   item,
