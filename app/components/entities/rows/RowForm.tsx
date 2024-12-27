@@ -27,6 +27,10 @@ import { RowDisplayDefaultProperty } from "~/utils/helpers/PropertyHelper";
 import { PropertyType } from "~/application/enums/entities/PropertyType";
 import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db.server";
 import RowUrlHelper from "~/utils/helpers/RowUrlHelper";
+import { generateJsonFromContent } from "~/utils/openaiUtils";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useNavigate } from "react-router-dom";
+import { saveCandidateEntity, saveEducationHistory, saveEmploymentInformation, saveRelationship, updateCandidateEntity } from "~/utils/apiClient";
 
 export interface RefRowForm {
   save: () => void;
@@ -103,6 +107,8 @@ const RowForm = (
   const { t } = useTranslation();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const navigate = useNavigate();
+
   const params = useParams();
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
   const formGroup = useRef<RefFormGroup>(null);
@@ -125,6 +131,27 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
+
+  const [candidateId, setCandidateId] = useState<string | null>(null);
+  const [updatedCandidateData, setUpdatedCandidateData] = useState({
+    uploadCandidateCvResumeHere: [],
+    summary: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    languageSkills: [],
+    technicalskills: [],
+    proficiencyLevel: "",
+    facebookProfileUrl: "",
+    twitterProfileUrl: "",
+    linkedinProfileUrl: "",
+    githubProfileUrl: "",
+    xingProfileUrl: "",
+    source: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
 
 
   useEffect(() => {
@@ -308,15 +335,35 @@ const RowForm = (
     setRelatedRows(newRelatedRows);
   }
 
+  // function submitForm(formData: FormData) {
+  //   if (onSubmit) {
+  //     onSubmit(formData);
+  //   } else {
+  //     submit(formData, {
+  //       method: "post",
+  //     });
+  //   }
+  // }
+
   function submitForm(formData: FormData) {
-    if (onSubmit) {
-      onSubmit(formData);
+    if (entity.name === "Candidates" && candidateId && updatedCandidateData) {
+      updateCandidateEntity(candidateId, updatedCandidateData)
+        .then((updateResponse) => {
+          if (updateResponse) {
+            navigate(-1);
+          }
+        });
     } else {
-      submit(formData, {
-        method: "post",
-      });
+      if (onSubmit) {
+        onSubmit(formData);
+      } else {
+        submit(formData, {
+          method: "post",
+        });
+      }
     }
   }
+  
 
   function isPropertyVisible(f: PropertyWithDetails) {
     if (f.isHidden || (!item && !f.showInCreate) || (!item && f.isReadOnly) || (item && editing && f.isReadOnly)) {
@@ -403,6 +450,11 @@ const RowForm = (
   // Function to get distinct values from relationships
   return (
     <>
+    {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <ClipLoader color="#ffffff" size={50} />
+        </div>
+      )}
       <FormGroup
         ref={formGroup}
         id={item?.id}
@@ -471,6 +523,9 @@ const RowForm = (
           }}
           promptFlows={promptFlows}
           onSaveIfAllSet={onSaveIfAllSet}
+          setIsLoading={setIsLoading}
+          setUpdatedCandidateData={setUpdatedCandidateData}
+          setCandidateId={setCandidateId}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -769,6 +824,9 @@ function RowGroups({
   parentEntities,
   promptFlows,
   onSaveIfAllSet,
+  setIsLoading,
+  setUpdatedCandidateData,
+  setCandidateId,
 }: {
   item?: RowWithDetails | null;
   entity: EntityWithDetails;
@@ -796,6 +854,9 @@ function RowGroups({
   };
   promptFlows?: PromptFlowWithDetails[];
   onSaveIfAllSet: () => void;
+  setIsLoading: any;
+  setUpdatedCandidateData: any;
+  setCandidateId: any;
 }) {
   const { t } = useTranslation();
   const rowValueInput = useRef<RefRowValueInput>(null);
@@ -921,15 +982,303 @@ function RowGroups({
                           textValue: e,
                         });
                       }}
-                      onChangeMedia={(media) => {
+
+                      // onChangeMedia={(media) => {
+                      //   onChange({
+                      //     ...detailValue,
+                      //     media: media as any,
+                      //   });
+                      //   if (media.filter((f) => f.type).length > 0) {
+                      //     onSaveIfAllSet();
+                      //   }
+                      // }}
+                      onChangeMedia={async (media) => {
+                        setIsLoading(true);
+
                         onChange({
                           ...detailValue,
                           media: media as any,
                         });
+
+                        const loadPdfToText = () => import("react-pdftotext");
+
+                        // Trigger save if required
                         if (media.filter((f) => f.type).length > 0) {
                           onSaveIfAllSet();
                         }
+
+                        // Process the uploaded PDF if it's for the "Candidates" entity
+                        if (!item && entity.name === "Candidates") {
+                          if (media.length === 1) {
+                            const { file, type } = media[0];
+
+                            if (type === "application/pdf" && file) {
+                              try {
+                                let validFile = file;
+
+                                // If the file is base64, convert it into a File object
+                                if (
+                                  typeof file === "string" &&
+                                  file.startsWith("data:application/pdf;base64,")
+                                ) {
+                                  const base64Data = file.split(",")[1]; // Extract base64 string
+                                  const byteCharacters = atob(base64Data); // Decode base64
+                                  const byteNumbers = new Uint8Array(byteCharacters.length);
+
+                                  for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                  }
+
+                                  validFile = new File([byteNumbers], "uploaded.pdf", {
+                                    type: "application/pdf",
+                                  });
+                                }
+
+                                const validFileAsBase64 = async (file: any) => {
+                                  if (
+                                    typeof file === "string" &&
+                                    file.startsWith("data:application/pdf;base64,")
+                                  ) {
+                                    return file.split(",")[1]; // Extract the Base64 content
+                                  }
+
+                                  if (file instanceof File) {
+                                    return new Promise((resolve, reject) => {
+                                      const reader = new FileReader();
+                                      reader.onload = () => resolve(reader.result.split(",")[1]); // Extract Base64 content
+                                      reader.onerror = reject;
+                                      reader.readAsDataURL(file);
+                                    });
+                                  }
+
+                                  throw new Error("Unsupported file format");
+                                };
+
+                                const fileBase64 = await validFileAsBase64(validFile);
+
+                                const initialCandidateData = {
+                                  uploadCandidateCvResumeHere: [],
+                                  summary: "",
+                                  firstName: "",
+                                  lastName: "",
+                                  email: "",
+                                  phone: "",
+                                  willingToRelocate: false,
+                                  gender: "",
+                                  dateOfBirth: "",
+                                  languageSkills: [],
+                                  technicalskills: [],
+                                  proficiencyLevel: "",
+                                  facebookProfileUrl: "",
+                                  twitterProfileUrl: "",
+                                  linkedinProfileUrl: "",
+                                  githubProfileUrl: "",
+                                  xingProfileUrl: "",
+                                  source: "",
+                                };
+
+
+
+                                const candidateResponse = await saveCandidateEntity(
+                                  initialCandidateData
+                                );
+
+                                if (candidateResponse && candidateResponse.id) {
+                                  console.log("Candidate Entity ID:", candidateResponse.id);
+                                } else {
+                                  console.error("Failed to create candidate entity");
+                                }
+
+                                // Extract text from PDF
+                                const extractedText = await (async () => {
+                                  const { default: pdfToText } = await loadPdfToText();
+                                  return pdfToText(validFile);
+                                })();
+
+                                // Generate JSON from the extracted text
+                                const openAiJson = await generateJsonFromContent(extractedText);
+
+                                if (openAiJson) {
+                                  // Populate processedPdf using OpenAI JSON response
+                                  const processedPdf = {
+                                    summary: openAiJson.Summary || "",
+                                    firstName: openAiJson.Name?.split(" ")[0] || "",
+                                    lastName: openAiJson.Name?.split(" ")[1] || "",
+                                    email: openAiJson.Email || "",
+                                    phone: openAiJson.Phone_Number || "",
+                                    languageSkills: openAiJson.LanguageSkills || "",
+                                    technicalSkills: openAiJson.Skills?.join(", ") || "",
+                                    linkedinProfileUrl: openAiJson.LinkedInProfileURL || "",
+                                    location: openAiJson.Location || "",
+                                  };
+
+                                  
+
+                                  
+
+                                  const educationHistories = openAiJson.Education || [];
+                                  let educationHistoryIds = [];
+
+                                  for (const education of educationHistories) {
+                                    const educationEntity = {
+                                      schoolCollegeName: education.schoolCollegeName || "",
+                                      educationQualification: education.educationQualification || "",
+                                      educationalSpecialization: education.educationalSpecialization || "",
+                                      grade: education.grade || "",
+                                      location: education.location || "",
+                                      startDate: education.startDate || "",
+                                      endDate: education.endDate || "",
+                                      description: education.description || "",
+                                    };
+
+                                    try {
+                                      const saveEducationResponse = await saveEducationHistory(educationEntity);
+                                     
+
+                                      if (saveEducationResponse && saveEducationResponse.id) {
+                                        educationHistoryIds.push(saveEducationResponse.id);
+                                      }
+                                    } catch (error) {
+                                      console.error("Error saving education entity:", error);
+                                    }
+                                  }
+
+                                  if (candidateResponse && candidateResponse.id && educationHistoryIds.length > 0) {
+                                    for (const educationHistoryId of educationHistoryIds) {
+                                      try {
+                                        const relationshipData = {
+                                          parent: candidateResponse.id,
+                                          child: educationHistoryId,
+                                        };
+
+                                        const saveEducationRelationshipResponse = await saveRelationship(relationshipData);
+                                        console.log("Education Relationship Created:", saveEducationRelationshipResponse);
+                                      } catch (error) {
+                                        console.error("Error creating relationship with Education History:", error);
+                                      }
+                                    }
+                                  }
+
+                                  const employmentHistories = openAiJson.Employment || [];
+                                  let employmentHistoryIds = [];
+
+                                  for (const employment of employmentHistories) {
+                                    const employmentEntity = {
+                                      title: employment.title || "",
+                                      companyName: employment.companyName || "",
+                                      employmentType: employment.employmentType || "",
+                                      industryType: employment.industryType || "",
+                                      location: employment.location || "",
+                                      salary: typeof employment.salary === "number" ? employment.salary : 0,
+                                      currentlyWorkingInThisRole: employment.currentlyWorkingInThisRole || false,
+                                      startDate: employment.startDate || "",
+                                      endDate: employment.endDate || "",
+                                      description: employment.description || "",
+                                    };
+
+                                    try {
+                                      const saveEmploymentResponse = await saveEmploymentInformation(
+                                        employmentEntity
+                                      );
+                                      console.log("Saved Employment Entity:", saveEmploymentResponse);
+
+                                      if (saveEmploymentResponse && saveEmploymentResponse.id) {
+                                        employmentHistoryIds.push(saveEmploymentResponse.id);
+                                      }
+                                    } catch (error) {
+                                      console.error("Error saving employment entity:", error);
+                                    }
+                                  }
+
+                                  if (candidateResponse && candidateResponse.id && employmentHistoryIds.length > 0) {
+                                    for (const employmentHistoryId of employmentHistoryIds) {
+                                      try {
+                                        const relationshipData = {
+                                          parent: candidateResponse.id,
+                                          child: employmentHistoryId,
+                                        };
+
+                                        const saveEmploymentRelationshipResponse = await saveRelationship(relationshipData);
+                                        console.log("Employment Relationship Created:", saveEmploymentRelationshipResponse);
+                                      } catch (error) {
+                                        console.error("Error creating relationship with Employment History:", error);
+                                      }
+                                    }
+                                  }
+
+                                  // Update candidate properties
+                                  const updateProperty = (propertyName: any, value: any) => {
+                                    const property = headers.find(
+                                      (f) => f.property.name === propertyName
+                                    );
+                                    if (property) {
+                                      onChange({ ...property, textValue: value });
+                                    }
+                                  };
+
+                                  updateProperty("summary", processedPdf.summary);
+                                  updateProperty("firstName", processedPdf.firstName);
+                                  updateProperty("lastName", processedPdf.lastName);
+                                  updateProperty("email", processedPdf.email);
+                                  updateProperty("phone", processedPdf.phone);
+                                  updateProperty("linkedinProfileUrl", processedPdf.linkedinProfileUrl);
+
+                                  // Update the candidate entity with the processed data
+                                  if (candidateResponse && candidateResponse.id) {
+                                    const candidateId = candidateResponse.id; // Get the candidate ID
+                                    const updatedCandidateData = {
+                                      uploadCandidateCvResumeHere: [
+                                        {
+                                          title: processedPdf.firstName || "Resume",
+                                          name: "uploaded.pdf",
+                                          file: fileBase64,
+                                          type: "application/pdf",
+                                        },
+                                      ],
+                                      summary: processedPdf.summary || "",
+                                      firstName: processedPdf.firstName || "",
+                                      lastName: processedPdf.lastName || "",
+                                      email: processedPdf.email || "",
+                                      phone: processedPdf.phone || "",
+                                      willingToRelocate: false,
+                                      gender: "",
+                                      dateOfBirth: "",
+                                      languageSkills: Array.isArray(processedPdf.languageSkills)
+                                        ? processedPdf.languageSkills
+                                        : processedPdf.languageSkills
+                                          ? [processedPdf.languageSkills]
+                                          : [],
+                                      technicalskills: Array.isArray(processedPdf.technicalSkills)
+                                        ? processedPdf.technicalSkills
+                                        : processedPdf.technicalSkills
+                                          ? [processedPdf.technicalSkills]
+                                          : [],
+                                      proficiencyLevel: "",
+                                      facebookProfileUrl: "",
+                                      twitterProfileUrl: "",
+                                      linkedinProfileUrl: processedPdf.linkedinProfileUrl || "",
+                                      githubProfileUrl: "",
+                                      xingProfileUrl: "",
+                                      source: "",
+                                    };
+
+                                    setUpdatedCandidateData(updatedCandidateData);
+                                    setCandidateId(candidateId);
+
+
+                                  }
+                                }
+                              } catch (error) {
+                                console.error("Failed to extract text from PDF", error);
+                              }
+                            } else {
+                              console.error("Invalid file or file type.");
+                            }
+                          }
+                        }
+                        setIsLoading(false);
                       }}
+
                       onChangeMultiple={(e) => {
                         onChange({
                           ...detailValue,
