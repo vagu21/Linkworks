@@ -2,11 +2,11 @@
   "entities": [
     {
       "type": "admin",
-      "name": "companies",
-      "slug": "companies",
-      "title": "Companies",
-      "titlePlural": "Companies",
-      "prefix": "COMP",
+      "name": "Accounts",
+      "slug": "accounts",
+      "title": "Accounts",
+      "titlePlural": "Accounts",
+      "prefix": "COM",
       "properties": [
         {
           "name": "name",
@@ -23,12 +23,12 @@
               "value": "150"
             },
             {
-              "name": "Placeholder",
-              "value": "BMW"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "BMW"
             }
           ]
         },
@@ -47,12 +47,12 @@
               "value": "www.bmw.com"
             },
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Max",
               "value": "200"
+            },
+            {
+              "name": "Min",
+              "value": "0"
             }
           ]
         },
@@ -129,20 +129,20 @@
               "value": "About Company"
             },
             {
-              "name": "Max",
-              "value": "1000"
-            },
-            {
-              "name": "EditorSize",
-              "value": "sm"
-            },
-            {
               "name": "Min",
               "value": "0"
             },
             {
               "name": "Rows",
               "value": "2"
+            },
+            {
+              "name": "Max",
+              "value": "1000"
+            },
+            {
+              "name": "EditorSize",
+              "value": "sm"
             }
           ]
         },
@@ -157,20 +157,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "MaxSize",
-              "value": "10"
-            },
-            {
               "name": "AcceptFileTypes",
               "value": ".png, .jpg, .jpeg, .svg, .webp"
+            },
+            {
+              "name": "MaxSize",
+              "value": "10"
             }
           ]
         },
         {
           "name": "size",
           "title": "Size ",
-          "type": "rangeNumber",
-          "subtype": null,
+          "type": "select",
+          "subtype": "dropdown",
           "isRequired": false,
           "isDisplay": true,
           "isReadOnly": false,
@@ -181,12 +181,42 @@
               "value": " Metrics"
             },
             {
-              "name": "FormatNumber",
-              "value": "integer"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "FormatNumber",
+              "value": "integer"
+            }
+          ],
+          "options": [
+            {
+              "value": "1-50 employees",
+              "color": 0
+            },
+            {
+              "value": "51-200 employees",
+              "color": 0
+            },
+            {
+              "value": "201-500 employees",
+              "color": 0
+            },
+            {
+              "value": "501-1000 employees",
+              "color": 0
+            },
+            {
+              "value": "1001-5000 employees",
+              "color": 0
+            },
+            {
+              "value": "5001-10000 employees",
+              "color": 0
+            },
+            {
+              "value": "10000+employees",
+              "color": 0
             }
           ]
         },
@@ -201,6 +231,14 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Min",
+              "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Phone Number"
+            },
+            {
               "name": "Group",
               "value": "Contact Details"
             },
@@ -209,16 +247,8 @@
               "value": "integer"
             },
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Max",
               "value": "49"
-            },
-            {
-              "name": "Placeholder",
-              "value": "Enter Phone Number"
             }
           ]
         },
@@ -233,20 +263,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Contact Details"
-            },
-            {
               "name": "Placeholder",
               "value": "ryan@bmw.com"
             },
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Group",
+              "value": "Contact Details"
+            },
+            {
+              "name": "Max",
+              "value": "100"
             }
           ]
         },
@@ -261,12 +291,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "FormatNumber",
-              "value": "currency"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "FormatNumber",
+              "value": "currency"
             },
             {
               "name": "Group",
@@ -309,12 +339,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Separator",
-              "value": ","
-            },
-            {
               "name": "Group",
               "value": " Metrics"
+            },
+            {
+              "name": "Separator",
+              "value": ","
             }
           ]
         },
@@ -333,16 +363,16 @@
               "value": "0"
             },
             {
+              "name": "Max",
+              "value": "497"
+            },
+            {
               "name": "Placeholder",
               "value": "www.linkedin.com/ryancooper"
             },
             {
               "name": "Group",
               "value": "Social Links"
-            },
-            {
-              "name": "Max",
-              "value": "497"
             }
           ]
         },
@@ -357,16 +387,16 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Min",
+              "value": "0"
+            },
+            {
               "name": "Group",
               "value": "Social Links"
             },
             {
               "name": "FormatNumber",
               "value": "integer"
-            },
-            {
-              "name": "Min",
-              "value": "0"
             }
           ]
         },
@@ -381,20 +411,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
-              "name": "Max",
-              "value": "500"
+              "name": "Placeholder",
+              "value": "www.twitter.com/bmw"
             },
             {
               "name": "Group",
               "value": "Social Links"
             },
             {
-              "name": "Placeholder",
-              "value": "www.twitter.com/bmw"
+              "name": "Min",
+              "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "500"
             }
           ]
         },
@@ -409,16 +439,16 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Placeholder",
+              "value": "south africa"
+            },
+            {
               "name": "Max",
               "value": "300"
             },
             {
               "name": "Min",
               "value": "0"
-            },
-            {
-              "name": "Placeholder",
-              "value": "south africa"
             }
           ]
         },
@@ -433,12 +463,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "500"
-            },
-            {
               "name": "Placeholder",
               "value": "www.facebook.com/bmw"
+            },
+            {
+              "name": "Max",
+              "value": "500"
             },
             {
               "name": "Group",
@@ -461,12 +491,12 @@
           "showInCreate": false,
           "attributes": [
             {
-              "name": "DefaultValue",
-              "value": "Active"
-            },
-            {
               "name": "Placeholder",
               "value": "Select Company Status"
+            },
+            {
+              "name": "DefaultValue",
+              "value": "Active"
             }
           ],
           "options": [
@@ -491,12 +521,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Tax Identification Number"
-            },
-            {
               "name": "Group",
               "value": "Financial Details"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Tax Identification Number"
             },
             {
               "name": "FormatNumber",
@@ -519,16 +549,16 @@
               "value": "www.xing.com/ryancooper"
             },
             {
-              "name": "Group",
-              "value": "Social Links"
+              "name": "Min",
+              "value": "0"
             },
             {
               "name": "Max",
               "value": "500"
             },
             {
-              "name": "Min",
-              "value": "0"
+              "name": "Group",
+              "value": "Social Links"
             }
           ]
         },
@@ -537,7 +567,7 @@
           "title": "Specialization",
           "type": "multiSelect",
           "subtype": "combobox",
-          "isRequired": true,
+          "isRequired": false,
           "isDisplay": false,
           "isReadOnly": false,
           "showInCreate": true,
@@ -589,18 +619,18 @@
           "title": "Is Supplier?",
           "type": "boolean",
           "subtype": null,
-          "isRequired": true,
+          "isRequired": false,
           "isDisplay": false,
           "isReadOnly": false,
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Supplier"
-            },
-            {
               "name": "FormatBoolean",
               "value": "yesNo"
+            },
+            {
+              "name": "Group",
+              "value": "Supplier"
             },
             {
               "name": "DefaultValue",
@@ -613,7 +643,7 @@
           "title": "NDA Document",
           "type": "media",
           "subtype": null,
-          "isRequired": true,
+          "isRequired": false,
           "isDisplay": false,
           "isReadOnly": false,
           "showInCreate": true,
@@ -645,15 +675,75 @@
       "onEdit": "editRoute",
       "views": [
         {
-          "layout": "board",
-          "name": "companies",
-          "title": "Companies",
-          "properties": ["logo", "name", "industry", "email", "parent.Contacts", "child.Job", "website"],
+          "layout": "table",
+          "name": "all",
+          "title": "All",
+          "properties": [
+            "logo",
+            "name",
+            "industry",
+            "email",
+            "child.Contacts",
+            "child.Job",
+            "website"
+          ],
           "filters": [],
           "sort": [],
           "isDefault": true,
           "isSystem": false,
-          "order": 1
+          "order": 2
+        },
+        {
+          "layout": "table",
+          "name": "companies",
+          "title": "Companies",
+          "properties": [
+            "logo",
+            "name",
+            "industry",
+            "email",
+            "child.Contacts",
+            "child.Job",
+            "website"
+          ],
+          "filters": [
+            {
+              "match": "and",
+              "name": "isSupplier",
+              "condition": "equals",
+              "value": "false"
+            }
+          ],
+          "sort": [],
+          "isDefault": false,
+          "isSystem": false,
+          "order": 3
+        },
+        {
+          "layout": "table",
+          "name": "suppliers",
+          "title": "Suppliers",
+          "properties": [
+            "logo",
+            "name",
+            "industry",
+            "email",
+            "child.Contacts",
+            "child.Job",
+            "website"
+          ],
+          "filters": [
+            {
+              "match": "and",
+              "name": "isSupplier",
+              "condition": "equals",
+              "value": "true"
+            }
+          ],
+          "sort": [],
+          "isDefault": false,
+          "isSystem": false,
+          "order": 4
         }
       ]
     },
@@ -670,11 +760,15 @@
           "title": "Upload Candidate CV/Resume Here",
           "type": "media",
           "subtype": null,
-          "isRequired": true,
+          "isRequired": false,
           "isDisplay": true,
           "isReadOnly": false,
           "showInCreate": true,
           "attributes": [
+            {
+              "name": "AcceptFileTypes",
+              "value": ".pdf"
+            },
             {
               "name": "MaxSize",
               "value": "10"
@@ -682,10 +776,6 @@
             {
               "name": "Group",
               "value": "Personal Information"
-            },
-            {
-              "name": "AcceptFileTypes",
-              "value": ".pdf"
             }
           ]
         },
@@ -756,16 +846,16 @@
               "value": "0"
             },
             {
+              "name": "Max",
+              "value": "60"
+            },
+            {
               "name": "Group",
               "value": "Personal Information"
             },
             {
               "name": "Placeholder",
               "value": "Jorden"
-            },
-            {
-              "name": "Max",
-              "value": "60"
             }
           ]
         },
@@ -816,12 +906,12 @@
               "value": "Personal Information"
             },
             {
-              "name": "Max",
-              "value": "50"
-            },
-            {
               "name": "Placeholder",
               "value": "+1-202-555-0194"
+            },
+            {
+              "name": "Max",
+              "value": "50"
             }
           ]
         },
@@ -1024,12 +1114,12 @@
               "value": "https://www.twitter.com/ryancooper"
             },
             {
-              "name": "Group",
-              "value": "Social Profile Links"
-            },
-            {
               "name": "Max",
               "value": "500"
+            },
+            {
+              "name": "Group",
+              "value": "Social Profile Links"
             }
           ]
         },
@@ -1048,12 +1138,12 @@
               "value": "Social Profile Links"
             },
             {
-              "name": "Placeholder",
-              "value": "https://www.linkedin.com/ryancooper"
-            },
-            {
               "name": "Max",
               "value": "500"
+            },
+            {
+              "name": "Placeholder",
+              "value": "https://www.linkedin.com/ryancooper"
             }
           ]
         },
@@ -1126,6 +1216,22 @@
             {
               "name": "Max",
               "value": "500"
+            }
+          ]
+        },
+        {
+          "name": "reference",
+          "title": "Reference",
+          "type": "string",
+          "subtype": "singleLine",
+          "isRequired": false,
+          "isDisplay": false,
+          "isReadOnly": false,
+          "showInCreate": true,
+          "attributes": [
+            {
+              "name": "Placeholder",
+              "value": "Gourav"
             }
           ]
         }
@@ -1435,16 +1541,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "DefaultValue",
-              "value": "Open"
-            },
-            {
               "name": "HelpText",
               "value": "status of job"
             },
             {
               "name": "Group",
               "value": "Basic Information"
+            },
+            {
+              "name": "DefaultValue",
+              "value": "Open"
             }
           ],
           "options": [
@@ -1477,12 +1583,12 @@
               "value": "Technical/Administration"
             },
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "100"
             }
           ]
         },
@@ -1551,12 +1657,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Qualifications"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Group",
+              "value": "Qualifications"
             },
             {
               "name": "Placeholder",
@@ -1866,16 +1972,16 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Group",
+              "value": "Professional Details"
+            },
+            {
               "name": "Max",
               "value": "100"
             },
             {
               "name": "Placeholder",
               "value": "HR Manager"
-            },
-            {
-              "name": "Group",
-              "value": "Professional Details"
             },
             {
               "name": "Min",
@@ -1902,12 +2008,12 @@
               "value": "0"
             },
             {
-              "name": "Group",
-              "value": "Contact Details"
-            },
-            {
               "name": "Placeholder",
               "value": "ryan@abc.com"
+            },
+            {
+              "name": "Group",
+              "value": "Contact Details"
             }
           ]
         },
@@ -1922,20 +2028,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "49"
-            },
-            {
-              "name": "Group",
-              "value": "Contact Details"
-            },
-            {
               "name": "Min",
               "value": "0"
             },
             {
               "name": "Placeholder",
               "value": "7382010630"
+            },
+            {
+              "name": "Max",
+              "value": "49"
+            },
+            {
+              "name": "Group",
+              "value": "Contact Details"
             }
           ]
         },
@@ -1958,12 +2064,12 @@
               "value": "Social Links"
             },
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Max",
               "value": "500"
+            },
+            {
+              "name": "Min",
+              "value": "0"
             }
           ]
         },
@@ -1978,16 +2084,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "www.twitter.com/bmw"
-            },
-            {
               "name": "Max",
               "value": "498"
             },
             {
               "name": "Group",
               "value": "Social Links"
+            },
+            {
+              "name": "Placeholder",
+              "value": "www.twitter.com/bmw"
             },
             {
               "name": "Min",
@@ -2034,16 +2140,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Min",
-              "value": "0"
+              "name": "Placeholder",
+              "value": "www.xing.com/ryancooper"
             },
             {
               "name": "Max",
               "value": "500"
             },
             {
-              "name": "Placeholder",
-              "value": "www.xing.com/ryancooper"
+              "name": "Min",
+              "value": "0"
             },
             {
               "name": "Group",
@@ -2101,7 +2207,14 @@
           "layout": "table",
           "name": "contacts",
           "title": "All",
-          "properties": ["firstName", "title", "email", "phone", "stage", "parent.companies"],
+          "properties": [
+            "firstName",
+            "title",
+            "email",
+            "phone",
+            "stage",
+            "parent.companies"
+          ],
           "filters": [],
           "sort": [],
           "isDefault": true,
@@ -2214,7 +2327,14 @@
           "layout": "board",
           "name": "board",
           "title": "Board",
-          "properties": ["default.folio", "firstName", "lastName", "title", "email", "phone"],
+          "properties": [
+            "default.folio",
+            "firstName",
+            "lastName",
+            "title",
+            "email",
+            "phone"
+          ],
           "filters": [],
           "sort": [],
           "isDefault": false,
@@ -2375,12 +2495,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Location"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Location"
             },
             {
               "name": "Max",
@@ -2449,12 +2569,12 @@
               "value": "Add Description"
             },
             {
-              "name": "EditorSize",
-              "value": "sm"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "EditorSize",
+              "value": "sm"
             },
             {
               "name": "Max",
@@ -2521,12 +2641,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "100"
             },
             {
               "name": "Placeholder",
@@ -2569,12 +2689,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Max",
               "value": "38"
+            },
+            {
+              "name": "Min",
+              "value": "0"
             },
             {
               "name": "Placeholder",
@@ -2593,12 +2713,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "50"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "50"
             },
             {
               "name": "Placeholder",
@@ -2649,12 +2769,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Add Description"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Add Description"
             },
             {
               "name": "Max",
@@ -2697,16 +2817,16 @@
               "value": "0"
             },
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Placeholder",
               "value": "Java Developer"
             },
             {
               "name": "Group",
               "value": "Job Information"
+            },
+            {
+              "name": "Max",
+              "value": "100"
             }
           ]
         },
@@ -2721,12 +2841,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Experience Details"
-            },
-            {
               "name": "DefaultValue",
               "value": "0 Year"
+            },
+            {
+              "name": "Group",
+              "value": "Experience Details"
             }
           ],
           "options": [
@@ -2767,12 +2887,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "DefaultValue",
-              "value": "0 Year"
-            },
-            {
               "name": "Group",
               "value": "Experience Details"
+            },
+            {
+              "name": "DefaultValue",
+              "value": "0 Year"
             }
           ],
           "options": [
@@ -2813,12 +2933,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Salary Information"
-            },
-            {
               "name": "DefaultValue",
               "value": "Annual Salary"
+            },
+            {
+              "name": "Group",
+              "value": "Salary Information"
             }
           ],
           "options": [
@@ -2897,12 +3017,12 @@
               "value": "0"
             },
             {
-              "name": "Group",
-              "value": "Salary Information"
-            },
-            {
               "name": "Placeholder",
               "value": "500000"
+            },
+            {
+              "name": "Group",
+              "value": "Salary Information"
             }
           ]
         },
@@ -2941,20 +3061,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Job Information"
+              "name": "Max",
+              "value": "30"
             },
             {
-              "name": "Min",
-              "value": "0"
+              "name": "Group",
+              "value": "Job Information"
             },
             {
               "name": "Placeholder",
               "value": "Unemployed"
             },
             {
-              "name": "Max",
-              "value": "30"
+              "name": "Min",
+              "value": "0"
             }
           ]
         },
@@ -3025,12 +3145,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Max",
               "value": "500"
+            },
+            {
+              "name": "Min",
+              "value": "0"
             },
             {
               "name": "Placeholder",
@@ -3049,16 +3169,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "500"
+              "name": "Placeholder",
+              "value": "https://www.twitter.com/ryancooper"
             },
             {
               "name": "Min",
               "value": "0"
             },
             {
-              "name": "Placeholder",
-              "value": "https://www.twitter.com/ryancooper"
+              "name": "Max",
+              "value": "500"
             }
           ]
         },
@@ -3073,16 +3193,16 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Placeholder",
+              "value": "https://www.linkedin.com/ryancooper"
+            },
+            {
               "name": "Max",
               "value": "500"
             },
             {
               "name": "Min",
               "value": "0"
-            },
-            {
-              "name": "Placeholder",
-              "value": "https://www.linkedin.com/ryancooper"
             }
           ]
         },
@@ -3097,16 +3217,16 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Min",
+              "value": "0"
+            },
+            {
               "name": "Max",
               "value": "500"
             },
             {
               "name": "Placeholder",
               "value": "https://www.github.com/ryancooper"
-            },
-            {
-              "name": "Min",
-              "value": "0"
             }
           ]
         },
@@ -3125,12 +3245,12 @@
               "value": "0"
             },
             {
-              "name": "Max",
-              "value": "500"
-            },
-            {
               "name": "Placeholder",
               "value": "https://www.xing.com/profile/ryancooper"
+            },
+            {
+              "name": "Max",
+              "value": "500"
             }
           ]
         },
@@ -3209,12 +3329,12 @@
               "value": "0"
             },
             {
-              "name": "Placeholder",
-              "value": "Enter Last Name"
-            },
-            {
               "name": "Max",
               "value": "79"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Last Name"
             }
           ]
         },
@@ -3229,6 +3349,10 @@
           "showInCreate": true,
           "attributes": [
             {
+              "name": "Min",
+              "value": "0"
+            },
+            {
               "name": "Max",
               "value": "100"
             },
@@ -3239,10 +3363,6 @@
             {
               "name": "Placeholder",
               "value": "Enter Email"
-            },
-            {
-              "name": "Min",
-              "value": "0"
             }
           ]
         },
@@ -3257,20 +3377,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Phone Number"
+              "name": "Min",
+              "value": "0"
             },
             {
               "name": "Max",
               "value": "20"
             },
             {
-              "name": "Group",
-              "value": "Contact Details"
+              "name": "Placeholder",
+              "value": "Enter Phone Number"
             },
             {
-              "name": "Min",
-              "value": "0"
+              "name": "Group",
+              "value": "Contact Details"
             }
           ]
         },
@@ -3289,12 +3409,12 @@
               "value": "Enter Location"
             },
             {
-              "name": "Max",
-              "value": "200"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "200"
             },
             {
               "name": "Group",
@@ -3313,12 +3433,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "DefaultValue",
-              "value": "Active"
-            },
-            {
               "name": "Group",
               "value": "Professional Information"
+            },
+            {
+              "name": "DefaultValue",
+              "value": "Active"
             }
           ],
           "options": [
@@ -3343,12 +3463,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Hire Target"
-            },
-            {
               "name": "Group",
               "value": "Professional Information"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Hire Target"
             }
           ]
         },
@@ -3403,16 +3523,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "200"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter Department Name"
             },
             {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "200"
             }
           ]
         },
@@ -3431,12 +3551,12 @@
               "value": "0"
             },
             {
-              "name": "Max",
-              "value": "200"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter Department Head"
+            },
+            {
+              "name": "Max",
+              "value": "200"
             }
           ]
         },
@@ -3451,12 +3571,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Department Email"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Department Email"
             },
             {
               "name": "Group",
@@ -3499,20 +3619,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Department Location"
-            },
-            {
-              "name": "Max",
-              "value": "500"
-            },
-            {
               "name": "Min",
               "value": "0"
             },
             {
+              "name": "Placeholder",
+              "value": "Enter Department Location"
+            },
+            {
               "name": "Group",
               "value": "Address"
+            },
+            {
+              "name": "Max",
+              "value": "500"
             }
           ]
         },
@@ -3577,12 +3697,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Hiring Capacity for the Year"
-            },
-            {
               "name": "Group",
               "value": "Budget and Resources"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Hiring Capacity for the Year"
             }
           ]
         },
@@ -3647,12 +3767,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Separator",
-              "value": "Enter"
-            },
-            {
               "name": "Group",
               "value": "Projects and Initiatives"
+            },
+            {
+              "name": "Separator",
+              "value": "Enter"
             }
           ]
         },
@@ -3817,12 +3937,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "EditorSize",
-              "value": "auto"
-            },
-            {
               "name": "editor",
               "value": "wysiwyg"
+            },
+            {
+              "name": "EditorSize",
+              "value": "auto"
             }
           ]
         },
@@ -4103,12 +4223,12 @@
               "value": "wysiwyg"
             },
             {
-              "name": "Placeholder",
-              "value": "Type a short description "
-            },
-            {
               "name": "EditorSize",
               "value": "auto"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Type a short description "
             }
           ]
         },
@@ -4123,12 +4243,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Enter Location"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Location"
             },
             {
               "name": "Max",
@@ -4310,12 +4430,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "EditorSize",
-              "value": "sm"
-            },
-            {
               "name": "editor",
               "value": "wysiwyg"
+            },
+            {
+              "name": "EditorSize",
+              "value": "sm"
             }
           ]
         },
@@ -4330,12 +4450,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "5"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter a rating "
+            },
+            {
+              "name": "Max",
+              "value": "5"
             },
             {
               "name": "Min",
@@ -4414,12 +4534,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "FormatNumber",
-              "value": "currency"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter Salary Offered"
+            },
+            {
+              "name": "FormatNumber",
+              "value": "currency"
             }
           ]
         },
@@ -4434,16 +4554,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "editor",
-              "value": "wysiwyg"
+              "name": "Placeholder",
+              "value": "Enter Benefits"
             },
             {
               "name": "EditorSize",
               "value": "auto"
             },
             {
-              "name": "Placeholder",
-              "value": "Enter Benefits"
+              "name": "editor",
+              "value": "wysiwyg"
             }
           ]
         },
@@ -4548,20 +4668,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Employee Details"
-            },
-            {
-              "name": "Placeholder",
-              "value": "Enter Employee Name"
-            },
-            {
               "name": "Min",
               "value": "0"
             },
             {
+              "name": "Group",
+              "value": "Employee Details"
+            },
+            {
               "name": "Max",
               "value": "80"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Employee Name"
             }
           ]
         },
@@ -4576,20 +4696,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Min",
               "value": "0"
             },
             {
-              "name": "Placeholder",
-              "value": "Enter Email"
-            },
-            {
               "name": "Group",
               "value": "Employee Details"
+            },
+            {
+              "name": "Max",
+              "value": "100"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Enter Email"
             }
           ]
         },
@@ -4624,20 +4744,20 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "200"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter Job Title"
             },
             {
-              "name": "Group",
-              "value": "Job Details"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "200"
+            },
+            {
+              "name": "Group",
+              "value": "Job Details"
             }
           ]
         },
@@ -4692,12 +4812,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Job Details"
-            },
-            {
               "name": "Placeholder",
               "value": "Select Contract Type"
+            },
+            {
+              "name": "Group",
+              "value": "Job Details"
             }
           ],
           "options": [
@@ -4730,12 +4850,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Employee Details"
-            },
-            {
               "name": "Placeholder",
               "value": "Select Contract Status"
+            },
+            {
+              "name": "Group",
+              "value": "Employee Details"
             }
           ],
           "options": [
@@ -4764,12 +4884,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "MaxSize",
-              "value": "7"
-            },
-            {
               "name": "AcceptFileTypes",
               "value": ".pdf"
+            },
+            {
+              "name": "MaxSize",
+              "value": "7"
             }
           ]
         },
@@ -4804,16 +4924,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Contract Schedule"
+              "name": "Placeholder",
+              "value": "Enter Probation Period in Months"
             },
             {
               "name": "FormatNumber",
               "value": "integer"
             },
             {
-              "name": "Placeholder",
-              "value": "Enter Probation Period in Months"
+              "name": "Group",
+              "value": "Contract Schedule"
             }
           ]
         },
@@ -4866,12 +4986,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Select Currency"
-            },
-            {
               "name": "Group",
               "value": "Financial Details"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Select Currency"
             }
           ],
           "options": [
@@ -4904,12 +5024,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "Select Bonus Eligibility"
-            },
-            {
               "name": "Group",
               "value": "Job Details"
+            },
+            {
+              "name": "Placeholder",
+              "value": "Select Bonus Eligibility"
             }
           ],
           "options": [
@@ -5068,12 +5188,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "MaxSize",
-              "value": "10"
-            },
-            {
               "name": "AcceptFileTypes",
               "value": ".pdf"
+            },
+            {
+              "name": "MaxSize",
+              "value": "10"
             }
           ]
         },
@@ -5104,12 +5224,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "SelectOptions",
-              "value": "Value"
-            },
-            {
               "name": "Placeholder",
               "value": "Select Document Type"
+            },
+            {
+              "name": "SelectOptions",
+              "value": "Value"
             }
           ],
           "options": [
@@ -5156,7 +5276,14 @@
           "layout": "table",
           "name": "master service agreements",
           "title": "Master Service Agreements",
-          "properties": ["file", "signed", "type", "parent.companies", "default.createdAt", "default.createdBy"],
+          "properties": [
+            "file",
+            "signed",
+            "type",
+            "parent.companies",
+            "default.createdAt",
+            "default.createdBy"
+          ],
           "filters": [
             {
               "match": "and",
@@ -5174,7 +5301,14 @@
           "layout": "table",
           "name": "non-disclosure agreements",
           "title": "Non Disclosure Agreements",
-          "properties": ["file", "signed", "type", "parent.companies", "default.createdAt", "default.createdBy"],
+          "properties": [
+            "file",
+            "signed",
+            "type",
+            "parent.companies",
+            "default.createdAt",
+            "default.createdBy"
+          ],
           "filters": [
             {
               "match": "and",
@@ -5192,7 +5326,14 @@
           "layout": "table",
           "name": "service level agreements",
           "title": "Service Level Agreements",
-          "properties": ["file", "signed", "type", "parent.companies", "default.createdAt", "default.createdBy"],
+          "properties": [
+            "file",
+            "signed",
+            "type",
+            "parent.companies",
+            "default.createdAt",
+            "default.createdBy"
+          ],
           "filters": [
             {
               "match": "and",
@@ -5210,7 +5351,14 @@
           "layout": "table",
           "name": "statements of work",
           "title": "Statements of Work",
-          "properties": ["file", "signed", "type", "parent.companies", "default.createdAt", "default.createdBy"],
+          "properties": [
+            "file",
+            "signed",
+            "type",
+            "parent.companies",
+            "default.createdAt",
+            "default.createdBy"
+          ],
           "filters": [
             {
               "match": "and",
@@ -5228,7 +5376,14 @@
           "layout": "table",
           "name": "invoices",
           "title": "Invoices",
-          "properties": ["file", "signed", "type", "parent.companies", "default.createdAt", "default.createdBy"],
+          "properties": [
+            "file",
+            "signed",
+            "type",
+            "parent.companies",
+            "default.createdAt",
+            "default.createdBy"
+          ],
           "filters": [
             {
               "match": "and",
@@ -5243,6 +5398,124 @@
           "order": 5
         }
       ]
+    },
+    {
+      "type": "app",
+      "name": "Skills",
+      "slug": "skills",
+      "title": "Skills",
+      "titlePlural": "Skills",
+      "prefix": "SKI",
+      "properties": [
+        {
+          "name": "name",
+          "title": "Name",
+          "type": "string",
+          "subtype": "singleLine",
+          "isRequired": true,
+          "isDisplay": true,
+          "isReadOnly": false,
+          "showInCreate": true
+        },
+        {
+          "name": "proficiency",
+          "title": "Proficiency",
+          "type": "number",
+          "subtype": null,
+          "isRequired": true,
+          "isDisplay": false,
+          "isReadOnly": false,
+          "showInCreate": true,
+          "attributes": [
+            {
+              "name": "Min",
+              "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "6"
+            },
+            {
+              "name": "HelpText",
+              "value": "Rate your skill on a scale of 0-5"
+            },
+            {
+              "name": "Placeholder",
+              "value": "3"
+            },
+            {
+              "name": "FormatNumber",
+              "value": "rating"
+            }
+          ]
+        }
+      ],
+      "isAutogenerated": true,
+      "hasApi": true,
+      "icon": "<svg stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" strokeWidth=\"1.5\">   <path strokeLinecap=\"round\" strokeLinejoin=\"round\" d=\"M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z\" /> </svg>",
+      "active": true,
+      "hasTags": true,
+      "hasComments": true,
+      "hasTasks": false,
+      "defaultVisibility": "tenant",
+      "onCreated": "redirectToOverview",
+      "onEdit": "editRoute"
+    },
+    {
+      "type": "app",
+      "name": "Certifications",
+      "slug": "certifications",
+      "title": "Certifications",
+      "titlePlural": "Certificiations",
+      "prefix": "CER",
+      "properties": [
+        {
+          "name": "name",
+          "title": "Name",
+          "type": "string",
+          "subtype": "singleLine",
+          "isRequired": true,
+          "isDisplay": true,
+          "isReadOnly": false,
+          "showInCreate": true,
+          "attributes": [
+            {
+              "name": "Placeholder",
+              "value": "Software Developer"
+            }
+          ]
+        },
+        {
+          "name": "expirationDate",
+          "title": "Expiration Date",
+          "type": "date",
+          "subtype": null,
+          "isRequired": true,
+          "isDisplay": false,
+          "isReadOnly": false,
+          "showInCreate": true
+        },
+        {
+          "name": "issuingOrganization",
+          "title": "Issuing Organization",
+          "type": "string",
+          "subtype": "singleLine",
+          "isRequired": true,
+          "isDisplay": false,
+          "isReadOnly": false,
+          "showInCreate": true
+        }
+      ],
+      "isAutogenerated": true,
+      "hasApi": true,
+      "icon": "<svg stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" strokeWidth=\"1.5\">   <path strokeLinecap=\"round\" strokeLinejoin=\"round\" d=\"M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z\" /> </svg>",
+      "active": true,
+      "hasTags": true,
+      "hasComments": true,
+      "hasTasks": false,
+      "defaultVisibility": "tenant",
+      "onCreated": "redirectToOverview",
+      "onEdit": "editRoute"
     },
     {
       "type": "system",
@@ -5283,24 +5556,24 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Placeholder",
-              "value": "About Company"
-            },
-            {
               "name": "EditorSize",
               "value": "sm"
-            },
-            {
-              "name": "Rows",
-              "value": "2"
             },
             {
               "name": "Max",
               "value": "1000"
             },
             {
+              "name": "Rows",
+              "value": "2"
+            },
+            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Placeholder",
+              "value": "About Company"
             }
           ]
         },
@@ -5319,12 +5592,12 @@
               "value": "200"
             },
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Placeholder",
               "value": "www.bmw.com"
+            },
+            {
+              "name": "Min",
+              "value": "0"
             }
           ]
         },
@@ -5397,10 +5670,6 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Min",
-              "value": "0"
-            },
-            {
               "name": "Placeholder",
               "value": "Enter Phone Number"
             },
@@ -5409,12 +5678,16 @@
               "value": "Contact Details"
             },
             {
-              "name": "Max",
-              "value": "49"
-            },
-            {
               "name": "FormatNumber",
               "value": "integer"
+            },
+            {
+              "name": "Min",
+              "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "49"
             }
           ]
         },
@@ -5433,12 +5706,12 @@
               "value": "0"
             },
             {
-              "name": "Group",
-              "value": " Metrics"
-            },
-            {
               "name": "FormatNumber",
               "value": "integer"
+            },
+            {
+              "name": "Group",
+              "value": " Metrics"
             }
           ]
         },
@@ -5457,16 +5730,16 @@
               "value": "Contact Details"
             },
             {
-              "name": "Max",
-              "value": "100"
-            },
-            {
               "name": "Placeholder",
               "value": "ryan@bmw.com"
             },
             {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Max",
+              "value": "100"
             }
           ]
         },
@@ -5485,12 +5758,12 @@
               "value": "0"
             },
             {
-              "name": "Group",
-              "value": "Financial Details"
-            },
-            {
               "name": "FormatNumber",
               "value": "currency"
+            },
+            {
+              "name": "Group",
+              "value": "Financial Details"
             }
           ]
         },
@@ -5529,12 +5802,12 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Separator",
-              "value": ","
-            },
-            {
               "name": "Group",
               "value": " Metrics"
+            },
+            {
+              "name": "Separator",
+              "value": ","
             }
           ]
         },
@@ -5557,12 +5830,12 @@
               "value": "www.linkedin.com/ryancooper"
             },
             {
-              "name": "Group",
-              "value": "Social Links"
-            },
-            {
               "name": "Min",
               "value": "0"
+            },
+            {
+              "name": "Group",
+              "value": "Social Links"
             }
           ]
         },
@@ -5581,12 +5854,12 @@
               "value": "0"
             },
             {
-              "name": "FormatNumber",
-              "value": "integer"
-            },
-            {
               "name": "Group",
               "value": "Social Links"
+            },
+            {
+              "name": "FormatNumber",
+              "value": "integer"
             }
           ]
         },
@@ -5605,16 +5878,16 @@
               "value": "0"
             },
             {
-              "name": "Group",
-              "value": "Social Links"
-            },
-            {
               "name": "Placeholder",
               "value": "www.twitter.com/bmw"
             },
             {
               "name": "Max",
               "value": "500"
+            },
+            {
+              "name": "Group",
+              "value": "Social Links"
             }
           ]
         },
@@ -5629,16 +5902,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Max",
-              "value": "500"
-            },
-            {
               "name": "Placeholder",
               "value": "www.facebook.com/bmw"
             },
             {
               "name": "Group",
               "value": "Social Links"
+            },
+            {
+              "name": "Max",
+              "value": "500"
             },
             {
               "name": "Min",
@@ -5657,12 +5930,12 @@
           "showInCreate": false,
           "attributes": [
             {
-              "name": "DefaultValue",
-              "value": "Active"
-            },
-            {
               "name": "Placeholder",
               "value": "Select Company Status"
+            },
+            {
+              "name": "DefaultValue",
+              "value": "Active"
             }
           ],
           "options": [
@@ -5687,16 +5960,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Financial Details"
-            },
-            {
               "name": "FormatNumber",
               "value": "integer"
             },
             {
               "name": "Placeholder",
               "value": "Enter Tax Identification Number"
+            },
+            {
+              "name": "Group",
+              "value": "Financial Details"
             }
           ]
         },
@@ -5711,16 +5984,16 @@
           "showInCreate": true,
           "attributes": [
             {
-              "name": "Group",
-              "value": "Social Links"
-            },
-            {
               "name": "Max",
               "value": "500"
             },
             {
               "name": "Placeholder",
               "value": "www.xing.com/ryancooper"
+            },
+            {
+              "name": "Group",
+              "value": "Social Links"
             },
             {
               "name": "Min",
@@ -5753,10 +6026,32 @@
       "hiddenIfEmpty": false
     },
     {
+      "parent": "Job",
+      "child": "Address",
+      "order": 2,
+      "title": null,
+      "type": "one-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
       "parent": "Department",
       "child": "Recruiter",
       "order": 2,
       "title": "Recruiters",
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Department",
+      "child": "Employment Contract",
+      "order": 3,
+      "title": "Employment Contracts",
       "type": "one-to-many",
       "required": false,
       "cascade": false,
@@ -5775,10 +6070,43 @@
       "hiddenIfEmpty": false
     },
     {
-      "parent": "companies",
-      "child": "Contacts",
-      "order": 2,
-      "title": "Select Contacts",
+      "parent": "Contacts",
+      "child": "Address",
+      "order": 3,
+      "title": null,
+      "type": "one-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Accounts",
+      "child": "Address",
+      "order": 3,
+      "title": null,
+      "type": "one-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Candidates",
+      "child": "Work Experience",
+      "order": 8,
+      "title": null,
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Interviews and Meetings",
+      "child": "Interview Feedback",
+      "order": 8,
+      "title": "Interview ",
       "type": "one-to-many",
       "required": false,
       "cascade": false,
@@ -5797,139 +6125,7 @@
       "hiddenIfEmpty": false
     },
     {
-      "parent": "Candidates",
-      "child": "companies",
-      "order": 10,
-      "title": "Source Company",
-      "type": "one-to-one",
-      "required": true,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Job",
-      "child": "Address",
-      "order": 2,
-      "title": null,
-      "type": "one-to-one",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Department",
-      "child": "Employment Contract",
-      "order": 3,
-      "title": "Employment Contracts",
-      "type": "one-to-many",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Contacts",
-      "child": "Address",
-      "order": 3,
-      "title": null,
-      "type": "one-to-one",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "companies",
-      "child": "Address",
-      "order": 3,
-      "title": null,
-      "type": "one-to-one",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Interviews and Meetings",
-      "child": "Interview Feedback",
-      "order": 8,
-      "title": "Interview ",
-      "type": "one-to-many",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Offer Letter",
-      "child": "Application",
-      "order": 3,
-      "title": "Offer Letter Job",
-      "type": "one-to-one",
-      "required": true,
-      "cascade": false,
-      "readOnly": true,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Employment Contract",
-      "child": "Application",
-      "order": 1,
-      "title": "Job Contract",
-      "type": "one-to-many",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Candidates",
-      "child": "Address",
-      "order": 7,
-      "title": null,
-      "type": "one-to-one",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Contacts",
-      "child": "Job",
-      "order": 4,
-      "title": "SecondaryContact",
-      "type": "one-to-one",
-      "required": false,
-      "cascade": false,
-      "readOnly": true,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "Candidates",
-      "child": "Work Experience",
-      "order": 8,
-      "title": null,
-      "type": "one-to-many",
-      "required": false,
-      "cascade": false,
-      "readOnly": false,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "companies",
-      "child": "Job",
-      "order": 1,
-      "title": "Company",
-      "type": "one-to-one",
-      "required": true,
-      "cascade": false,
-      "readOnly": true,
-      "hiddenIfEmpty": false
-    },
-    {
-      "parent": "companies",
+      "parent": "Accounts",
       "child": "Documents",
       "order": 1,
       "title": null,
@@ -5948,6 +6144,105 @@
       "required": false,
       "cascade": false,
       "readOnly": true,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Employment Contract",
+      "child": "Application",
+      "order": 1,
+      "title": "Job Contract",
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Offer Letter",
+      "child": "Application",
+      "order": 3,
+      "title": "Offer Letter Job",
+      "type": "one-to-one",
+      "required": true,
+      "cascade": false,
+      "readOnly": true,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Contacts",
+      "child": "Job",
+      "order": 4,
+      "title": "SecondaryContact",
+      "type": "one-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": true,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Candidates",
+      "child": "Address",
+      "order": 7,
+      "title": null,
+      "type": "one-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Candidates",
+      "child": "Skills",
+      "order": 1,
+      "title": null,
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Candidates",
+      "child": "Certifications",
+      "order": 1,
+      "title": null,
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Accounts",
+      "child": "Job",
+      "order": 1,
+      "title": null,
+      "type": "one-to-one",
+      "required": true,
+      "cascade": false,
+      "readOnly": true,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Accounts",
+      "child": "Contacts",
+      "order": 2,
+      "title": null,
+      "type": "one-to-many",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
+      "hiddenIfEmpty": false
+    },
+    {
+      "parent": "Accounts",
+      "child": "Candidates",
+      "order": 10,
+      "title": null,
+      "type": "many-to-one",
+      "required": false,
+      "cascade": false,
+      "readOnly": false,
       "hiddenIfEmpty": false
     }
   ]
