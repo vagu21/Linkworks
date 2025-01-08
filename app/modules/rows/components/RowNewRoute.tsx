@@ -90,8 +90,8 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
           ) : (
             <CheckPlanFeatureLimit item={data.entityData.featureUsageEntity}>
               <RowForm
-              companyUserFormValues={companyUserFormValues}
-              setCompanyUserFormValues={setCompanyUserFormValues}
+                companyUserFormValues={companyUserFormValues}
+                setCompanyUserFormValues={setCompanyUserFormValues}
                 key={actionData?.newRow?.id || selectedTemplate?.title}
                 entity={data.entityData.entity}
                 routes={data.routes}

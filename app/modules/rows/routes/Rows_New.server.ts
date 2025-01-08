@@ -80,7 +80,12 @@ export namespace Rows_New {
           }),
           "RowsApi.create"
         );
-        if (params.entity == "companies") {
+        if (params.entity == "accounts") {          
+          const numberOfUsers = Number(form.get("numberOfUsers"));
+          if (numberOfUsers == 0 || !numberOfUsers) {
+            console.error("Please add atleast one company member.");
+            return json({ error: "Please add atleast one company member." }, { status: 400 });
+          }
           let companyId = newRow.id;
           const tenantId = await getTenantIdFromUrl(params);
           const fromUser = await getUser(userId);
@@ -88,54 +93,51 @@ export namespace Rows_New {
           if (!tenant || !fromUser) {
             return json({ error: "Could not find tenant or user" });
           }
-          const email = form.get("userEmail")?.toString().toLowerCase().trim() || "";
-          const firstName = form.get("firstName")?.toString().trim() || "";
-          const lastName = form.get("lastName")?.toString().trim() || "";
-          const sendInvitationEmail = form.get("sendInvitationEmail") === "true";
-        //   console.log("Parsed Form Data:", { email, firstName, lastName, sendInvitationEmail });
-          if (!email || !firstName || !lastName) {
-            console.error("Please add atleast one company member.");
-            return json({ error: "Please add atleast one company member." }, { status: 400 });
-          }
-        //   console.log("User invitation details:", { email, firstName, lastName, sendInvitationEmail });
-          const invitation = await createUserInvitation(tenantId, {
-            email,
-            companyId,
-            firstName,
-            lastName,
-            type: TenantUserType.MEMBER,
-            fromUserId: fromUser?.id ?? null,
-          });
-          if (!invitation) {
-            return json({
-              error: "Could not create invitation",
+
+          for (let i = 0; i < numberOfUsers; i++) {
+            const email = form.get(`user[${i}]Email`)?.toString().toLowerCase().trim() || "";
+            const firstName = form.get(`user[${i}]firstName`)?.toString().trim() || "";
+            const lastName = form.get(`user[${i}]lastName`)?.toString().trim() || "";
+            const sendInvitationEmail = form.get(`user[${i}]sendInvitationEmail`) === "true";
+
+            const invitation = await createUserInvitation(tenantId, {
+              email,
+              companyId,
+              firstName,
+              lastName,
+              type: TenantUserType.MEMBER,
+              fromUserId: fromUser?.id ?? null,
             });
-          }
-          await EventsService.create({
-            request,
-            event: "member.invitation.created",
-            tenantId: tenant.id,
-            userId: fromUser.id,
-            data: {
-              user: { email: invitation.email, firstName: invitation.firstName, lastName: invitation.lastName, type: TenantUserType[invitation.type] },
-              tenant: { id: tenant.id, name: tenant.name },
-              fromUser: { id: fromUser!.id, email: fromUser!.email },
-            } satisfies MemberInvitationCreatedDto,
-          });
-          if (sendInvitationEmail) {
-            await sendEmail({
+            if (!invitation) {
+              return json({
+                error: "Could not create invitation",
+              });
+            }
+            await EventsService.create({
               request,
-              to: email,
-              alias: "user-invitation",
+              event: "member.invitation.created",
+              tenantId: tenant.id,
+              userId: fromUser.id,
               data: {
-                name: firstName,
-                invite_sender_name: fromUser.firstName,
-                invite_sender_organization: tenant.name,
-                action_url: getBaseURL(request) + `/invitation/${invitation.id}`,
-              },
+                user: { email: invitation.email, firstName: invitation.firstName, lastName: invitation.lastName, type: TenantUserType[invitation.type] },
+                tenant: { id: tenant.id, name: tenant.name },
+                fromUser: { id: fromUser!.id, email: fromUser!.email },
+              } satisfies MemberInvitationCreatedDto,
             });
+            if (sendInvitationEmail) {
+              await sendEmail({
+                request,
+                to: email,
+                alias: "user-invitation",
+                data: {
+                  name: firstName,
+                  invite_sender_name: fromUser.firstName,
+                  invite_sender_organization: tenant.name,
+                  action_url: getBaseURL(request) + `/invitation/${invitation.id}`,
+                },
+              });
+            }
           }
-        //   console.log("New row and user invitation processed successfully.", { newRow, invitation });
         }
         await time(
           FormulaService.trigger({ trigger: "AFTER_CREATED", rows: [newRow], entity: entity, session: { tenantId, userId }, t }),
@@ -167,10 +169,10 @@ export namespace Rows_New {
         }
         return json({ newRow, headers: getServerTimingHeader() });
       } catch (error: any) {
-        return json({ error: error.message }, { status: 400 });
+        return json({ error: error.message }, { status: 400, headers: getServerTimingHeader() });
       }
     } else {
-      return json({ error: t("shared.invalidForm") }, { status: 400 });
+      return json({ error: t("shared.invalidForm") }, { status: 400, headers: getServerTimingHeader() });
     }
   };
 }

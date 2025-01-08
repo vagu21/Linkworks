@@ -13,7 +13,7 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
     {
       banner: {
         style: "top",
-        text: "Linkfields Site",
+        text: "",
         textMd: "This is linlfields site.",
         cta: [{ text: "Linkfields", href: "https://linkfields.com", isPrimary: true, target: "_blank" }],
       },

@@ -1,8 +1,7 @@
 import { RowWithDetails, RowWithValues } from "~/utils/db/entities/rows.db.server";
 import { EntityWithDetails, PropertyWithDetails } from "~/utils/db/entities/entities.db.server";
-import { Dispatch, forwardRef, Fragment, ReactNode, Ref, SetStateAction, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Dispatch, forwardRef, Fragment, ReactNode, Ref, SetStateAction, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import { updateItemByIdx } from "~/utils/shared/ObjectUtils";
 import { useNavigation, useParams, useSearchParams, useSubmit } from "@remix-run/react";
 import { RowValueDto } from "~/application/dtos/entities/RowValueDto";
 import FormGroup, { RefFormGroup } from "~/components/ui/forms/FormGroup";
@@ -27,35 +26,10 @@ import { RowDisplayDefaultProperty } from "~/utils/helpers/PropertyHelper";
 import { PropertyType } from "~/application/enums/entities/PropertyType";
 import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db.server";
 import RowUrlHelper from "~/utils/helpers/RowUrlHelper";
-import { generateJsonFromContent } from "~/utils/openaiUtils";
-import ClipLoader from "react-spinners/ClipLoader";
-import { useNavigate } from "react-router-dom";
-import { saveCandidateEntity, saveEducationHistory, saveEmploymentInformation, saveRelationship, updateCandidateEntity } from "~/utils/apiClient";
-import NewMember from "~/components/core/settings/members/NewMember";
-import { redirect, useTypedLoaderData } from "remix-typedjson";
-import NewMemberRoute, { NewMemberLoaderData } from "~/routes/app.$tenant/settings/members/new";
-import InputCheckboxWithDescription from "~/components/ui/input/InputCheckboxWithDescription";
-// import { getUserByEmail } from "~/utils/db/users.db.server";
-// import { getTenant, getTenantMember } from "~/utils/db/tenants.db.server";
-import { createUserInvitation } from "~/utils/db/tenantUserInvitations.db.server";
-import { getTenantIdFromUrl } from "~/utils/services/.server/urlService";
-import EventsService from "~/modules/events/services/.server/EventsService";
-import { TenantUserType } from "~/application/enums/tenants/TenantUserType";
-import { MemberInvitationCreatedDto } from "~/modules/events/dtos/MemberInvitationCreatedDto";
-import { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { verifyUserHasPermission } from "~/utils/helpers/.server/PermissionsService";
-import { getUserInfo } from "~/utils/session.server";
-import { getUser, getUserByEmail } from "~/utils/db/users.db.server";
-import { getTenant, getTenantMember } from "~/utils/db/tenants.db.server";
-import { sendEmail } from "~/utils/email.server";
-import { getBaseURL } from "~/utils/url.server";
-import { getTranslations } from "~/locale/i18next.server";
-import { getPlanFeatureUsage } from "~/utils/services/.server/subscriptionService";
-import { DefaultFeatures } from "~/application/dtos/shared/DefaultFeatures";
-import { useFetcher } from "@remix-run/react";
 import CompanyMemberTable from "~/custom/components/companyMemberTable";
-import { toast } from "~/components/ui/use-toast";
 import { country_arr, states } from "./CountryUtils";
+import { useProcessCandidate } from "~/modules/resumeParser/hooks/useProcessCandidate";
+import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 
 export interface RefRowForm {
   save: () => void;
@@ -96,11 +70,11 @@ interface Props {
   setCompanyUserFormValues?: (values: any) => void;
 }
 interface formDataCompany extends FormData {
-     
-    userEmail?:"string",
-    firstName?:"string",
-    lastName?:"string",
-    sendInvitationEmail?:boolean
+
+  userEmail?: "string",
+  firstName?: "string",
+  lastName?: "string",
+  sendInvitationEmail?: boolean
 }
 
 
@@ -143,7 +117,6 @@ const RowForm = (
   const { t } = useTranslation();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const navigate = useNavigate();
 
   const params = useParams();
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
@@ -168,28 +141,6 @@ const RowForm = (
     hidden: [],
   });
   const [showMemberForm, setShowMemberForm] = useState(false);
-
-  const [candidateId, setCandidateId] = useState<string | null>(null);
-  const [updatedCandidateData, setUpdatedCandidateData] = useState({
-    uploadCandidateCvResumeHere: [],
-    summary: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    languageSkills: [],
-    technicalskills: [],
-    proficiencyLevel: "",
-    facebookProfileUrl: "",
-    twitterProfileUrl: "",
-    linkedinProfileUrl: "",
-    githubProfileUrl: "",
-    xingProfileUrl: "",
-    source: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-
-
 
   useEffect(() => {
     loadInitialFields();
@@ -317,14 +268,12 @@ const RowForm = (
         }
       });
     }
-    const dis = (f: EntityRelationshipWithDetails) => {
-      return f.distinct ? true : false;
-    };
-    
+
     const allChildren = entity.childEntities.filter((f) => childEntityVisible(f) && allEntities.find((x) => x.id === f.childId));
     setChildrenEntities(getVisibleRelatedEntities(allChildren, relatedRows));
     const allParents = entity.parentEntities.filter((f) => f.parentId !== parentEntity?.id && allEntities.find((x) => x.id === f.parentId));
     setParentEntities(getVisibleRelatedEntities(allParents, relatedRows));
+
     setHeaders(initial);
     setRelatedRows(relatedRows);
   }
@@ -372,6 +321,31 @@ const RowForm = (
     setRelatedRows(newRelatedRows);
   }
 
+
+  function addDynamicRow(relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) {
+    setRelatedRows((prevRelatedRows) => {
+      const newRelatedRows = [...prevRelatedRows];
+      const existing = newRelatedRows.find((f) => f.relationship.id === relationship.id);
+      if (existing) {
+        if (relationship.parentId === entity.id) {
+          const nonExistingRows = rows.filter((f) => !existing.rows.find((ff) => ff.id === f.id));
+          existing.rows = [...existing.rows, ...nonExistingRows];
+        } else {
+          existing.rows = rows;
+        }
+      } else {
+        newRelatedRows.push({ relationship, rows });
+      }
+
+      allEntities.forEach((rel) => {
+        if (!newRelatedRows.find((f) => f.relationship.id === rel.id)) {
+          newRelatedRows.push({ relationship: rel as any, rows: [] });
+        }
+      });
+      return newRelatedRows;
+    });
+  }
+
   // function submitForm(formData: FormData) {
   //   if (onSubmit) {
   //     onSubmit(formData);
@@ -381,57 +355,47 @@ const RowForm = (
   //     });
   //   }
   // }
-
-  // 
   
   function submitForm(formData: formDataCompany) {
-    if (entity.name === "Candidates" && candidateId && updatedCandidateData) {
-      // Handle candidate update
-      updateCandidateEntity(candidateId, updatedCandidateData)
-        .then((updateResponse) => {
-          if (updateResponse) {
-            navigate(-1); // Navigate back upon successful update
-          }
-        })
-        .catch((error) => {
-          // console.error("Error updating candidate entity:", error);
-        });
-    } else if (entity.name === "companies") {
+    if (entity.name === "Accounts") {
       // Handle company-related submission
       if (!companyUserFormValues || companyUserFormValues.length === 0) {
         alert("No company user found! Please add at least one company user.");
         return;
       }
-  
+
       const user = companyUserFormValues[0]; // Use the first user in the array
       if (!user.email || !user.firstName || !user.lastName) {
-        console.error("Missing required fields in company user data:", user);
+        // console.error("Missing required fields in company user data:", user);
         alert("Please provide valid company user details.");
         return;
       }
-  
-      // Append company user data to FormData
+
       if (formData instanceof FormData) {
-        formData.append("userEmail", user.email);
-        formData.append("firstName", user.firstName);
-        formData.append("lastName", user.lastName);
-        formData.append("sendInvitationEmail", user.sendInvitationEmail ? "true" : "false");
+        let numberofUsers:any=0;
+        companyUserFormValues.map((user:any,index:any)=>{
+          formData.append(`user[${index}]Email`, user.email);
+          formData.append(`user[${index}]firstName"`, user.firstName);
+          formData.append(`user[${index}]lastName`, user.lastName);
+          formData.append(`user[${index}]sendInvitationEmail`, user.sendInvitationEmail ? "true" : "false");
+          numberofUsers++;
+        })
+ 
+        formData.append("numberOfUsers",numberofUsers);
+     
       }
-  
-      submit(formData, { method: "post" })
-        
+      submit(formData, { method: "post" });
     } else {
       // Default submission
       if (onSubmit) {
         onSubmit(formData);
       } else {
-        submit(formData, { method: "post" })
-         
+        submit(formData, {
+          method: "post",
+        });
       }
     }
   }
-  
-  
 
   function isPropertyVisible(f: PropertyWithDetails) {
     if (f.isHidden || (!item && !f.showInCreate) || (!item && f.isReadOnly) || (item && editing && f.isReadOnly)) {
@@ -515,24 +479,22 @@ const RowForm = (
   }
 
   function handleRemove(index: number) {
-    if (setCompanyUserFormValues)
-      setCompanyUserFormValues(companyUserFormValues?.filter((f: any, i: any) => i !== index));
+    if (setCompanyUserFormValues) {
+      setCompanyUserFormValues((prev = []) => prev.filter((f: any, i: any) => i !== index));
+    }
   }
-  // console.log(companyUserFormValues, "companyUserFormValues")
-  const data = useTypedLoaderData<NewMemberLoaderData>();
-  const [sendEmail, setSendEmail] = useState(false);
-  const inputEmail = useRef<HTMLInputElement>(null);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  // console.log(companyUserFormValues, "companyUserFormValues");
 
-  
+  const { parseResumeData , isLoading } = useProcessCandidate({
+    addDynamicRow,
+    childrenEntities,
+  });
+
   // Function to get distinct values from relationships
   return (
     <>
-    {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <ClipLoader color="#ffffff" size={50} />
+      {isLoading && (
+        <div >
+          <FloatingLoader loading={isLoading} />
         </div>
       )}
       <FormGroup
@@ -603,9 +565,7 @@ const RowForm = (
           }}
           promptFlows={promptFlows}
           onSaveIfAllSet={onSaveIfAllSet}
-          setIsLoading={setIsLoading}
-          setUpdatedCandidateData={setUpdatedCandidateData}
-          setCandidateId={setCandidateId}
+          parseResumeData={parseResumeData}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -670,7 +630,7 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
-        {entity.name == 'companies' && (
+        {entity.name == 'Accounts' && (
           <div onClick={() => setShowMemberForm(!showMemberForm)}>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700 ">
               Company Member
@@ -738,10 +698,10 @@ const RowForm = (
             onSelected={(rows) => {
               addRelationshipRow(searchingRelationshipRows, rows);
               setSearchingRelationshipRows(undefined);
-            } }
+            }}
             multipleSelection={selectedRelatedEntity.multiple}
-            allEntities={allEntities} 
-            distinct={searchingRelationshipRows.distinct}       />
+            allEntities={allEntities}
+            distinct={searchingRelationshipRows.distinct} />
         )}
       </SlideOverWideEmpty>
       {/* // </OpenModal> */}
@@ -782,13 +742,13 @@ function RelationshipSelector({
   const [entity] = useState(
     type === "parent"
       ? {
-          entity: getChildEntity(relationship)!,
-          view: relationship.parentEntityView,
-        }
+        entity: getChildEntity(relationship)!,
+        view: relationship.parentEntityView,
+      }
       : {
-          entity: getParentEntity(relationship)!,
-          view: relationship.childEntityView,
-        }
+        entity: getParentEntity(relationship)!,
+        view: relationship.childEntityView,
+      }
   );
 
   function getRows(relationship: EntityRelationshipWithDetails) {
@@ -954,9 +914,7 @@ function RowGroups({
   parentEntities,
   promptFlows,
   onSaveIfAllSet,
-  setIsLoading,
-  setUpdatedCandidateData,
-  setCandidateId,
+  parseResumeData,
 }: {
   item?: RowWithDetails | null;
   entity: EntityWithDetails;
@@ -984,15 +942,13 @@ function RowGroups({
   };
   promptFlows?: PromptFlowWithDetails[];
   onSaveIfAllSet: () => void;
-  setIsLoading: any;
-  setUpdatedCandidateData: any;
-  setCandidateId: any;
+  parseResumeData: any;
 }) {
   const { t } = useTranslation();
   const rowValueInput = useRef<RefRowValueInput>(null);
   const [statesArr, setStatesArr] = useState<string[]>([]);
   const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
-
+  
 
   useEffect(() => {
     const groups: { group?: string; headers: RowValueDto[] }[] = [];
@@ -1017,81 +973,66 @@ function RowGroups({
     setGroups(groups);
   }, [groups.length, rowValues]);
 
-  useEffect(() => {
-    if (groups.length > 0 && groups[0].headers.length > 0) {
-      // console.log("groups", groups);
-      addHasCountryToState();
-    }
+  const hasCountry = useMemo(() => {
+    return groups.some((group) => group.headers.some((header) => header.property.subtype === "country"))
   }, [groups]);
-  function addHasCountryToState() {
-    let countryName = '' as string | undefined;
-    groups.forEach((group) => {
-      let countryFound = false;
-      group.headers.forEach((header) => {
-        if (header.property.subtype === "country") {
-          countryFound = true;
-          countryName = header.textValue;
-        }
-      });
-      // console.log("countryFound", countryFound);
-      if (countryFound) {
-        populateInitialStates(countryName);
-        group.headers.forEach((header) => {
-          if (header.property.subtype === "state") {
-            header.property.hasCountry = true;
-          }
-        });
-      } else {
-        group.headers.forEach((header) => {
-          if (header.property.subtype === "state") {
-            header.property.hasCountry = false;
-          }
-        });
+
+  useEffect(() => {
+
+    if(!hasCountry) return;
+
+    const populateInitialStates = (country: string | undefined) => {
+      if (country && statesArr.length == 0) {
+        let index = country_arr.indexOf(country);
+        let curstates = states[index + 1].split("|");
+        setStatesArr(curstates);
       }
-    });
-  }
-  function populateInitialStates(country: string | undefined) {
-    if (country && statesArr.length == 0) {
-      let index = country_arr.indexOf(country);
-      let curstates = states[index + 1].split("|");
-      setStatesArr(curstates);
     }
-  }
+
+    const addHasCountryToState = () => {
+      if (!groups.length || !groups[0].headers.length) return;
+
+      setGroups((prevGroups) =>
+        prevGroups.map((group) => {
+          let countryName;
+          const hasCountry = group.headers.some((header) => {
+            if (header.property.subtype === "country") {
+              countryName = header.textValue;
+              return true;
+            }
+            return false;
+          });
+    
+          if (hasCountry && countryName) {
+            populateInitialStates(countryName);
+          }
+    
+          group.headers.forEach((header) => {
+            if (header.property.subtype === "state") {
+              header.property.hasCountry = hasCountry;
+            }
+          });
+    
+          return group;
+        })
+      );
+    };
+    
+
+    addHasCountryToState();
+  }, [hasCountry]);
+
 
   function isVisible(rowValue: RowValueDto) {
-         if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument" ) {
-          const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
-          if (!firstNameValue) {
-             return false;
-           }
-         }
-        return true;
-       }
+    if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument") {
+      const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
+      if (!firstNameValue) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-  // function addHasCountryToState() {
-  //   groups.forEach((group) => {
-  //     let countryFound = false;
-
-  //     group.headers.forEach((header) => {
-  //       if (header.property.subtype === "country") {
-  //         countryFound = true;
-  //       }
-  //     });
-  //     if (countryFound) {
-  //       group.headers.forEach((header) => {
-  //         if (header.property.subtype === "state") {
-  //           header.property.hasCountry = true;
-  //         }
-  //       });
-  //     } else {
-  //       group.headers.forEach((header) => {
-  //         if (header.property.subtype === "state") {
-  //           header.property.hasCountry = false;
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
   function getPropertyColumnSpan(property: PropertyWithDetails) {
     const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
     if (columns === undefined || isNaN(columns) || (columns < 1 && columns > 12)) {
@@ -1099,6 +1040,7 @@ function RowGroups({
     }
     return `col-span-${columns}`;
   }
+
   function onChange(rowValue: RowValueDto) {
     setHeaders((prev) => {
       return prev.map((f) => {
@@ -1109,6 +1051,7 @@ function RowGroups({
       });
     });
   }
+
   return (
     <>
       {groups.map(({ group, headers }, idx) => {
@@ -1116,11 +1059,9 @@ function RowGroups({
           <InputGroup key={idx} title={group ? t(group) : t("shared.details")}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
               {headers.map((detailValue, idxDetailValue) => {
-              detailValue.property.subtype == 'country' && addHasCountryToState() 
-
                 if (!isVisible(detailValue)) {
-                          return null;
-                      }
+                  return null;
+                }
                 return (
                   <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
                     <RowValueInput
@@ -1150,303 +1091,16 @@ function RowGroups({
                           textValue: e,
                         });
                       }}
-
-                      // onChangeMedia={(media) => {
-                      //   onChange({
-                      //     ...detailValue,
-                      //     media: media as any,
-                      //   });
-                      //   if (media.filter((f) => f.type).length > 0) {
-                      //     onSaveIfAllSet();
-                      //   }
-                      // }}
                       onChangeMedia={async (media) => {
-                        setIsLoading(true);
-
                         onChange({
                           ...detailValue,
                           media: media as any,
                         });
-
-                        const loadPdfToText = () => import("react-pdftotext");
-
-                        // Trigger save if required
                         if (media.filter((f) => f.type).length > 0) {
                           onSaveIfAllSet();
                         }
-
-                        // Process the uploaded PDF if it's for the "Candidates" entity
-                        if (!item && entity.name === "Candidates") {
-                          if (media.length === 1) {
-                            const { file, type } = media[0];
-
-                            if (type === "application/pdf" && file) {
-                              try {
-                                let validFile = file;
-
-                                // If the file is base64, convert it into a File object
-                                if (
-                                  typeof file === "string" &&
-                                  file.startsWith("data:application/pdf;base64,")
-                                ) {
-                                  const base64Data = file.split(",")[1]; // Extract base64 string
-                                  const byteCharacters = atob(base64Data); // Decode base64
-                                  const byteNumbers = new Uint8Array(byteCharacters.length);
-
-                                  for (let i = 0; i < byteCharacters.length; i++) {
-                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                                  }
-
-                                  validFile = new File([byteNumbers], "uploaded.pdf", {
-                                    type: "application/pdf",
-                                  });
-                                }
-
-                                const validFileAsBase64 = async (file: any) => {
-                                  if (
-                                    typeof file === "string" &&
-                                    file.startsWith("data:application/pdf;base64,")
-                                  ) {
-                                    return file.split(",")[1]; // Extract the Base64 content
-                                  }
-
-                                  if (file instanceof File) {
-                                    return new Promise((resolve, reject) => {
-                                      const reader = new FileReader();
-                                      reader.onload = () => resolve(reader.result.split(",")[1]); // Extract Base64 content
-                                      reader.onerror = reject;
-                                      reader.readAsDataURL(file);
-                                    });
-                                  }
-
-                                  throw new Error("Unsupported file format");
-                                };
-
-                                const fileBase64 = await validFileAsBase64(validFile);
-
-                                const initialCandidateData = {
-                                  uploadCandidateCvResumeHere: [],
-                                  summary: "",
-                                  firstName: "",
-                                  lastName: "",
-                                  email: "",
-                                  phone: "",
-                                  willingToRelocate: false,
-                                  gender: "",
-                                  dateOfBirth: "",
-                                  languageSkills: [],
-                                  technicalskills: [],
-                                  proficiencyLevel: "",
-                                  facebookProfileUrl: "",
-                                  twitterProfileUrl: "",
-                                  linkedinProfileUrl: "",
-                                  githubProfileUrl: "",
-                                  xingProfileUrl: "",
-                                  source: "",
-                                };
-
-
-
-                                const candidateResponse = await saveCandidateEntity(
-                                  initialCandidateData
-                                );
-
-                                if (candidateResponse && candidateResponse.id) {
-                                  console.log("Candidate Entity ID:", candidateResponse.id);
-                                } else {
-                                  console.error("Failed to create candidate entity");
-                                }
-
-                                // Extract text from PDF
-                                const extractedText = await (async () => {
-                                  const { default: pdfToText } = await loadPdfToText();
-                                  return pdfToText(validFile);
-                                })();
-
-                                // Generate JSON from the extracted text
-                                const openAiJson = await generateJsonFromContent(extractedText);
-
-                                if (openAiJson) {
-                                  // Populate processedPdf using OpenAI JSON response
-                                  const processedPdf = {
-                                    summary: openAiJson.Summary || "",
-                                    firstName: openAiJson.Name?.split(" ")[0] || "",
-                                    lastName: openAiJson.Name?.split(" ")[1] || "",
-                                    email: openAiJson.Email || "",
-                                    phone: openAiJson.Phone_Number || "",
-                                    languageSkills: openAiJson.LanguageSkills || "",
-                                    technicalSkills: openAiJson.Skills?.join(", ") || "",
-                                    linkedinProfileUrl: openAiJson.LinkedInProfileURL || "",
-                                    location: openAiJson.Location || "",
-                                  };
-
-                                  
-
-                                  
-
-                                  const educationHistories = openAiJson.Education || [];
-                                  let educationHistoryIds = [];
-
-                                  for (const education of educationHistories) {
-                                    const educationEntity = {
-                                      schoolCollegeName: education.schoolCollegeName || "",
-                                      educationQualification: education.educationQualification || "",
-                                      educationalSpecialization: education.educationalSpecialization || "",
-                                      grade: education.grade || "",
-                                      location: education.location || "",
-                                      startDate: education.startDate || "",
-                                      endDate: education.endDate || "",
-                                      description: education.description || "",
-                                    };
-
-                                    try {
-                                      const saveEducationResponse = await saveEducationHistory(educationEntity);
-                                     
-
-                                      if (saveEducationResponse && saveEducationResponse.id) {
-                                        educationHistoryIds.push(saveEducationResponse.id);
-                                      }
-                                    } catch (error) {
-                                      console.error("Error saving education entity:", error);
-                                    }
-                                  }
-
-                                  if (candidateResponse && candidateResponse.id && educationHistoryIds.length > 0) {
-                                    for (const educationHistoryId of educationHistoryIds) {
-                                      try {
-                                        const relationshipData = {
-                                          parent: candidateResponse.id,
-                                          child: educationHistoryId,
-                                        };
-
-                                        const saveEducationRelationshipResponse = await saveRelationship(relationshipData);
-                                        console.log("Education Relationship Created:", saveEducationRelationshipResponse);
-                                      } catch (error) {
-                                        console.error("Error creating relationship with Education History:", error);
-                                      }
-                                    }
-                                  }
-
-                                  const employmentHistories = openAiJson.Employment || [];
-                                  let employmentHistoryIds = [];
-
-                                  for (const employment of employmentHistories) {
-                                    const employmentEntity = {
-                                      title: employment.title || "",
-                                      companyName: employment.companyName || "",
-                                      employmentType: employment.employmentType || "",
-                                      industryType: employment.industryType || "",
-                                      location: employment.location || "",
-                                      salary: typeof employment.salary === "number" ? employment.salary : 0,
-                                      currentlyWorkingInThisRole: employment.currentlyWorkingInThisRole || false,
-                                      startDate: employment.startDate || "",
-                                      endDate: employment.endDate || "",
-                                      description: employment.description || "",
-                                    };
-
-                                    try {
-                                      const saveEmploymentResponse = await saveEmploymentInformation(
-                                        employmentEntity
-                                      );
-                                      console.log("Saved Employment Entity:", saveEmploymentResponse);
-
-                                      if (saveEmploymentResponse && saveEmploymentResponse.id) {
-                                        employmentHistoryIds.push(saveEmploymentResponse.id);
-                                      }
-                                    } catch (error) {
-                                      console.error("Error saving employment entity:", error);
-                                    }
-                                  }
-
-                                  if (candidateResponse && candidateResponse.id && employmentHistoryIds.length > 0) {
-                                    for (const employmentHistoryId of employmentHistoryIds) {
-                                      try {
-                                        const relationshipData = {
-                                          parent: candidateResponse.id,
-                                          child: employmentHistoryId,
-                                        };
-
-                                        const saveEmploymentRelationshipResponse = await saveRelationship(relationshipData);
-                                        console.log("Employment Relationship Created:", saveEmploymentRelationshipResponse);
-                                      } catch (error) {
-                                        console.error("Error creating relationship with Employment History:", error);
-                                      }
-                                    }
-                                  }
-
-                                  // Update candidate properties
-                                  const updateProperty = (propertyName: any, value: any) => {
-                                    const property = headers.find(
-                                      (f) => f.property.name === propertyName
-                                    );
-                                    if (property) {
-                                      onChange({ ...property, textValue: value });
-                                    }
-                                  };
-
-                                  updateProperty("summary", processedPdf.summary);
-                                  updateProperty("firstName", processedPdf.firstName);
-                                  updateProperty("lastName", processedPdf.lastName);
-                                  updateProperty("email", processedPdf.email);
-                                  updateProperty("phone", processedPdf.phone);
-                                  updateProperty("linkedinProfileUrl", processedPdf.linkedinProfileUrl);
-
-                                  // Update the candidate entity with the processed data
-                                  if (candidateResponse && candidateResponse.id) {
-                                    const candidateId = candidateResponse.id; // Get the candidate ID
-                                    const updatedCandidateData = {
-                                      uploadCandidateCvResumeHere: [
-                                        {
-                                          title: processedPdf.firstName || "Resume",
-                                          name: "uploaded.pdf",
-                                          file: fileBase64,
-                                          type: "application/pdf",
-                                        },
-                                      ],
-                                      summary: processedPdf.summary || "",
-                                      firstName: processedPdf.firstName || "",
-                                      lastName: processedPdf.lastName || "",
-                                      email: processedPdf.email || "",
-                                      phone: processedPdf.phone || "",
-                                      willingToRelocate: false,
-                                      gender: "",
-                                      dateOfBirth: "",
-                                      languageSkills: Array.isArray(processedPdf.languageSkills)
-                                        ? processedPdf.languageSkills
-                                        : processedPdf.languageSkills
-                                          ? [processedPdf.languageSkills]
-                                          : [],
-                                      technicalskills: Array.isArray(processedPdf.technicalSkills)
-                                        ? processedPdf.technicalSkills
-                                        : processedPdf.technicalSkills
-                                          ? [processedPdf.technicalSkills]
-                                          : [],
-                                      proficiencyLevel: "",
-                                      facebookProfileUrl: "",
-                                      twitterProfileUrl: "",
-                                      linkedinProfileUrl: processedPdf.linkedinProfileUrl || "",
-                                      githubProfileUrl: "",
-                                      xingProfileUrl: "",
-                                      source: "",
-                                    };
-
-                                    setUpdatedCandidateData(updatedCandidateData);
-                                    setCandidateId(candidateId);
-
-
-                                  }
-                                }
-                              } catch (error) {
-                                console.error("Failed to extract text from PDF", error);
-                              }
-                            } else {
-                              console.error("Invalid file or file type.");
-                            }
-                          }
-                        }
-                        setIsLoading(false);
+                        parseResumeData(headers, onChange, media, item, entity, routes);                      
                       }}
-
                       onChangeMultiple={(e) => {
                         onChange({
                           ...detailValue,

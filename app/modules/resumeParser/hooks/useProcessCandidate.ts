@@ -1,0 +1,226 @@
+import { useState } from "react";
+import { entityListData, saveEducationHistory, saveWorkExperience } from "../utils/entityapiService";
+import { generateJsonFromContent } from "../utils/resumeBot";
+import EntityHelper from "~/utils/helpers/EntityHelper";
+import { EntityRelationshipWithDetails } from "~/utils/db/entities/entityRelationships.db.server";
+import { RowWithDetails } from "~/utils/db/entities/rows.db.server";
+
+type ProcessCandidateArgs = {
+  addDynamicRow: (relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) => void,
+  childrenEntities: { visible: EntityRelationshipWithDetails[]; hidden: EntityRelationshipWithDetails[] }
+}
+
+export const useProcessCandidate = ({
+  addDynamicRow = () => { },
+  childrenEntities = { visible: [], hidden: [] },
+}: ProcessCandidateArgs) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadPdfToText = () => import("react-pdftotext");
+
+  const parseResumeData = async (
+    headers: any,
+    onChange: any,
+    media: any,
+    item: any,
+    entity: any,
+    routes: any
+  ) => {
+    setIsLoading(true);
+
+    try {
+      if (!item && entity.name === "Candidates") {
+        if (media.length === 1) {
+          const { file, type } = media[0];
+
+          if (type === "application/pdf" && file) {
+            try {
+              let validFile = file;
+
+              if (typeof file === "string" && file.startsWith("data:application/pdf;base64,")) {
+                const base64Data = file.split(",")[1]; // Extract base64 string
+                const byteCharacters = atob(base64Data); // Decode base64
+                const byteNumbers = new Uint8Array(byteCharacters.length);
+
+                for (let i = 0; i < byteCharacters.length; i++) {
+                  byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+
+                validFile = new File([byteNumbers], "uploaded.pdf", {
+                  type: "application/pdf",
+                });
+              }
+
+
+              // Extract text from PDF
+
+              const extractedText = await (async () => {
+                const { default: pdfToText } = await loadPdfToText();
+                return pdfToText(validFile);
+              })();
+
+              // Generate JSON from the extracted text
+              const openAiJson = await generateJsonFromContent(extractedText);
+
+              if (openAiJson) {
+                // Populate processedPdf using OpenAI JSON response
+                const processedPdf = {
+                  summary: openAiJson.Summary || "",
+                  firstName: openAiJson.Name?.split(" ")[0] || "",
+                  lastName: openAiJson.Name?.split(" ")[1] || "",
+                  email: openAiJson.Email || "",
+                  phone: openAiJson.Phone_Number || "",
+                  languageSkills: openAiJson.LanguageSkills || "",
+                  technicalSkills: openAiJson.Skills?.join(", ") || "",
+                  linkedinProfileUrl: openAiJson.LinkedInProfileURL || "",
+                  location: openAiJson.Location || "",
+                };
+
+                const educationHistories = openAiJson.Education || [];
+                let educationHistoryIds = [];
+
+                for (const education of educationHistories) {
+                  const educationEntity = {
+                    schoolCollegeName: education.schoolCollegeName || "",
+                    educationQualification: education.educationQualification || "",
+                    educationalSpecialization: education.educationalSpecialization || "",
+                    grade: education.grade || "",
+                    location: education.location || "",
+                    startDate: education.startDate || "",
+                    endDate: education.endDate || "",
+                    description: education.description || "",
+                  };
+
+                  try {
+                    const saveEducationResponse = await saveEducationHistory(educationEntity)
+
+                    if (saveEducationResponse && saveEducationResponse.id) {
+                      educationHistoryIds.push(saveEducationResponse.id);
+                    }
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
+
+                if (educationHistoryIds.length > 0) {
+                  for (const educationHistoryId of educationHistoryIds) {
+                    try {
+                      const educationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "education-history");
+
+                      if (educationRelationEntity.length > 0) {
+                        const educationSlugEntity = { slug: "education-history", onEdit: null };
+                        const allEducation = await entityListData(
+                          EntityHelper.getRoutes({ routes, entity: educationSlugEntity })?.list +
+                          "?view=null?&_data=routes/app.$tenant/g.$group/$entity.__autogenerated/__$entity"
+                        );
+
+
+
+                        if (!allEducation || !allEducation.rowsData || !allEducation.rowsData.items) {
+                          throw new Error("Invalid education data format");
+                        }
+
+
+                        // Filter education data for the current ID
+                        const selectEducation = allEducation.rowsData.items.filter((id: any) => id.id === educationHistoryId);
+
+
+                        if (selectEducation.length > 0) {
+                          addDynamicRow(educationRelationEntity[0], selectEducation);
+                        }
+                      }
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }
+                }
+
+                const workExperienceHistories = openAiJson.Employment || [];
+                let workExperienceIds = [];
+
+                for (const workExperience of workExperienceHistories) {
+                  const workExperienceEntity = {
+                    title: workExperience.title || "",
+                    companyName: workExperience.companyName || "",
+                    employmentType: workExperience.employmentType || "",
+                    industryType: workExperience.industryType || "",
+                    location: workExperience.location || "",
+                    salary: typeof workExperience.salary === "number" ? workExperience.salary : 0,
+                    currentlyWorkingInThisRole: workExperience.currentlyWorkingInThisRole || false,
+                    startDate: workExperience.startDate || "",
+                    endDate: workExperience.endDate || "",
+                    description: workExperience.description || "",
+                  };
+
+                  try {
+                    const saveWorkExperienceResponse = await saveWorkExperience(workExperienceEntity);
+
+                    if (saveWorkExperienceResponse && saveWorkExperienceResponse.id) {
+                      workExperienceIds.push(saveWorkExperienceResponse.id);
+                    }
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
+
+                if (workExperienceIds.length > 0) {
+                  for (const workExperienceId of workExperienceIds) {
+                    try {
+                      const workExperienceRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "work-experience");
+
+                      if (workExperienceRelationEntity.length > 0) {
+                        const workExperienceSlugEntity = { slug: "work-experience", onEdit: null };
+
+                        const allWorkExperience = await entityListData(
+                          EntityHelper.getRoutes({ routes, entity: workExperienceSlugEntity })?.list +
+                          "?view=null?&_data=routes/app.$tenant/g.$group/$entity.__autogenerated/__$entity"
+                        );
+
+
+                        if (!allWorkExperience || !allWorkExperience.rowsData || !allWorkExperience.rowsData.items) {
+                          throw new Error("Invalid employment data format");
+                        }
+
+                        const selectWorkExperience = allWorkExperience.rowsData.items.filter((id: any) => id.id === workExperienceId);
+
+
+                        addDynamicRow(workExperienceRelationEntity[0], selectWorkExperience);
+                      }
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }
+                }
+
+                // Update candidate properties
+                const updateProperty = (propertyName: any, value: any) => {
+                  const property = headers.find((f: any) => f.property.name === propertyName);
+                  if (property) {
+                    onChange({ ...property, textValue: value });
+                  }
+                };
+
+                updateProperty("summary", processedPdf.summary);
+                updateProperty("firstName", processedPdf.firstName);
+                updateProperty("lastName", processedPdf.lastName);
+                updateProperty("email", processedPdf.email);
+                updateProperty("phone", processedPdf.phone);
+                updateProperty("linkedinProfileUrl", processedPdf.linkedinProfileUrl);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            // console.error("Invalid file or file type.");
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { parseResumeData, isLoading };
+};

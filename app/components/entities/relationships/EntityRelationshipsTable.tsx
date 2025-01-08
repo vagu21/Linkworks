@@ -23,6 +23,7 @@ export default function EntityRelationshipsTable({
           title: "Order",
           value: (_item, idx) => (
             <div>
+              {/* {item.order} */}
               <OrderListButtons index={idx} items={items.map((f) => ({ ...f, order: f.order ?? 0 }))} editable={true} />
             </div>
           ),

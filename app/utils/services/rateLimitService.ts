@@ -5,7 +5,7 @@ import { cache } from "../cache.server";
 import { TenantSubscriptionWithDetails } from "../db/tenantSubscriptions.db.server";
 
 const DEFAULT_RATE_LIMIT_PER_MINUTE = 60;
-const DEFAULT_RATE_LIMIT_PER_SECOND = 5;
+const DEFAULT_RATE_LIMIT_PER_SECOND = 60;
 
 function getCacheKey(apiKey: string, period: string, timestamp: number): string {
   return `rateLimit:${apiKey}:${period}:${timestamp}`;

@@ -5400,7 +5400,7 @@
       ]
     },
     {
-      "type": "app",
+      "type": "admin",
       "name": "Skills",
       "slug": "skills",
       "title": "Skills",
@@ -5462,7 +5462,7 @@
       "onEdit": "editRoute"
     },
     {
-      "type": "app",
+      "type": "admin",
       "name": "Certifications",
       "slug": "certifications",
       "title": "Certifications",

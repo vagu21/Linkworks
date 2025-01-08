@@ -113,22 +113,6 @@ export default function RowOverviewHeader({
                   );
                 })}
               {buttons}
-              {/* {rowData.entity.name == "Candidates" ? (<div>
-                <ButtonSecondary className="gap-2" onClick={() => downloadResumeAction(item,'concise')}>
-                  Concise Resume
-                  <DownloadIcon className="h-4 w-4 text-gray-500 " />
-                </ButtonSecondary>
-              </div>
-              ) : <></>
-              } */}
-              {/* {rowData.entity.name == "Candidates" ? (<div>
-                <ButtonSecondary className="gap-2" onClick={() => downloadResumeAction(item,'detailed')}>
-                  Detailed Resume
-                  <DownloadIcon className="h-4 w-4 text-gray-500 " />
-                </ButtonSecondary>
-              </div>
-              ) : <></>
-              } */}
               {!options?.hideShare && (item.createdByUserId === appOrAdminData?.user?.id || appOrAdminData.isSuperAdmin) && (
                 <ButtonSecondary to="share">
                   <ShareIcon className="h-4 w-4 text-gray-500" />
