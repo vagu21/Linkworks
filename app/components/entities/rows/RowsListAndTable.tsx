@@ -11,7 +11,7 @@ import { RowHeaderActionDto } from "~/application/dtos/data/RowHeaderActionDto";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
-import { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
+import  {  getConditionalActions } from "~/modules/customActionComponent";
 import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
 import { DownloadIcon } from "lucide-react";
 import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
@@ -102,19 +102,7 @@ export default function RowsListAndTable({
       });
     }
 
-    if (entity.name == "Candidate") {
-      actions.push({
-        title: (
-          <div>
-            <ButtonPrimary className="gap-2">
-              Summary
-              <DownloadIcon className="h-4 w-4 text-white " />
-            </ButtonPrimary>
-          </div>
-        ),
-        onClick: (_, item) => downloadResumeAction(item),
-      })
-    }
+    actions.push(...getConditionalActions(entity, onRemove));
     setActions(actions);
   }, [editable, entity, onEditClick, onRemove, routes, t]);
 

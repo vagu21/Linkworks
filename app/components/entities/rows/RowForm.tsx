@@ -30,6 +30,7 @@ import CompanyMemberTable from "~/custom/components/companyMemberTable";
 import { country_arr, states } from "./CountryUtils";
 import { useProcessCandidate } from "~/modules/resumeParser/hooks/useProcessCandidate";
 import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
+import { appendUserFormValues } from "~/modules/companyMembers/utils";
 
 export interface RefRowForm {
   save: () => void;
@@ -359,31 +360,7 @@ const RowForm = (
   function submitForm(formData: formDataCompany) {
     if (entity.name === "Account") {
       // Handle company-related submission
-      if (!companyUserFormValues || companyUserFormValues.length === 0) {
-        alert("No company user found! Please add at least one company user.");
-        return;
-      }
-
-      const user = companyUserFormValues[0]; // Use the first user in the array
-      if (!user.email || !user.firstName || !user.lastName) {
-        // console.error("Missing required fields in company user data:", user);
-        alert("Please provide valid company user details.");
-        return;
-      }
-
-      if (formData instanceof FormData) {
-        let numberofUsers: any = 0;
-        companyUserFormValues.map((user: any, index: any) => {
-          formData.append(`user[${index}]Email`, user.email);
-          formData.append(`user[${index}]firstName"`, user.firstName);
-          formData.append(`user[${index}]lastName`, user.lastName);
-          formData.append(`user[${index}]sendInvitationEmail`, user.sendInvitationEmail ? "true" : "false");
-          numberofUsers++;
-        })
-
-        formData.append("numberOfUsers", numberofUsers);
-
-      }
+      appendUserFormValues(formData,companyUserFormValues);
       submit(formData, { method: "post" });
     } else {
       // Default submission
