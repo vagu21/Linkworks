@@ -20,7 +20,7 @@ import EntityHelper from "~/utils/helpers/EntityHelper";
 import { RowsApi } from "~/utils/api/.server/RowsApi";
 import { RowValueMultipleDto } from "~/application/dtos/entities/RowValueMultipleDto";
 import RelationshipHelper from "~/utils/helpers/RelationshipHelper";
-import RowsList from "./RowsList";
+import RowsList, { AddMoreCard } from "./RowsList";
 import { EntityViewWithDetails } from "~/utils/db/entities/entityViews.db.server";
 import { RowDisplayDefaultProperty } from "~/utils/helpers/PropertyHelper";
 import { PropertyType } from "~/application/enums/entities/PropertyType";
@@ -355,7 +355,7 @@ const RowForm = (
   //     });
   //   }
   // }
-  
+
   function submitForm(formData: formDataCompany) {
     if (entity.name === "Accounts") {
       // Handle company-related submission
@@ -372,17 +372,17 @@ const RowForm = (
       }
 
       if (formData instanceof FormData) {
-        let numberofUsers:any=0;
-        companyUserFormValues.map((user:any,index:any)=>{
+        let numberofUsers: any = 0;
+        companyUserFormValues.map((user: any, index: any) => {
           formData.append(`user[${index}]Email`, user.email);
           formData.append(`user[${index}]firstName"`, user.firstName);
           formData.append(`user[${index}]lastName`, user.lastName);
           formData.append(`user[${index}]sendInvitationEmail`, user.sendInvitationEmail ? "true" : "false");
           numberofUsers++;
         })
- 
-        formData.append("numberOfUsers",numberofUsers);
-     
+
+        formData.append("numberOfUsers", numberofUsers);
+
       }
       submit(formData, { method: "post" });
     } else {
@@ -484,7 +484,7 @@ const RowForm = (
     }
   }
 
-  const { parseResumeData , isLoading } = useProcessCandidate({
+  const { parseResumeData, isLoading } = useProcessCandidate({
     addDynamicRow,
     childrenEntities,
   });
@@ -862,27 +862,39 @@ function RelationshipSelector({
                   </div>
                 </div>
               ))} */}
-          <button
-            onClick={() => onFindEntityRows(relationship)}
-            type="button"
-            className={clsx(
-              "relative flex space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
-              readOnly && "hidden"
+
+          <div className="flex pt-4 space-x-3">
+
+            <AddMoreCard
+              entity={entity.entity}
+              routes={routes}
+              title={t(entity.entity.title)}
+            />
+
+            {!relationship.distinct && (
+              <button
+                onClick={() => onFindEntityRows(relationship)}
+                type="button"
+                className={clsx(
+                  "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
+                  readOnly && "hidden"
+                )}
+              >
+                {type === "parent" && (
+                  <>
+                    <div>{t("shared.select")}</div>
+                    <div className="lowercase">{t(relationship.parent.title)}</div>
+                  </>
+                )}
+                {type === "child" && (
+                  <>
+                    <div>{t("shared.select")}</div>
+                    <div className="lowercase">{t(relationship.child.title)}</div>
+                  </>
+                )}
+              </button>
             )}
-          >
-            {type === "parent" && (
-              <>
-                <div>{t("shared.select")}</div>
-                <div className="lowercase">{t(relationship.parent.title)}</div>
-              </>
-            )}
-            {type === "child" && (
-              <>
-                <div>{t("shared.add")}</div>
-                <div className="lowercase">{t(relationship.child.title)}</div>
-              </>
-            )}
-          </button>
+          </div>
         </div>
       )}
       {/* </>
@@ -948,7 +960,7 @@ function RowGroups({
   const rowValueInput = useRef<RefRowValueInput>(null);
   const [statesArr, setStatesArr] = useState<string[]>([]);
   const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
-  
+
 
   useEffect(() => {
     const groups: { group?: string; headers: RowValueDto[] }[] = [];
@@ -979,7 +991,7 @@ function RowGroups({
 
   useEffect(() => {
 
-    if(!hasCountry) return;
+    if (!hasCountry) return;
 
     const populateInitialStates = (country: string | undefined) => {
       if (country && statesArr.length == 0) {
@@ -1002,22 +1014,22 @@ function RowGroups({
             }
             return false;
           });
-    
+
           if (hasCountry && countryName) {
             populateInitialStates(countryName);
           }
-    
+
           group.headers.forEach((header) => {
             if (header.property.subtype === "state") {
               header.property.hasCountry = hasCountry;
             }
           });
-    
+
           return group;
         })
       );
     };
-    
+
 
     addHasCountryToState();
   }, [hasCountry]);
@@ -1099,7 +1111,7 @@ function RowGroups({
                         if (media.filter((f) => f.type).length > 0) {
                           onSaveIfAllSet();
                         }
-                        parseResumeData(headers, onChange, media, item, entity, routes);                      
+                        parseResumeData(headers, onChange, media, item, entity, routes);
                       }}
                       onChangeMultiple={(e) => {
                         onChange({

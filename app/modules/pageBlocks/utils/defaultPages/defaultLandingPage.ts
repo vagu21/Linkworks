@@ -78,7 +78,7 @@ export function defaultLandingPage({ t }: { t: TFunction }) {
     // Gallery
     {
       layout: {
-        padding: { y: "py-12" },
+        // padding: { y: "py-12" },
       },
       gallery: {
         style: "carousel",

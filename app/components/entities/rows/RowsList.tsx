@@ -348,9 +348,11 @@ function RowsListWrapped({
               }}
             />
           ) : (
-            <div className="flex space-x-2 overflow-x-scroll">
+            // <div className="flex space-x-2 overflow-x-scroll">
+            <div className="grid grid-cols-1 gap-2">
+
               {items.map((item) => {
-                let className = clsx("w-64");
+                let className = clsx("w-full");
                 if (onSelected && selectedRows !== undefined) {
                   return (
                     <ButtonSelectWrapper className={clsx("group relative")} key={item.id} item={item} onSelected={onSelected} selectedRows={selectedRows}>
@@ -400,7 +402,7 @@ function RowsListWrapped({
                 <Fragment>{readOnly ? <EmptyCard className="w-full" /> : <AddMoreCard className="w-64" entity={entity} routes={routes} />}</Fragment>
               ) : (
                 <Fragment>
-                  {!readOnly && <AddMoreCard className="w-64" entity={entity} routes={routes} />}
+                  {/* {!readOnly && <AddMoreCard className="w-64" entity={entity} routes={routes} />} */}
                   <RowsLoadMoreCard className="w-64" pagination={pagination} currentView={currentView} />
                 </Fragment>
               )}
@@ -412,7 +414,7 @@ function RowsListWrapped({
   );
 }
 
-export function AddMoreCard({ entity, routes, className }: { entity: EntityWithDetails; routes?: EntitiesApi.Routes; className?: string }) {
+export function AddMoreCard({ entity, routes, className, title }: { entity: EntityWithDetails; routes?: EntitiesApi.Routes; className?: string; title?: string }) {
   const { t } = useTranslation();
   return (
     <Fragment>
@@ -420,12 +422,19 @@ export function AddMoreCard({ entity, routes, className }: { entity: EntityWithD
         {routes && (
           <Link
             className={clsx(
-              "group flex h-full items-center rounded-md border-2 border-dashed border-slate-200 p-2 text-left align-middle shadow-sm hover:border-dotted hover:border-slate-300 hover:bg-slate-100",
+              // "group flex h-full items-center rounded-md border-2 border-dashed border-slate-200 p-2 text-left align-middle shadow-sm hover:border-dotted hover:border-slate-300 hover:bg-slate-100",
+              "relative flex w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
               className
             )}
             to={EntityHelper.getRoutes({ routes, entity })?.new ?? ""}
           >
-            <div className="mx-auto flex justify-center text-center align-middle text-sm font-medium text-gray-700">{t("shared.add")}</div>
+            {/* <div className="mx-auto flex justify-center text-center align-middle text-sm font-medium text-gray-700">{t("shared.add")}</div> */}
+            <div className="flex items-center">
+              <div className="">{t("shared.add")}</div>
+              {title && (
+                <div className="lowercase ml-1">{title}</div>
+              )}
+            </div>
           </Link>
         )}
       </div>

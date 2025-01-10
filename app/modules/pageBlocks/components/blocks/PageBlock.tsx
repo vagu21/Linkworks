@@ -15,15 +15,15 @@ import BlogPostBlock from "./marketing/blog/post/BlogPostBlock";
 import BlogPostBlockForm from "./marketing/blog/post/BlogPostBlockForm";
 import BlogPostsBlock from "./marketing/blog/posts/BlogPostsBlock";
 import BlogPostsBlockForm from "./marketing/blog/posts/BlogPostsBlockForm";
-import CommunityBlock from "./marketing/community/CommunityBlock";
+// import CommunityBlock from "./marketing/community/CommunityBlock";
 import CommunityBlockForm from "./marketing/community/CommunityBlockForm";
-import FaqBlock from "./marketing/faq/FaqBlock";
+// import FaqBlock from "./marketing/faq/FaqBlock";
 import FaqBlockForm from "./marketing/faq/FaqBlockForm";
-import FeaturesBlock from "./marketing/features/FeaturesBlock";
+// import FeaturesBlock from "./marketing/features/FeaturesBlock";
 import FeaturesBlockForm from "./marketing/features/FeaturesBlockForm";
 import FooterBlock from "./marketing/footer/FooterBlock";
 import FooterBlockForm from "./marketing/footer/FooterBlockForm";
-import GalleryBlock from "./marketing/gallery/GalleryBlock";
+// import GalleryBlock from "./marketing/gallery/GalleryBlock";
 import GalleryBlockForm from "./marketing/gallery/GalleryBlockForm";
 import HeaderBlock from "./marketing/header/HeaderBlock";
 import HeaderBlockForm from "./marketing/header/HeaderBlockForm";
@@ -31,13 +31,13 @@ import HeadingBlock from "./marketing/heading/HeadingBlock";
 import HeadingBlockForm from "./marketing/heading/HeadingBlockForm";
 import HeroBlock from "./marketing/hero/HeroBlock";
 import HeroBlockForm from "./marketing/hero/HeroBlockForm";
-import LogoCloudsBlock from "./marketing/logoClouds/LogoCloudsBlock";
+// import LogoCloudsBlock from "./marketing/logoClouds/LogoCloudsBlock";
 import LogoCloudsBlockForm from "./marketing/logoClouds/LogoCloudsBlockForm";
-import NewsletterBlock from "./marketing/newsletter/NewsletterBlock";
+// import NewsletterBlock from "./marketing/newsletter/NewsletterBlock";
 import NewsletterBlockForm from "./marketing/newsletter/NewsletterBlockForm";
-import PricingBlock from "./marketing/pricing/PricingBlock";
+// import PricingBlock from "./marketing/pricing/PricingBlock";
 import PricingBlockForm from "./marketing/pricing/PricingBlockForm";
-import TestimonialsBlock from "./marketing/testimonials/TestimonialsBlock";
+// import TestimonialsBlock from "./marketing/testimonials/TestimonialsBlock";
 import TestimonialsBlockForm from "./marketing/testimonials/TestimonialsBlockForm";
 import VideoBlock from "./marketing/video/VideoBlock";
 import VideoBlockForm from "./marketing/video/VideoBlockForm";
@@ -56,15 +56,15 @@ export function PageBlock({ item, userSession }: { item: PageBlockDto; userSessi
       {item.header && <HeaderBlock item={item.header} />}
       {item.footer && <FooterBlock item={item.footer} />}
       {item.hero && <HeroBlock item={item.hero} />}
-      {item.gallery && <GalleryBlock item={item.gallery} />}
-      {item.logoClouds && <LogoCloudsBlock item={item.logoClouds} />}
+      {/* {item.gallery && <GalleryBlock item={item.gallery} />} */}
+      {/* {item.logoClouds && <LogoCloudsBlock item={item.logoClouds} />} */}
       {item.video && <VideoBlock item={item.video} />}
-      {item.community && <CommunityBlock item={item.community} />}
-      {item.testimonials && <TestimonialsBlock item={item.testimonials} />}
-      {item.features && <FeaturesBlock item={item.features} />}
-      {item.newsletter && <NewsletterBlock item={item.newsletter} />}
-      {item.faq && <FaqBlock item={item.faq} />}
-      {item.pricing && <PricingBlock item={item.pricing} />}
+      {/* {item.community && <CommunityBlock item={item.community} />} */}
+      {/* {item.testimonials && <TestimonialsBlock item={item.testimonials} />} */}
+      {/* {item.features && <FeaturesBlock item={item.features} />} */}
+      {/* {item.newsletter && <NewsletterBlock item={item.newsletter} />} */}
+      {/* {item.faq && <FaqBlock item={item.faq} />} */}
+      {/* {item.pricing && <PricingBlock item={item.pricing} />} */}
       {item.blogPosts && <BlogPostsBlock item={item.blogPosts} />}
       {item.blogPost && <BlogPostBlock item={item.blogPost} />}
       {item.rowsList && <RowsListBlock item={item.rowsList} />}

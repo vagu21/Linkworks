@@ -54,7 +54,8 @@ function DashboardStat({ item, loading, className }: { item: Stat; loading: bool
         <div className="flex items-baseline space-x-2 text-2xl font-medium text-gray-900">
           <div>{loading ? "..." : item.stat}</div>
           {item.previousStat !== undefined && (
-            <span className="ml-2 hidden text-sm font-medium text-gray-500 xl:block">{!loading && <span>from {item.previousStat}</span>}</span>
+            // <span className="ml-2 hidden text-sm font-medium text-gray-500 xl:block">{!loading && <span>from {item.previousStat}</span>}</span>
+            <></>
           )}
         </div>
       </div>

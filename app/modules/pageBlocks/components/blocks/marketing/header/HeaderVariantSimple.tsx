@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useRootData } from "~/utils/data/useRootData";
 import { HeaderBlockDto } from "~/modules/pageBlocks/components/blocks/marketing/header/HeaderBlockUtils";
-import HeaderFlyoutItem from "~/components/ui/headers/HeaderFlyoutItem";
+// import HeaderFlyoutItem from "~/components/ui/headers/HeaderFlyoutItem";
 import Icon from "~/components/brand/Icon";
 import LocaleSelector from "~/components/ui/selectors/LocaleSelector";
 import ButtonEvent from "~/components/ui/buttons/ButtonEvent";
@@ -54,8 +54,8 @@ export default function HeaderVariantSimple({ item, width = "7xl" }: { item: Hea
                 <div className="flex w-full items-center justify-between md:w-auto">
                   {item.withLogo ? (
                     <>
-                      <Logo className="hidden lg:block" size="h-9" />
-                      <Icon className="lg:hidden" size="h-9" />
+                      <Logo className="hidden lg:block" size="h-9"/>
+                      <Icon className="lg:hidden"size="h-9" />
                     </>
                   ) : (
                     <div></div>
@@ -111,25 +111,27 @@ export default function HeaderVariantSimple({ item, width = "7xl" }: { item: Hea
                   return (
                     <Fragment key={idx}>
                       {!link.items || link.items.length === 0 ? (
-                        <ButtonEvent
-                          to={link.path ?? ""}
-                          target={link.target}
-                          className={clsx(
-                            link.className,
-                            "truncate rounded-sm px-3 py-1 text-base font-medium leading-6 transition duration-150 ease-in-out focus:outline-none",
-                            !isCurrent(link.path ?? "") && "text-muted-foreground",
-                            isCurrent(link.path ?? "") && ""
-                          )}
-                          event={{ action: "click", category: "header", label: t(link.title), value: link.path ?? "" }}
-                        >
-                          {t(link.title)} {link.hint && <span className="text-muted-foreground text-xs">{t(link.hint)}</span>}
-                        </ButtonEvent>
+                        // <ButtonEvent
+                        //   to={link.path ?? ""}
+                        //   target={link.target}
+                        //   className={clsx(
+                        //     link.className,
+                        //     "truncate rounded-sm px-3 py-1 text-base font-medium leading-6 transition duration-150 ease-in-out focus:outline-none",
+                        //     !isCurrent(link.path ?? "") && "text-muted-foreground",
+                        //     isCurrent(link.path ?? "") && ""
+                        //   )}
+                        //   event={{ action: "click", category: "header", label: t(link.title), value: link.path ?? "" }}
+                        // >
+                        //   {t(link.title)} {link.hint && <span className="text-muted-foreground text-xs">{t(link.hint)}</span>}
+                        // </ButtonEvent>
+                        <></>
                       ) : (
-                        <HeaderFlyoutItem
-                          className="rounded-sm px-3 py-1 text-base font-medium leading-6 transition duration-150 ease-in-out focus:outline-none"
-                          title={t(link.title)}
-                          items={link.items}
-                        />
+                        // <HeaderFlyoutItem
+                        //   className="rounded-sm px-3 py-1 text-base font-medium leading-6 transition duration-150 ease-in-out focus:outline-none"
+                        //   title={t(link.title)}
+                        //   items={link.items}
+                        // />
+                        <></>
                       )}
                     </Fragment>
                   );

@@ -35,7 +35,8 @@ export function EntitiesStats({ items }: Props) {
             <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
               <div className="flex items-baseline text-2xl font-semibold text-gray-800">
                 <div>{loading ? "..." : item.stat}</div>
-                <span className="ml-2 hidden text-sm font-medium text-gray-500 xl:block">{!loading && <span>from {item.previousStat}</span>}</span>
+                {/* <span className="ml-2 hidden text-sm font-medium text-gray-500 xl:block">{!loading && <span>from {item.previousStat}</span>}</span> */}
+                <></>
               </div>
 
               {!loading && (

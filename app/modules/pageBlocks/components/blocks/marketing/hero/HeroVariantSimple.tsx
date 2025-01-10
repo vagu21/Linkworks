@@ -1,4 +1,4 @@
-import clsx from "clsx";
+// import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { HeroBlockDto } from "./HeroBlockUtils";
 import ButtonEvent from "~/components/ui/buttons/ButtonEvent";
@@ -36,7 +36,7 @@ export default function HeroVariantSimple({ item }: { item: HeroBlockDto }) {
           {item.headline && <h1 className="title-font mb-4 max-w-4xl text-4xl font-bold sm:text-5xl md:text-6xl md:font-black">{t(item.headline)}</h1>}
           {item.description && <h2 className="mb-8 max-w-4xl text-lg leading-relaxed md:text-xl">{t(item.description)}</h2>}
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          {/* <div className="mt-8 flex flex-wrap justify-center gap-4">
             {item.cta.map((item, idx) => {
               return (
                 <ButtonEvent
@@ -55,9 +55,10 @@ export default function HeroVariantSimple({ item }: { item: HeroBlockDto }) {
                 </ButtonEvent>
               );
             })}
-          </div>
+          </div> */}
+          
 
-          <div className="mt-8 space-y-3">
+          {/* <div className="mt-8 space-y-3">
             {item.bottomText && (
               <span>
                 {t(item.bottomText.text ?? "")}{" "}
@@ -73,7 +74,7 @@ export default function HeroVariantSimple({ item }: { item: HeroBlockDto }) {
                 )}
               </span>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
