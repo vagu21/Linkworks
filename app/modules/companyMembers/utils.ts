@@ -21,6 +21,7 @@ if (!companyUserFormValues || companyUserFormValues.length === 0) {
       formData.append(`user[${index}]firstName"`, user.firstName);
       formData.append(`user[${index}]lastName`, user.lastName);
       formData.append(`user[${index}]sendInvitationEmail`, user.sendInvitationEmail ? "true" : "false");
+      formData.append(`user[${index}]roles`,user.roles);
       numberofUsers++;
     })
 

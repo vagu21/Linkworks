@@ -356,14 +356,16 @@ export async function register(data: {
   googleId?: string;
   avatarURL?: string;
   locale?: string;
+  companyId?: string| null;
   defaultTenantId?: string | null;
   request: Request;
 }) {
-  const { email, password, firstName, lastName, active, githubId, googleId, avatarURL, locale, defaultTenantId } = data;
+  const { email, password, firstName, lastName, active, githubId, googleId, avatarURL, locale, defaultTenantId,companyId } = data;
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
     data: {
       email,
+      companyId,
       passwordHash,
       firstName,
       lastName,

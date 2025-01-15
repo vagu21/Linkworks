@@ -30,10 +30,11 @@ export async function sendInvitation(form:any,companyId:any,params:any,userId:an
                 const firstName = form.get(`user[${i}]firstName`)?.toString().trim() || "";
                 const lastName = form.get(`user[${i}]lastName`)?.toString().trim() || "";
                 const sendInvitationEmail = form.get(`user[${i}]sendInvitationEmail`) === "true";
-    
+                const roles=form.get(`user[${i}]roles`).split(',')||[];
                 const invitation = await createUserInvitation(tenantId, {
                   email,
                   companyId,
+                  roles,
                   firstName,
                   lastName,
                   type: TenantUserType.MEMBER,

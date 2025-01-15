@@ -58,6 +58,7 @@ model User {
   passwordHash               String
   firstName                  String
   lastName                   String
+  companyId                  String?
   avatar                     String?
   phone                      String?
   defaultTenantId            String?
@@ -354,6 +355,7 @@ model TenantUserInvitation {
   tenantId      String
   email         String
   companyId     String?
+  roles         Json? 
   firstName     String
   lastName      String
   type          Int

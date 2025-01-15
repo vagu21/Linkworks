@@ -19,6 +19,9 @@ import { getBaseURL } from "~/utils/url.server";
 import EventsService from "~/modules/events/services/.server/EventsService";
 import { MemberInvitationAcceptedDto } from "~/modules/events/dtos/MemberInvitationAcceptedDto";
 
+
+let companyRoleIDs:any = [];
+
 type LoaderData = {
   title: string;
   invitation: (TenantUserInvitation & { tenant: Tenant }) | null;
@@ -28,6 +31,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { t } = await getTranslations(request);
 
   const invitation = await getUserInvitation(params.id ?? "");
+  companyRoleIDs = invitation?.roles;
   const existingUser = await getUserByEmail(invitation?.email);
   const data: LoaderData = {
     title: `${t("account.invitation.title")} | ${process.env.APP_NAME}`,
@@ -56,7 +60,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     });
   }
   const fromUser = invitation.fromUserId ? await getUser(invitation.fromUserId) : null;
-
+  const companyId=invitation?.companyId || null;
   let existingUser = await getUserByEmail(invitation.email);
   if (!existingUser) {
     // Register user
@@ -68,6 +72,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const user = await register({
       email: invitation.email,
       password,
+      companyId,
       firstName: invitation.firstName,
       lastName: invitation.lastName,
       locale: userInfo.lng,
@@ -78,13 +83,35 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
     await updateUserInvitationPending(invitation.id);
     const roles = await getAllRoles("app");
+    let companyRoles:any = [];
+    if (companyRoleIDs.length!=0) {
+      try {
+        const data: any = await fetch("http://localhost:3000/api/getCompanyRoles");
+        if (data.ok) {
+          const response = await data.json();
+          companyRoles=response;
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    function assignRoles()
+    {
+      if(companyRoleIDs.length!=0)
+      {
+         return companyRoles.filter((f:any)=>companyRoleIDs.includes(f.id));
+      }
+      else return roles.filter((f) => f.assignToNewUsers);
+    }
+
     await createTenantUser(
       {
         tenantId: invitation.tenantId,
         userId: user.id,
         type: invitation.type,
       },
-      roles.filter((f) => f.assignToNewUsers)
+      assignRoles()
     );
     await EventsService.create({
       request,
