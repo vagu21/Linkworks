@@ -59,7 +59,7 @@ const createCompanyEntityPermissions = () => {
 };
 
 const createCandidatesEntityPermissions = () => {
-	return createEntityPermissions('Candidates', [
+	return createEntityPermissions('Candidate', [
 		{
 			actions: ['view', 'read'],
 			allRoles: true,

@@ -19,7 +19,7 @@ export const useProcessCandidate = ({ addDynamicRow = () => {}, childrenEntities
     setIsLoading(true);
 
     try {
-      if (!item && entity.name === "Candidates") {
+      if (!item && entity.name === "Candidate") {
         if (media.length === 1) {
           const { file, type } = media[0];
 

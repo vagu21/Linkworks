@@ -325,7 +325,7 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
           )}
         >
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="bg-background border-border flex grow flex-col overflow-y-auto border-r px-6 pb-4 shadow-sm dark:border-r-0">
+          <div className="bg-[#2D58C0] border-border flex grow flex-col overflow-y-auto border-r px-6 pb-4 shadow-sm dark:border-r-0">
             <div className="flex h-16 shrink-0 items-center justify-center border-b border-transparent">
               <Link to={"/"}>
                 {/* <Logo size="h-8 p-1 w-auto" /> */}
@@ -369,8 +369,8 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                                           "group mt-1 flex items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
                                           menuItem.icon !== undefined && "px-4",
                                           isCurrent(menuItem)
-                                            ? "bg-secondary text-primary dark:text-secondary-foreground"
-                                            : "hover:bg-secondary hover:text-secondary-foreground text-secondary-foreground/70",
+                                          ? "bg-blue-500 text-primary dark:text-secondary-foreground"
+                                          : "hover:bg-sky-400 hover:text-secondary-foreground text-secondary-foreground/70",
                                           "group flex gap-x-3 rounded-md p-2 text-sm leading-5"
                                         )}
                                         onClick={onSelected}
@@ -600,7 +600,7 @@ function NavBar({
         {buttons.onboarding && appOrAdminData?.onboardingSession && (
           <OnboardingButton item={appOrAdminData?.onboardingSession} onClick={onOpenOnboardingModal} />
         )}
-        {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />}
+        {/* {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />} */}
         {/* <LocaleSelector /> */}
         {buttons.notifications && appOrAdminData?.user && (
           <Inbox

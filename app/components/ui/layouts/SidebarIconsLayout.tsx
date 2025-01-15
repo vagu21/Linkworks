@@ -52,7 +52,7 @@ export default function SidebarIconsLayout({
     <div className="sm:flex sm:h-[calc(100vh-56px)] sm:flex-row">
       <div
         className={clsx(
-          " border-border hidden flex-none flex-col items-center justify-between overflow-y-auto border-r shadow-sm sm:flex",
+          "lg:min-w-[180px] border-border hidden flex-none flex-col items-center justify-between overflow-y-auto border-r shadow-sm sm:flex",
           label?.align === "bottom" && "lg:text-center"
         )}
       >
@@ -87,7 +87,7 @@ export default function SidebarIconsLayout({
         </div>
       </div>
 
-      <div ref={mainElement} className="w-full overflow-x-hidden">
+      <div ref={mainElement} className="w-full overflow-x-hidden bg-white">
         {children}
       </div>
     </div>
@@ -133,7 +133,7 @@ function IconLink({
         {textIcon !== undefined && textIconSelected !== undefined ? (
           <div>
             {current ? (
-              <EntityIcon className="h-5 w-5 text-gray-500" icon={textIconSelected} />
+              <EntityIcon className="h-5 w-5 text-black" icon={textIconSelected} />
             ) : (
               <EntityIcon className="h-5 w-5 text-gray-400" icon={textIcon} />
             )}
