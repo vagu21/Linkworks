@@ -42,6 +42,7 @@ const config = {
         },
         navBar:"#3B82F6",
         navBarHover:"#2D58C0",
+        onSelect:"#0c4a6e",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

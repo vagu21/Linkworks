@@ -351,7 +351,7 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                       return (
                         <div key={index} className="select-none">
                           <div className="mt-2">
-                            <h3 id="Group-headline" className="text-muted-foreground px-1 text-xs font-medium uppercase leading-4 tracking-wider">
+                            <h3 id="Group-headline" className="text-muted-white px-1 text-xs font-medium uppercase leading-4 tracking-wider">
                               {t(group.title)}
                             </h3>
                           </div>
@@ -366,10 +366,10 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                                         id={UrlUtils.slugify(getPath(menuItem))}
                                         to={menuItem.redirectTo ?? getPath(menuItem)}
                                         className={clsx(
-                                          "group mt-1 flex items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
+                                          "group mt-1 flex text-white items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
                                           menuItem.icon !== undefined && "px-4",
                                           isCurrent(menuItem)
-                                            ? "bg-indigo-600 text-primary dark:text-secondary-foreground"
+                                            ? "bg-onSelect text-white dark:text-secondary-foreground"
                                             : "hover:bg-navBarHover hover:text-secondary-foreground text-secondary-foreground/70",
                                           "group flex gap-x-3 rounded-md p-2 text-sm leading-5"
                                         )}
