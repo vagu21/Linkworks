@@ -45,7 +45,7 @@ const createCompanyEntityPermissions = () => {
 	]
 	return [
 		...basePermissions,
-		...createEntityPermissions('companies', [
+		...createEntityPermissions('Account', [
 			{
 				actions: ['view', 'read'],
 				allRoles: true,
@@ -72,7 +72,7 @@ const createCandidatesEntityPermissions = () => {
 };
 
 const createContactsEntityPermissions = () => {
-	return createEntityPermissions('Contacts', [
+	return createEntityPermissions('Contact', [
 		{
 			actions: ['view', 'read'],
 			allRoles: true,
