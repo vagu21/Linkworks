@@ -1063,30 +1063,30 @@ function RowGroups({
       });
     });
   }
-const distributeGroups = (
-  groups: { group?: string; headers: RowValueDto[] }[]
-): Array<{ group?: string; headers: RowValueDto[] }[]> => {
-  const [left, right] = [[], []] as Array<typeof groups>;
-  let leftHeight = 0;
-  let rightHeight = 0;
+  const distributeGroups = (
+    groups: { group?: string; headers: RowValueDto[] }[]
+  ): Array<{ group?: string; headers: RowValueDto[] }[]> => {
+    const [left, right] = [[], []] as Array<typeof groups>;
+    let leftHeight = 0;
+    let rightHeight = 0;
 
-  const estimateHeight = (group: { headers: RowValueDto[] }): number =>
-    group.headers.length * 100; // Adjust height estimation based on inputs
+    const estimateHeight = (group: { headers: RowValueDto[] }): number =>
+      group.headers.length * 100; // Adjust height estimation based on inputs
 
-  groups.forEach((group) => {
-    const height = estimateHeight(group);
-    if (leftHeight <= rightHeight) {
-      left.push(group);
-      leftHeight += height;
-    } else {
-      right.push(group);
-      rightHeight += height;
-    }
-  });
+    groups.forEach((group) => {
+      const height = estimateHeight(group);
+      if (leftHeight <= rightHeight) {
+        left.push(group);
+        leftHeight += height;
+      } else {
+        right.push(group);
+        rightHeight += height;
+      }
+    });
 
-  return [left, right];
-};
-const columns = groups.length > 1 ? 2 : 1;
+    return [left, right];
+  };
+  const columns = groups.length > 1 ? 2 : 1;
 
   return (
     <div className={`grid ${columns === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
@@ -1097,9 +1097,9 @@ const columns = groups.length > 1 ? 2 : 1;
         )}>
           {column.map(({ group, headers }, originalIndex) => {
             const isMediaGroup = headers.some(h => h.property.type === PropertyType.MEDIA);
-      
-                return (
-                  <div 
+
+            return (
+              <div
                 key={originalIndex}
                 className={clsx(
                   "space-y-2",
@@ -1164,8 +1164,8 @@ const columns = groups.length > 1 ? 2 : 1;
                               });
                             }}
                             readOnly={
-                              (editing && !detailValue.property.canUpdate) || 
-                              (item?.id !== undefined && (!editing || !canUpdate)) || 
+                              (editing && !detailValue.property.canUpdate) ||
+                              (item?.id !== undefined && (!editing || !canUpdate)) ||
                               detailValue.property?.isReadOnly
                             }
                             autoFocus={colIndex === 0 && originalIndex === 0 && idxDetailValue === 0 && canSubmit}

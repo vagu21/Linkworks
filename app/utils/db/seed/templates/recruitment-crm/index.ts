@@ -95,22 +95,22 @@ async function seedEntities(admin: any) {
 	console.log(`🌱 Seed Recruitment CRM Template`);
 	console.log(`🌱 Creating Recruitment CRM entities`)
 	const entities = await importEntitiesFromTemplate({
-    template: EntitiesJson as EntitiesTemplateDto,
-    createdByUserId: admin.id,
-  });
-  console.log(`🌱 Created Recruitment CRM entities: ${entities.length}`)
+		template: EntitiesJson as EntitiesTemplateDto,
+		createdByUserId: admin.id,
+	});
+	console.log(`🌱 Created Recruitment CRM entities: ${entities.length}`)
 }
 
 async function seedRolePermissions(admin: any) {
 
-  const templateSpecificRoles = [
-    DefaultAppRoles.CompanyAdmin,
-    DefaultAppRoles.CompanyMember,
-    DefaultAppRoles.Supplier
-  ]
+	const templateSpecificRoles = [
+		DefaultAppRoles.CompanyAdmin,
+		DefaultAppRoles.CompanyMember,
+		DefaultAppRoles.Supplier
+	]
 
 	seedTemplateRoles({
-		templateName: 'Recruitment CRM', 
+		templateName: 'Recruitment CRM',
 		templatePermissions: RECRUITMENT_CRM_PERMISSIONS,
 		templateSpecificRoles: templateSpecificRoles,
 	});
