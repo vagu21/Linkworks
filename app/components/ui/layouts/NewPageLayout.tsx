@@ -11,7 +11,7 @@ interface Props {
   children: ReactNode;
   className?: string;
 }
-export default function NewPageLayout({ title, menu, buttons, children, className = "pt-3 pb-6 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3" }: Props) {
+export default function NewPageLayout({ title, menu, buttons, children, className = "mx-auto grid max-w-5xl gap-5 px-4 py-5 sm:px-8" }: Props) {
   return (
     <div className={className}>
       <div className="space-y-1">

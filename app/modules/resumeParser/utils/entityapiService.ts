@@ -5,11 +5,11 @@ export const saveTenantEntity = async (
 ): Promise<string[]> => {
   const entityIds: string[] = [];
 
-  if (!tenantData?.rowsData?.items[0]?.tenantId) {
+  if (!tenantData?.rowsData?.views?.[0]?.tenantId) {
     return entityIds;
   }
 
-  const tenant = { tenantId: tenantData.rowsData.items[0]?.tenantId };
+  const tenant = { tenantId: tenantData.rowsData.views[0].tenantId };
 
   for (const entityData of entityDataList) {
     const formData = new FormData();

@@ -325,7 +325,7 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
           )}
         >
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="bg-background border-border flex grow flex-col overflow-y-auto border-r px-6 pb-4 shadow-sm dark:border-r-0">
+          <div className="bg-navBar border-border flex grow flex-col overflow-y-auto border-r px-6 pb-4 shadow-sm dark:border-r-0">
             <div className="flex h-16 shrink-0 items-center justify-center border-b border-transparent">
               <Link to={"/"}>
                 {/* <Logo size="h-8 p-1 w-auto" /> */}
@@ -351,7 +351,7 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                       return (
                         <div key={index} className="select-none">
                           <div className="mt-2">
-                            <h3 id="Group-headline" className="text-muted-foreground px-1 text-xs font-medium uppercase leading-4 tracking-wider">
+                            <h3 id="Group-headline" className="text-muted-white px-1 text-xs font-medium uppercase leading-4 tracking-wider">
                               {t(group.title)}
                             </h3>
                           </div>
@@ -366,11 +366,11 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                                         id={UrlUtils.slugify(getPath(menuItem))}
                                         to={menuItem.redirectTo ?? getPath(menuItem)}
                                         className={clsx(
-                                          "group mt-1 flex items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
+                                          "group mt-1 flex text-white items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
                                           menuItem.icon !== undefined && "px-4",
                                           isCurrent(menuItem)
-                                            ? "bg-secondary text-primary dark:text-secondary-foreground"
-                                            : "hover:bg-secondary hover:text-secondary-foreground text-secondary-foreground/70",
+                                            ? "bg-onSelect text-white dark:text-secondary-foreground"
+                                            : "hover:bg-navBarHover hover:text-secondary-foreground text-secondary-foreground/70",
                                           "group flex gap-x-3 rounded-md p-2 text-sm leading-5"
                                         )}
                                         onClick={onSelected}
@@ -600,7 +600,7 @@ function NavBar({
         {buttons.onboarding && appOrAdminData?.onboardingSession && (
           <OnboardingButton item={appOrAdminData?.onboardingSession} onClick={onOpenOnboardingModal} />
         )}
-        {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />}
+        {/* {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />} */}
         {/* <LocaleSelector /> */}
         {buttons.notifications && appOrAdminData?.user && (
           <Inbox

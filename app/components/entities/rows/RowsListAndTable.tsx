@@ -11,9 +11,10 @@ import { RowHeaderActionDto } from "~/application/dtos/data/RowHeaderActionDto";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
-import  { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
+import { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
 import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
 import { DownloadIcon } from "lucide-react";
+import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
 
 interface Props {
   entity: EntityWithDetails;
@@ -81,14 +82,14 @@ export default function RowsListAndTable({
 
   useEffect(() => {
     const actions: RowHeaderActionDto<RowWithDetails>[] = [];
-    if (editable) {
-      actions.push({
-        title: t("shared.edit"),
-        onClickRoute: (_, item) => (onEditClick !== undefined ? undefined : EntityHelper.getRoutes({ routes, entity, item })?.edit ?? ""),
-        onClick: (_, item) => (onEditClick !== undefined ? onEditClick(item) : undefined),
-        hidden: (item) => !editable || !EntityHelper.getRoutes({ routes, entity, item })?.edit,
-      });
-    }
+    // if (editable) {
+    //   actions.push({
+    //     title: t("shared.edit"),
+    //     onClickRoute: (_, item) => (onEditClick !== undefined ? undefined : EntityHelper.getRoutes({ routes, entity, item })?.edit ?? ""),
+    //     onClick: (_, item) => (onEditClick !== undefined ? onEditClick(item) : undefined),
+    //     hidden: (item) => !editable || !EntityHelper.getRoutes({ routes, entity, item })?.edit,
+    //   });
+    // }
     if (onRemove) {
       actions.push({
         title: (
@@ -101,15 +102,14 @@ export default function RowsListAndTable({
       });
     }
 
-    if(entity.name=="Candidates")
-      {
+    if (entity.name == "Candidate") {
       actions.push({
         title: (
           <div>
-            <ButtonSecondary className="gap-2">
-            Concise Resume
-              <DownloadIcon className="h-4 w-4 text-gray-500 " />
-            </ButtonSecondary>
+            <ButtonPrimary className="gap-2">
+              Summary
+              <DownloadIcon className="h-4 w-4 text-white " />
+            </ButtonPrimary>
           </div>
         ),
         onClick: (_, item) => downloadResumeAction(item),

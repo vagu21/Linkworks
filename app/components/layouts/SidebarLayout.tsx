@@ -244,7 +244,7 @@ function NavBar({
         {buttons.onboarding && appOrAdminData?.onboardingSession && (
           <OnboardingButton item={appOrAdminData?.onboardingSession} onClick={onOpenOnboardingModal} />
         )}
-        {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />}
+        {/* {layout === "app" && buttons.mySubscription && <CurrentSubscriptionButton />} */}
         {buttons.notifications && appOrAdminData?.user && (
           <Inbox
             applicationIdentifier={rootData?.appConfiguration.notifications.novuAppId || ""}

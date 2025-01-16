@@ -357,7 +357,7 @@ const RowForm = (
   // }
 
   function submitForm(formData: formDataCompany) {
-    if (entity.name === "Accounts") {
+    if (entity.name === "Account") {
       // Handle company-related submission
       if (!companyUserFormValues || companyUserFormValues.length === 0) {
         alert("No company user found! Please add at least one company user.");
@@ -630,7 +630,7 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
-        {entity.name == 'Accounts' && (
+        {entity.name == 'Account' && (
           <div onClick={() => setShowMemberForm(!showMemberForm)}>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700 ">
               Company Member
@@ -1063,120 +1063,163 @@ function RowGroups({
       });
     });
   }
+  const distributeGroups = (
+    groups: { group?: string; headers: RowValueDto[] }[]
+  ): Array<{ group?: string; headers: RowValueDto[] }[]> => {
+    const [left, right] = [[], []] as Array<typeof groups>;
+    let leftHeight = 0;
+    let rightHeight = 0;
+
+    const estimateHeight = (group: { headers: RowValueDto[] }): number =>
+      group.headers.length * 100; // Adjust height estimation based on inputs
+
+    groups.forEach((group) => {
+      const height = estimateHeight(group);
+      if (leftHeight <= rightHeight) {
+        left.push(group);
+        leftHeight += height;
+      } else {
+        right.push(group);
+        rightHeight += height;
+      }
+    });
+
+    return [left, right];
+  };
+  const columns = groups.length > 1 ? 2 : 1;
 
   return (
-    <>
-      {groups.map(({ group, headers }, idx) => {
-        return (
-          <InputGroup key={idx} title={group ? t(group) : t("shared.details")}>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
-              {headers.map((detailValue, idxDetailValue) => {
-                if (!isVisible(detailValue)) {
-                  return null;
-                }
-                return (
-                  <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
-                    <RowValueInput
-                      ref={rowValueInput}
-                      entity={entity}
-                      statesArr={statesArr}
-                      setStatesArr={setStatesArr}
-                      textValue={detailValue.textValue}
-                      numberValue={detailValue.numberValue}
-                      dateValue={detailValue.dateValue}
-                      booleanValue={detailValue.booleanValue}
-                      multiple={detailValue.multiple}
-                      range={detailValue.range}
-                      initialOption={detailValue.selectedOption}
-                      selected={detailValue.property}
-                      initialMedia={detailValue.media}
-                      onChange={(e) => {
-                        onChange({
-                          ...detailValue,
-                          ...RowHelper.updateFieldValueTypeArray(detailValue, e),
-                        });
-                      }}
-                      onChangeOption={(e) => {
-                        onChange({
-                          ...detailValue,
-                          selectedOption: e,
-                          textValue: e,
-                        });
-                      }}
-                      onChangeMedia={async (media) => {
-                        onChange({
-                          ...detailValue,
-                          media: media as any,
-                        });
-                        if (media.filter((f) => f.type).length > 0) {
-                          onSaveIfAllSet();
-                        }
-                        parseResumeData(headers, onChange, media, item, entity, routes);
-                      }}
-                      onChangeMultiple={(e) => {
-                        onChange({
-                          ...detailValue,
-                          multiple: e as any[],
-                        });
-                      }}
-                      onChangeRange={(e) => {
-                        onChange({
-                          ...detailValue,
-                          range: e as any,
-                        });
-                      }}
-                      readOnly={
-                        (editing && !detailValue.property.canUpdate) || (item?.id !== undefined && (!editing || !canUpdate)) || detailValue.property?.isReadOnly
-                      }
-                      autoFocus={idx === 0 && idxDetailValue === 0 && canSubmit}
-                      promptFlows={promptFlows ? { prompts: promptFlows, rowId: item?.id } : undefined}
-                    />
-                  </div>
-                );
-              })}
-              {/* Show parent entities in Default Properties Group */}
-              {!group && (
-                <>
-                  {parentEntities.visible.map((relationship) => (
-                    <div key={relationship.id} className="col-span-12">
-                      <label htmlFor={relationship.id} className="flex justify-between space-x-2 text-xs font-medium text-gray-600 ">
-                        <div className=" flex items-center space-x-1">
-                          <div className="truncate">
-                            {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
-                            {relationship.required && <span className="ml-1 text-red-500">*</span>}
-                          </div>
-                        </div>
-                      </label>
-                      <RelationshipSelector
-                        fromEntity={entity}
-                        className="mt-1"
-                        type="parent"
-                        relationship={relationship}
-                        relatedRows={relatedRows}
-                        onFindEntityRows={onFindEntityRows}
-                        allEntities={allEntities}
-                        onRemoveRelatedRow={onRemoveRelatedRow}
-                        readOnly={item?.id !== undefined && (!editing || !canUpdate)}
-                        routes={routes}
-                        relationshipRows={relationshipRows}
-                        addRelationshipRow={addRelationshipRow}
-                        setRelationshipRows={setRelationshipRows}
-                      />
-                    </div>
-                  ))}
+    <div className={`grid ${columns === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+      {distributeGroups(groups).map((column, colIndex) => (
+        <div key={colIndex} className={clsx(
+          "space-y-4",
+          colIndex === 0 && "pb-8"
+        )}>
+          {column.map(({ group, headers }, originalIndex) => {
+            const isMediaGroup = headers.some(h => h.property.type === PropertyType.MEDIA);
 
-                  {isAddingOrEditing && (
-                    <AddHiddenRelationshipEntities items={parentEntities.hidden} onClick={parentEntities.onAddParentEntity} type="parent" />
-                  )}
-                </>
-              )}
-              {/* Show custom properties in Default Properties Group */}
-              {!group && <>{children}</>}
-            </div>
-          </InputGroup>
-        );
-      })}
-    </>
+            return (
+              <div
+                key={originalIndex}
+                className={clsx(
+                  "space-y-2",
+                  isMediaGroup && "col-span-2"
+                )}
+              >
+                <InputGroup title={group ? t(group).trim() : t("shared.details")}>
+                  <div className="grid grid-cols-12 gap-3">
+                    {headers.map((detailValue, idxDetailValue) => {
+                      if (!isVisible(detailValue)) {
+                        return null;
+                      }
+                      return (
+                        <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
+                          <RowValueInput
+                            ref={rowValueInput}
+                            entity={entity}
+                            statesArr={statesArr}
+                            setStatesArr={setStatesArr}
+                            textValue={detailValue.textValue}
+                            numberValue={detailValue.numberValue}
+                            dateValue={detailValue.dateValue}
+                            booleanValue={detailValue.booleanValue}
+                            multiple={detailValue.multiple}
+                            range={detailValue.range}
+                            initialOption={detailValue.selectedOption}
+                            selected={detailValue.property}
+                            initialMedia={detailValue.media}
+                            onChange={(e) => {
+                              onChange({
+                                ...detailValue,
+                                ...RowHelper.updateFieldValueTypeArray(detailValue, e),
+                              });
+                            }}
+                            onChangeOption={(e) => {
+                              onChange({
+                                ...detailValue,
+                                selectedOption: e,
+                                textValue: e,
+                              });
+                            }}
+                            onChangeMedia={async (media) => {
+                              onChange({
+                                ...detailValue,
+                                media: media as any,
+                              });
+                              if (media.filter((f) => f.type).length > 0) {
+                                onSaveIfAllSet();
+                              }
+                              parseResumeData(headers, onChange, media, item, entity, routes);
+                            }}
+                            onChangeMultiple={(e) => {
+                              onChange({
+                                ...detailValue,
+                                multiple: e as any[],
+                              });
+                            }}
+                            onChangeRange={(e) => {
+                              onChange({
+                                ...detailValue,
+                                range: e as any,
+                              });
+                            }}
+                            readOnly={
+                              (editing && !detailValue.property.canUpdate) ||
+                              (item?.id !== undefined && (!editing || !canUpdate)) ||
+                              detailValue.property?.isReadOnly
+                            }
+                            autoFocus={colIndex === 0 && originalIndex === 0 && idxDetailValue === 0 && canSubmit}
+                            promptFlows={promptFlows ? { prompts: promptFlows, rowId: item?.id } : undefined}
+                          />
+                        </div>
+                      );
+                    })}
+                    {/* Show parent entities in Default Properties Group */}
+                    {!group && (
+                      <>
+                        {parentEntities.visible.map((relationship) => (
+                          <div key={relationship.id} className="col-span-12">
+                            <label htmlFor={relationship.id} className="flex justify-between space-x-2 text-xs font-medium text-gray-600 ">
+                              <div className=" flex items-center space-x-1">
+                                <div className="truncate">
+                                  {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
+                                  {relationship.required && <span className="ml-1 text-red-500">*</span>}
+                                </div>
+                              </div>
+                            </label>
+                            <RelationshipSelector
+                              fromEntity={entity}
+                              className="mt-1"
+                              type="parent"
+                              relationship={relationship}
+                              relatedRows={relatedRows}
+                              onFindEntityRows={onFindEntityRows}
+                              allEntities={allEntities}
+                              onRemoveRelatedRow={onRemoveRelatedRow}
+                              readOnly={item?.id !== undefined && (!editing || !canUpdate)}
+                              routes={routes}
+                              relationshipRows={relationshipRows}
+                              addRelationshipRow={addRelationshipRow}
+                              setRelationshipRows={setRelationshipRows}
+                            />
+                          </div>
+                        ))}
+
+                        {isAddingOrEditing && (
+                          <AddHiddenRelationshipEntities items={parentEntities.hidden} onClick={parentEntities.onAddParentEntity} type="parent" />
+                        )}
+                      </>
+                    )}
+                    {/* Show custom properties in Default Properties Group */}
+                    {!group && <>{children}</>}
+                  </div>
+                </InputGroup>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
 }
 
