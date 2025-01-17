@@ -17,7 +17,7 @@ import EventsService from "~/modules/events/services/.server/EventsService";
 import { RowDeletedDto } from "~/modules/events/dtos/RowDeletedDto";
 import ApiHelper from "~/utils/helpers/ApiHelper";
 import { RowUpdatedDto } from "~/modules/events/dtos/RowUpdatedDto";
-
+import { sendInvitation } from "~/modules/companyMembers/companyMemberInvitation";
 export namespace Rows_Edit {
   export type LoaderData = {
     meta: MetaTagsDto;
@@ -87,6 +87,9 @@ export namespace Rows_Edit {
           }),
           "RowsApi.update"
         );
+        if (params.entity == "account") {
+          sendInvitation(form, params.id, params, userId, request);
+        }
         await time(
           FormulaService.trigger({ trigger: "AFTER_UPDATED", rows: [updatedRow], entity: entity, session: { tenantId, userId }, t }),
           "FormulaService.trigger.AFTER_UPDATED"

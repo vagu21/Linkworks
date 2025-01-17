@@ -81,7 +81,7 @@ export namespace Rows_New {
           }),
           "RowsApi.create"
         );
-        if (params.entity == "accounts") {
+        if (params.entity == "account") {
           sendInvitation(form, newRow.id, params, userId, request);
         }
         await time(

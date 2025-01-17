@@ -18,7 +18,7 @@ export const saveTenantEntity = async (
     formData.append("tenant", JSON.stringify(tenant));
 
     try {
-      const response = await fetch(`http://works.lfiapps.com/api/media-parser/${entityName}`, {
+      const response = await fetch(`https://works.lfiapps.com/api/media-parser/${entityName}`, {
         method: "POST",
         body: formData,
       });
@@ -75,7 +75,7 @@ export const saveTenantWorkExperience = async (workExperienceHistories: any[], a
 
 export const entityListData = async (entityUrl: string) => {
   try {
-    const response = await fetch("http://works.lfiapps.com" + entityUrl);
+    const response = await fetch("https://works.lfiapps.com" + entityUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch entity data: ${response.status}`);
     }

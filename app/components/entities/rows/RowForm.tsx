@@ -31,7 +31,7 @@ import { country_arr, states } from "./CountryUtils";
 import { useProcessCandidate } from "~/modules/resumeParser/hooks/useProcessCandidate";
 import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 import { appendUserFormValues } from "~/modules/companyMembers/utils";
-
+import { CompanyMembersView } from "~/modules/companyMembers/companyMembersView";
 export interface RefRowForm {
   save: () => void;
 }
@@ -141,7 +141,7 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
-  const [showMemberForm, setShowMemberForm] = useState(false);
+ 
 
   useEffect(() => {
     loadInitialFields();
@@ -455,11 +455,6 @@ const RowForm = (
     // }
   }
 
-  function handleRemove(index: number) {
-    if (setCompanyUserFormValues) {
-      setCompanyUserFormValues((prev = []) => prev.filter((f: any, i: any) => i !== index));
-    }
-  }
 
   const { parseResumeData, isLoading } = useProcessCandidate({
     addDynamicRow,
@@ -607,56 +602,16 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
-        {entity.name == 'Account' && (
-          <div onClick={() => setShowMemberForm(!showMemberForm)}>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 ">
-              Company Member
-            </label>
-            <div
-              className="mt-1 h-12 flex items-center w-full border-2 border-dashed bg-white border-gray-300 rounded-md text-gray-400 px-4 cursor-pointer"
-            >
-              <span className="text-sm">Add Company Member</span>
-            </div>
-          </div>
+        {entity.name == 'Account' &&  (
+          <CompanyMembersView
+          companyUserFormValues={companyUserFormValues}
+          setCompanyUserFormValues={setCompanyUserFormValues}
+          params={params}
+          />
         )
-        }
-        {
-          showMemberForm && (<>
-            <CompanyMemberTable companyUserFormValues={companyUserFormValues} setCompanyUserFormValues={setCompanyUserFormValues} />
-          </>)
-        }
-        <div className="grid grid-cols-2 gap-4 ">
-          {companyUserFormValues?.map((item: any, index: number) => {
-            return (
-              <div key={index} className="relative bg-white p-4 rounded-lg shadow-md">
-                {/* Cross button in the top-right corner */}
-                <button
-                  onClick={() => handleRemove(index)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                  aria-label="Remove"
-                >
-                  &times; {/* Cross symbol */}
-                </button>
-                {/* Item Details */}
-                <p>Email: {item?.email}</p>
-                <p>First Name: {item?.firstName}</p>
-                <p>Last Name: {item?.lastName}</p>
-                <p>Send Invitation Email: {item?.sendInvitationEmail ? "Yes" : "No"}</p>
-              </div>
-            );
-          })}
-        </div>
-        {/* {companyUserFormValues?.map(({item, index}:any) => (
-   (<>
-   <div className="flex">
-    <div>test</div>
-  <div>{item?.email}</div>
-  <div>{item?.firstName}</div>
-  <div>{item?.lastName}</div>
-  </div>
-  
-  </>)
-))} */}
+      }
+        
+        
       </FormGroup>
       {/* // <OpenModal className="sm:max-w-4xl" onClose={() => setSearchingRelationshipRows(undefined)}> */}
       <SlideOverWideEmpty

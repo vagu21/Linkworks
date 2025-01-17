@@ -35,7 +35,7 @@ export default function RowEditRoute({ rowFormChildren, options }: Props) {
   const params = useParams();
   const [statesArr, setStatesArr] = useState<string[]>([]);
   const { t } = useTranslation();
-
+  const [companyUserFormValues, setCompanyUserFormValues] = useState([]);
   return (
     <NewPageLayout
       title={t("shared.edit") + " " + t(rowData.entity.title)}
@@ -44,6 +44,8 @@ export default function RowEditRoute({ rowFormChildren, options }: Props) {
       <RowForm
         allEntities={allEntities}
         entity={rowData.entity}
+        companyUserFormValues={companyUserFormValues}
+        setCompanyUserFormValues={setCompanyUserFormValues}
         routes={routes}
         statesArr={statesArr}
         setStatesArr={setStatesArr}

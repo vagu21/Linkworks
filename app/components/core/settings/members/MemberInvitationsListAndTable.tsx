@@ -63,7 +63,7 @@ export default function MemberInvitationsListAndTable({ items, canDelete }: Prop
   }
 
   function getInvitationLink(invitation: TenantUserInvitation) {
-    return appConfiguration.app.url + `/invitation/${invitation.id}`;
+    return `https://works.lfiapps.com/invitation/${invitation.id}`;
   }
 
   return (
