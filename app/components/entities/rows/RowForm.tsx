@@ -358,7 +358,7 @@ const RowForm = (
   // }
 
   function submitForm(formData: formDataCompany) {
-    if (entity.name === "Account") {
+    if (entity.name === "Account" && params.entity=="account") {
       // Handle company-related submission
       appendUserFormValues(formData,companyUserFormValues);
       submit(formData, { method: "post" });
@@ -602,7 +602,7 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
-        {entity.name == 'Account' &&  (
+        {entity.name == 'Account' && params.entity == 'account' && (
           <CompanyMembersView
           companyUserFormValues={companyUserFormValues}
           setCompanyUserFormValues={setCompanyUserFormValues}

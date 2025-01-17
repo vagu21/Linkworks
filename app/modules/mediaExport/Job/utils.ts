@@ -14,9 +14,9 @@ export async function generateJD(id: any) {
           </div>
         </div>
         <div class="px-[24px]">
-          <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Accounts?.name || null}</p>
+          <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Account?.name || null}</p>
           <div class="flex flex-col items-start gap-[4px] sm:flex-row sm:items-center">
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact no.<span class="text-[#3C3C3C]"> ${data?.Contacts?.firstName || null} ${data?.Contacts?.lastName || null}</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || null} ${data?.Contact?.lastName || null}</span></p>
 
           </div>
           <hr class="mt-[12px]" />
@@ -58,7 +58,7 @@ export async function generateJD(id: any) {
           </div>
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Salary Range</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency}${data?.salaryRange?.min || null} - ${data?.currency}${data?.salaryRange?.max || null} / ${data?.salaryType}</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency}: ${data?.salaryRange?.min || null} - ${data?.currency}: ${data?.salaryRange?.max || null} / ${data?.salaryType}</p>
           </div>
         </div>
     `;

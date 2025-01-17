@@ -6,7 +6,7 @@ import { rowFetcher } from "../rowFetcher";
   }
   
   export async function generateResume(id: any) {
-    const data=await rowFetcher(id,"Candidates")
+    const data=await rowFetcher(id,"Candidate")
     let skillBarMapping: any = {
       0: ` <div class="h-[2px] rounded-[2.5px] bg-[#EE3434]" style="width: 40%"></div>`,
       1: `<div class="h-[2px] rounded-[2.5px] bg-[#F2A73E]" style="width: 70%"></div>`,

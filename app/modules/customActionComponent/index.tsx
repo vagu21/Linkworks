@@ -1,15 +1,16 @@
 import { DownloadIcon } from "lucide-react";
 import { downloadAction } from "~/modules/mediaExport";
 import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
+import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
 
 
 function ActionButton({ buttonTitle }: { buttonTitle: string }) {
   return (
     <div>
-      <ButtonSecondary className="gap-2">
+      <ButtonPrimary className="gap-2">
         {buttonTitle}
-        <DownloadIcon className="h-4 w-4 text-gray-500" />
-      </ButtonSecondary>
+        <DownloadIcon className="h-4 w-4 text-white" />
+      </ButtonPrimary>
     </div>
   );
 }
@@ -18,9 +19,9 @@ export function getConditionalActions(entity: any, onRemove: any) {
   const actions = [];
   
   switch (entity.name) {
-    case "Candidates":
+    case "Candidate":
       actions.push({
-        title: <ActionButton buttonTitle={"Concise Resume"} />,
+        title: <ActionButton buttonTitle={"Summary"} />,
         onClick: (_: any, item: any) => downloadAction(item.id, "resume"),
       });
       break;
