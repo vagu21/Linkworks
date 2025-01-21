@@ -21,7 +21,13 @@ export let action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    const browser = await Puppeteer.launch();
+    const browser = await Puppeteer.launch(
+      {
+        headless: true,
+        executablePath: "/var/lib/snapd/snap/bin/chromium",
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      }
+    );
     const page = await browser.newPage();
     
     await page.setContent(html);

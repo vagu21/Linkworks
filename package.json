@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "remix vite:dev",
-    "build": "prisma generate && remix vite:build",
+    "build": "prisma generate && remix vite:build && npm run post-build",
+    "post-build": "npx puppeteer browsers install",
     "lint": "eslint --ext .tsx,.ts .",
     "typecheck": "tsc -b",
     "test": "vitest app/",
