@@ -86,7 +86,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     let companyRoles:any = [];
     if (companyRoleIDs.length!=0) {
       try {
-        const data: any = await fetch("http://localhost:3000/api/getCompanyRoles");
+        const data: any = await fetch("https://works.lfiapps.com/api/getCompanyRoles");
         if (data.ok) {
           const response = await data.json();
           companyRoles=response;

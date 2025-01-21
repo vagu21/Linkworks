@@ -232,6 +232,7 @@ export async function importEntitiesFromTemplate({ template, createdByUserId }: 
           required: relationship.required ?? false,
           cascade: false,
           readOnly: relationship.readOnly ?? false,
+          distinct: relationship.distinct ?? false,
           hiddenIfEmpty: relationship.hiddenIfEmpty !== undefined ? relationship.hiddenIfEmpty : false,
           childEntityViewId: null,
           parentEntityViewId: null,

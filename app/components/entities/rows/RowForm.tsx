@@ -28,7 +28,7 @@ import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db
 import RowUrlHelper from "~/utils/helpers/RowUrlHelper";
 import CompanyMemberTable from "~/custom/components/companyMemberTable";
 import { country_arr, states } from "./CountryUtils";
-import { useProcessCandidate } from "~/modules/resumeParser/hooks/useProcessCandidate";
+import { useProcessMediaFile } from "~/modules/mediaParser/useProcessMedia";
 import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 import { appendUserFormValues } from "~/modules/companyMembers/utils";
 import { CompanyMembersView } from "~/modules/companyMembers/companyMembersView";
@@ -456,11 +456,10 @@ const RowForm = (
   }
 
 
-  const { parseResumeData, isLoading } = useProcessCandidate({
+  const { parseMediaFile, isLoading } = useProcessMediaFile({
     addDynamicRow,
     childrenEntities,
   });
-
   // Function to get distinct values from relationships
   return (
     <>
@@ -537,7 +536,7 @@ const RowForm = (
           }}
           promptFlows={promptFlows}
           onSaveIfAllSet={onSaveIfAllSet}
-          parseResumeData={parseResumeData}
+          parseMediaFile={parseMediaFile}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -858,7 +857,7 @@ function RowGroups({
   parentEntities,
   promptFlows,
   onSaveIfAllSet,
-  parseResumeData,
+  parseMediaFile,
 }: {
   item?: RowWithDetails | null;
   entity: EntityWithDetails;
@@ -886,7 +885,7 @@ function RowGroups({
   };
   promptFlows?: PromptFlowWithDetails[];
   onSaveIfAllSet: () => void;
-  parseResumeData: any;
+  parseMediaFile: any;
 }) {
   const { t } = useTranslation();
   const rowValueInput = useRef<RefRowValueInput>(null);
@@ -1081,7 +1080,7 @@ function RowGroups({
                               if (media.filter((f) => f.type).length > 0) {
                                 onSaveIfAllSet();
                               }
-                              parseResumeData(headers, onChange, media, item, entity, routes);
+                              parseMediaFile(headers, onChange, media, item, entity, routes);
                             }}
                             onChangeMultiple={(e) => {
                               onChange({

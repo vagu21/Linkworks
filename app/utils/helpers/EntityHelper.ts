@@ -359,6 +359,7 @@ function exportEntitiesToTemplate(entities: EntityWithDetails[], relationships: 
       required: relationship.required ?? false,
       cascade: relationship.cascade ?? false,
       readOnly: relationship.readOnly ?? false,
+      distinct: relationship.distinct ?? false,
       hiddenIfEmpty: relationship.hiddenIfEmpty ?? false,
     });
   });

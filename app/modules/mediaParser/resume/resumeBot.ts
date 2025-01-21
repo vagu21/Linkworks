@@ -11,21 +11,22 @@ export async function generateJsonFromContent(extractedText: string) {
   const prompt = `
 Summarize the candidate details below into a JSON with exactly the following structure{
             "Summary" (it should be a brief summary of the candidate's experience, skills, and expertise in string format, cannot be empty): "",
-            "Name" (it should be a name of candidate in string format, cannot be empty):"",
+            "FirstName" (it should be a first name of candidate in string format, cannot be empty):"",
+            "LastName" (it should be a last name of candidate in string format, cannot be empty):"",
             "Email" (it should be a valid email address in string format, cannot be empty): "",
             "Phone_Number" (it should be a valid phone number in string format, cannot be empty): "",
             "Location"(it should be a location of candidate in string format, leave an empty string if not found):"",
             "LanguageSkills" (it should list the languages the candidate is proficient in, separated by commas, leave an empty string if not found): "",
             "Skills": ["A list of skills suitable for the job role. Maximum of 10 items. Cannot be empty."],
             "LinkedInProfileURL" (it should be a valid LinkedIn URL in string format, cannot be empty): "",
-            
+            "Date of Birth" (it should be a valid date of birth in 'YYYY-MM-DD' format, can be empty if not found): "",
 
             
             "Education": [
     {
       "schoolCollegeName": "The name of the school, college, or university attended by the candidate, written as a single string.",
       "educationQualification": "The qualification attained by the candidate, such as 'B.Tech', 'Intermediate Education', 'MBA', written as a string.",
-      "educationalSpecialization": "The field of study or specialization, such as 'Computer Science Engineering' or 'Marketing', written as a string.",
+      "educationalSpecialization": "The field of study or specialization, such as 'Computer Science Engineering' or 'Marketing', written as a string. should not be more long 4-5 words as maximum",
       "grade": "The grade or percentage attained by the candidate, such as 'CGPA: 6.44' or 'Percentage: 78.5%', written as a string.",
       "location": "The location of the institution, such as 'Hyderabad', written as a string. If not available, leave this as an empty string.",
       "startDate": "The start date of the education period in 'YYYY-MM-DD' format. If not available, leave this as an empty string.",

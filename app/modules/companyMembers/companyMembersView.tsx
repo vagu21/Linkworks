@@ -22,7 +22,7 @@ export const CompanyMembersView = ({companyUserFormValues,setCompanyUserFormValu
        }
     const fetchCompanyMembers = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/api/get-companyMembers/${params.id}`);
+          const response = await fetch(`https://works.lfiapps.com/api/get-companyMembers/${params.id}`);
           const companyMembers = await response.json();
       
           setCompanyMembersOverview((prev) => {
