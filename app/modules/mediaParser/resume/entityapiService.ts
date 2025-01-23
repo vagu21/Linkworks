@@ -19,7 +19,7 @@ export const saveTenantEntity = async (
       formData.append("tenant", JSON.stringify(tenant));
   
       try {
-        const response = await fetch(`${serverUrl}/api/media-parser/${entityName})`, {
+        const response = await fetch(`${serverUrl}/api/media-parser/${entityName}`, {
           method: "POST",
           body: formData,
         });

@@ -63,7 +63,6 @@ export let action: ActionFunction = async ({ request }) => {
         bottom: "0px",
         left: "0px",
       },
-      scale: 1, // Optional: scale if the content is too large
     });
 
     await browser.close();

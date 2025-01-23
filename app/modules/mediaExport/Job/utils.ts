@@ -16,7 +16,7 @@ export async function generateJD(id: any) {
         <div class="px-[24px]">
           <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Account?.name || null}</p>
           <div class="flex flex-col items-start gap-[4px] sm:flex-row sm:items-center">
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || null} ${data?.Contact?.lastName || null}</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || null} ${data?.Contact?.lastName || null} | ${data?.Contact?.phone || null}</span></p>
 
           </div>
           <hr class="mt-[12px]" />
@@ -50,7 +50,7 @@ export async function generateJD(id: any) {
         <div class="mb-[51px] flex gap-[36px]">
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Experience</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experience?.min || null} - ${data?.experience?.max || null} years</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experience || null} years</p>
           </div>
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Experience Level</p>
@@ -58,7 +58,7 @@ export async function generateJD(id: any) {
           </div>
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Salary Range</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency}: ${data?.salaryRange?.min || null} - ${data?.currency}: ${data?.salaryRange?.max || null} / ${data?.salaryType}</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency}: ${data?.salary || null} / ${data?.salaryType}</p>
           </div>
         </div>
     `;
@@ -110,9 +110,11 @@ export async function generateJD(id: any) {
   
   function applicationDeadlineSection() {
     return `
-      <p class="mb-[8px] text-center text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">
+      <div class="">
+      <p class="mb-[8px] text-center text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94] ">
         Job deadline: <span class="text-[10px] font-semibold leading-[14.06px] text-[#3C3C3C]"> ${new Date(data?.applicationDeadline).toLocaleDateString()}</span>
       </p>
+      </div>
     `;
   }
   
@@ -168,8 +170,8 @@ export async function generateJD(id: any) {
     <title>Job Description</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="">
-   <div class="mx-auto max-w-full rounded-lg bg-white shadow-lg sm:max-w-[600px] ">
+  <body class="w-[210mm] !h-[calc(100vh-0px)]">
+   <div class=" rounded-lg bg-white shadow-lg w-[210mm]  ">
       ${headerSection()}
       ${jobDetailsSection()}
       ${experienceAndSalarySection()}

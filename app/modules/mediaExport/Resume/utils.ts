@@ -54,9 +54,9 @@ import { rowFetcher } from "../rowFetcher";
           <title>Resume</title>
           <script src="https://cdn.tailwindcss.com"></script>
         </head>
-        <body class="bg-gray-100 overflow-hidden">
+        <body class="bg-gray-100  w-[210mm] !h-[calc(100vh-0px)]">
           <!-- Container -->
-          <div class="mx-auto   rounded-lg bg-white shadow-md h-[100%] w-[100%]">
+          <div class=" rounded-lg bg-white shadow-md w-[210mm] h-[297mm] ">
             <!-- Header Section -->
            ${headerSection()}
       
@@ -126,11 +126,11 @@ import { rowFetcher } from "../rowFetcher";
 
     function detailsSection()
     {
-        return `<div class="flex  flex-col px-6 md:flex-row  relative ml-8">
+        return `<div class="flex  flex-col px-6 md:flex-row  relative ml-8 !h-[calc(100vh-140px)]">
               <!-- Left Section -->
-              <div class="py-6 pr-4 md:w-[38.82%] md:pr-8 md:border-r">
+              <div class="py-6 pr-4 md:w-[38.82%] md:pr-8 md:border-r ">
                 <!-- Detailst -->
-                <div class="mb-[30px] relative">
+                <div class="mb-[30px] relative pt-4">
                   <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Details</h3>
                   <ul class="space-y-2 text-gray-600">
                     <li class="text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2">
@@ -184,7 +184,7 @@ import { rowFetcher } from "../rowFetcher";
 
     function experienceSection()
     {
-        return `  <div class="mb-[30px]">
+        return `  <div class="mb-[30px] pt-4">
                   <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Experience</h3>
                   <ul class="space-y-4 text-gray-600">
                   ${data?.['Work Experience']
@@ -288,7 +288,7 @@ import { rowFetcher } from "../rowFetcher";
 
     function footerSection()
     {
-        return `<div class="flex flex-col items-center justify-between border-t bg-[#D6DCE8] px-6 py-4 text-center md:flex-row">
+        return `<div class=" absolute bottom-0 left-0 right-0 flex flex-col items-center justify-between border-t bg-[#D6DCE8] px-6 py-4 text-center md:flex-row">
               <!-- 
       
                  <div class="flex items-center justify-start gap-2">
