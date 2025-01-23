@@ -19,8 +19,7 @@ import { getBaseURL } from "~/utils/url.server";
 import EventsService from "~/modules/events/services/.server/EventsService";
 import { MemberInvitationAcceptedDto } from "~/modules/events/dtos/MemberInvitationAcceptedDto";
 
-
-let companyRoleIDs:any = [];
+let companyRoleIDs: any = [];
 
 type LoaderData = {
   title: string;
@@ -60,7 +59,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     });
   }
   const fromUser = invitation.fromUserId ? await getUser(invitation.fromUserId) : null;
-  const companyId=invitation?.companyId || null;
+  const companyId = invitation?.companyId || null;
   let existingUser = await getUserByEmail(invitation.email);
   if (!existingUser) {
     // Register user
@@ -83,26 +82,15 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
     await updateUserInvitationPending(invitation.id);
     const roles = await getAllRoles("app");
-    let companyRoles:any = [];
-    if (companyRoleIDs.length!=0) {
-      try {
-        const data: any = await fetch("https://works.lfiapps.com/api/getCompanyRoles");
-        if (data.ok) {
-          const response = await data.json();
-          companyRoles=response;
-        }
-      } catch (error) {
-        throw error;
-      }
-    }
+    let AllCompanyRoles = ["Company Member", "Company Admin", "Supplier"];
+    const companyRoles: any = roles.filter((role: any) => AllCompanyRoles.includes(role.name));
 
-    function assignRoles()
-    {
-      if(companyRoleIDs.length!=0)
-      {
-         return companyRoles.filter((f:any)=>companyRoleIDs.includes(f.id));
-      }
-      else return roles.filter((f) => f.assignToNewUsers);
+    function assignRoles() {
+      if (companyRoleIDs.length != 0) {
+        if (companyRoleIDs.length != 0) {
+          return companyRoles?.filter((f: any) => companyRoleIDs.includes(f.id));
+        }
+      } else return roles.filter((f) => f.assignToNewUsers);
     }
 
     await createTenantUser(

@@ -27,7 +27,13 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
 
   async function getCompanyRoles() {
     try {
-      const data :any= await fetch("https://works.lfiapps.com/api/getCompanyRoles");
+      const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
+      const data :any= await fetch(`${serverUrl}/api/getCompanyRoles`,{
+        headers:{
+          "Content-Type": "application/json",
+        },
+        credentials: 'include',
+      });
             if(data.ok)
             {
       const response=await data.json();

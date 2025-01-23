@@ -1,10 +1,12 @@
-const apiKey: string | undefined = import.meta.env.VITE_CLIENT_API_KEY;
 export async function downloadAction(id: any,type:String) {
-    const response = await fetch("https://works.lfiapps.com/api/generate-pdf", {
+
+  const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
+    const response = await fetch(`${serverUrl}/api/generate-pdf`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Api-Key": ``,
+        // "Authorizariton":`Bearer ${token}`
       },
       body: JSON.stringify({id,type}),
     });

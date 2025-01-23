@@ -1,3 +1,4 @@
+const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
 export const saveTenantEntity = async (
     entityName: string,
     entityDataList: any[],
@@ -18,7 +19,7 @@ export const saveTenantEntity = async (
       formData.append("tenant", JSON.stringify(tenant));
   
       try {
-        const response = await fetch(`https://works.lfiapps.com/api/media-parser/${entityName}`, {
+        const response = await fetch(`${serverUrl}/api/media-parser/${entityName})`, {
           method: "POST",
           body: formData,
         });
@@ -75,7 +76,7 @@ export const saveTenantEntity = async (
   
   export const entityListData = async (entityUrl: string) => {
     try {
-      const response = await fetch("https://works.lfiapps.com" + entityUrl);
+      const response = await fetch(`${serverUrl}` + entityUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch entity data: ${response.status}`);
       }

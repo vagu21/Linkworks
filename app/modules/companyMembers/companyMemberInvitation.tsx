@@ -13,11 +13,6 @@ export async function sendInvitation(form:any,companyId:any,params:any,userId:an
 {
          
               const numberOfUsers = Number(form.get("numberOfUsers"));
-              if (numberOfUsers == 0 || !numberOfUsers) {
-                console.error("Please add atleast one company member.");
-                return json({ error: "Please add atleast one company member." }, { status: 400 });
-              }
-              
               const tenantId = await getTenantIdFromUrl(params);
               const fromUser = await getUser(userId);
               const tenant = await getTenant(tenantId);
