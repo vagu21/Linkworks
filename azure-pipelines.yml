@@ -26,8 +26,8 @@ jobs:
         secureFile: "linkworks-saasrock.env"
       displayName: download .env file from library
     - script: |
-        mv $(Agent.TempDirectory)/linkworks-saasrock.env $(Build.SourcesDirectory)/.env
-      displayName: move env file to source directory
+        mv $(Agent.TempDirectory)/linkworks-saasrock.env $(Build.SourcesDirectory)/pipeline-publish/applicationcode/.env
+      displayName: move .env file to that directory that are zip and publish
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(Build.SourcesDirectory)/pipeline-publish/applicationcode'
