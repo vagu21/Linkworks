@@ -9,19 +9,18 @@ jobs:
     vmImage: ubuntu-latest
   steps:
     - task: CopyFiles@2
-            displayName: Copy artifacts to publish
-            inputs:
-              SourceFolder: $(Build.SourcesDirectory)
-              Contents: |
-                **/?(app|prisma|public|signatures|workflows)/**
-                **.json
-                **.ts
-                **.tsx
-                **.js
-                fly.toml
-                shadcn-install-all.sh
-                start.sh
-              TargetFolder: $(Build.SourcesDirectory)/pipeline-publish/applicationcode  
+      displayName: Copy artifacts to publish
+      inputs:
+        SourceFolder: $(Build.SourcesDirectory)
+        Contents: |
+          **/?(app|prisma|public|signatures|workflows)/**
+          **.json
+          **.ts
+          **.tsx
+          **.js
+          *.toml
+          *.sh
+        TargetFolder: $(Build.SourcesDirectory)/pipeline-publish/applicationcode
     - task: DownloadSecureFile@1
       inputs:
         secureFile: "linkworks-saasrock.env"
@@ -29,15 +28,15 @@ jobs:
     - script: |
         mv $(Agent.TempDirectory)/linkworks-saasrock.env $(Build.SourcesDirectory)/.env
       displayName: move env file to source directory
-    - task: ArchiveFiles@2        
+    - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: '$(Build.SourcesDirectory)'
+        rootFolderOrFile: '$(Build.SourcesDirectory)/pipeline-publish/applicationcode'
         includeRootFolder: false 
         archiveType: 'zip'
         archiveFile: $(Build.SourcesDirectory)/build.zip
         replaceExistingArchive: true
       displayName: 'Archieving the source code as zip'
-    - task: CopyFilesOverSSH@0        
+    - task: CopyFilesOverSSH@0  
       inputs:
         sshEndpoint: 'linkworks-ssh-cicd'
         sourceFolder: $(Build.SourcesDirectory)
@@ -54,6 +53,6 @@ jobs:
           sudo systemctl stop pm2-root
           cd /home/ec2-user/saasrock && sudo rm -rf apps-bkp.zip && sudo zip -r apps-bkp.zip apps && sudo rm -rf apps && sudo mkdir apps
           cd /home/ec2-user/saasrock/apps && sudo unzip /home/ec2-user/saasrock/build.zip && sudo npm i 2>&1 && sudo npm run build 2>&1
-          sudo systemctl restart pm2-root 
-          sudo systemctl restart nginx      
+          sudo systemctl restart pm2-root
+          sudo systemctl restart nginx
       displayName: 'Application Deployment using ssh'
