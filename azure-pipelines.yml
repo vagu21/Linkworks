@@ -8,9 +8,20 @@ jobs:
   pool:
     vmImage: ubuntu-latest
   steps:
-    - script: |
-        rm -f azure-pipelines.yml package-lock.json Dockerfile .env.example .env.fly.example .dockerignore .gitignore README* 
-      displayName: remove unwanted files
+    - task: CopyFiles@2
+            displayName: Copy artifacts to publish
+            inputs:
+              SourceFolder: $(Build.SourcesDirectory)
+              Contents: |
+                **/?(app|prisma|public|signatures|workflows)/**
+                **.json
+                **.ts
+                **.tsx
+                **.js
+                fly.toml
+                shadcn-install-all.sh
+                start.sh
+              TargetFolder: $(Build.SourcesDirectory)/pipeline-publish/applicationcode  
     - task: DownloadSecureFile@1
       inputs:
         secureFile: "linkworks-saasrock.env"
