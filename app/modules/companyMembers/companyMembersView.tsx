@@ -1,15 +1,11 @@
 import { useLocation } from '@remix-run/react';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,forwardRef, useImperativeHandle } from 'react'
 import CompanyMemberTable from '~/custom/components/companyMemberTable';
+import { appendUserFormValues } from './utils';
 
-
-
-
-
-
-
-export const CompanyMembersView = ({companyUserFormValues,setCompanyUserFormValues,params}:any) => {
+export const CompanyMembersView = forwardRef(({params,formData}:any,ref) => {
      const [companyMembersOverview, setCompanyMembersOverview] = useState<any[]>([]);
+     const [companyUserFormValues,setCompanyUserFormValues]=useState<any>([]);
      const [showMemberForm, setShowMemberForm] = useState(false);
        const location = useLocation();
        const isEditPage = location.pathname.includes("/edit");
@@ -22,7 +18,13 @@ export const CompanyMembersView = ({companyUserFormValues,setCompanyUserFormValu
        }
     const fetchCompanyMembers = async () => {
         try {
-          const response = await fetch(`https://works.lfiapps.com/api/get-companyMembers/${params.id}`);
+          const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
+          const response = await fetch(`${serverUrl}/api/get-companyMembers/${params.id}`,{
+            headers:{
+              "Content-Type": "application/json",
+            },
+            credentials: 'include',
+          });
           const companyMembers = await response.json();
       
           setCompanyMembersOverview((prev) => {
@@ -42,6 +44,12 @@ export const CompanyMembersView = ({companyUserFormValues,setCompanyUserFormValu
           console.error("Error fetching company members:", error);
         }
       };
+
+      useImperativeHandle(ref, () => ({
+        handleSubmit: (formData:any) => {
+          appendUserFormValues(formData, companyUserFormValues);
+        }
+      }));
       
       useEffect(() => {
         if (isoverViewPage) {
@@ -108,4 +116,4 @@ export const CompanyMembersView = ({companyUserFormValues,setCompanyUserFormValu
 
         </>
     )
-}
+})

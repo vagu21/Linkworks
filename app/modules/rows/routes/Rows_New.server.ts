@@ -82,7 +82,14 @@ export namespace Rows_New {
           "RowsApi.create"
         );
         if (params.entity == "account") {
-          sendInvitation(form, newRow.id, params, userId, request);
+          const enabled = form.get("enabled");
+          if (enabled=="true") {
+              const numberOfUsers = Number(form.get("numberOfUsers"));
+              if (numberOfUsers==0) {
+                return json({ error: "Add atleast one company Member" });
+              }
+            sendInvitation(form, newRow.id, params, userId, request);
+          }
         }
         await time(
           FormulaService.trigger({ trigger: "AFTER_CREATED", rows: [newRow], entity: entity, session: { tenantId, userId }, t }),

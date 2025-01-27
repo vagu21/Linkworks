@@ -67,18 +67,13 @@ interface Props {
   template?: { title: string; config: string } | null;
   statesArr?: string[];
   setStatesArr?: Dispatch<SetStateAction<string[]>>;
-  companyUserFormValues?: any;
-  setCompanyUserFormValues?: (values: any) => void;
 }
 interface formDataCompany extends FormData {
-
-  userEmail?: "string",
-  firstName?: "string",
-  lastName?: "string",
-  sendInvitationEmail?: boolean
+  userEmail?: "string";
+  firstName?: "string";
+  lastName?: "string";
+  sendInvitationEmail?: boolean;
 }
-
-
 
 const RowForm = (
   {
@@ -110,15 +105,13 @@ const RowForm = (
     template,
     statesArr,
     setStatesArr,
-    companyUserFormValues,
-    setCompanyUserFormValues
   }: Props,
   ref: Ref<RefRowForm>
 ) => {
   const { t } = useTranslation();
   const submit = useSubmit();
   const navigation = useNavigation();
-
+  const companyMemberRef: any = useRef();
   const params = useParams();
   // const actionData = useActionData<{ newRow?: RowWithDetails }>();
   const formGroup = useRef<RefFormGroup>(null);
@@ -141,7 +134,21 @@ const RowForm = (
     visible: [],
     hidden: [],
   });
- 
+
+  const [featureFlagValues, setFeatureFlagValues] = useState<any>({});
+
+  async function getFeatureFlags() {
+    const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
+    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`,{credentials: 'include'});
+    const response = await data.json();
+    setFeatureFlagValues(response);
+  }
+
+  useEffect(() => {
+    if (entity.name == "Account") {
+      getFeatureFlags();
+    }
+  }, []);
 
   useEffect(() => {
     loadInitialFields();
@@ -322,7 +329,6 @@ const RowForm = (
     setRelatedRows(newRelatedRows);
   }
 
-
   function addDynamicRow(relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) {
     setRelatedRows((prevRelatedRows) => {
       const newRelatedRows = [...prevRelatedRows];
@@ -358,9 +364,12 @@ const RowForm = (
   // }
 
   function submitForm(formData: formDataCompany) {
-    if (entity.name === "Account" && params.entity=="account") {
+    if (entity.name === "Account" && params.entity == "account") {
       // Handle company-related submission
-      appendUserFormValues(formData,companyUserFormValues);
+      formData.append("enabled", featureFlagValues?.enabled);
+      if (featureFlagValues?.enabled == true) {
+        companyMemberRef?.current.handleSubmit(formData);
+      }
       submit(formData, { method: "post" });
     } else {
       // Default submission
@@ -464,7 +473,7 @@ const RowForm = (
   return (
     <>
       {isLoading && (
-        <div >
+        <div>
           <FloatingLoader loading={isLoading} />
         </div>
       )}
@@ -601,16 +610,9 @@ const RowForm = (
             ))}
           </Fragment>
         ))}
-        {entity.name == 'Account' && params.entity == 'account' && (
-          <CompanyMembersView
-          companyUserFormValues={companyUserFormValues}
-          setCompanyUserFormValues={setCompanyUserFormValues}
-          params={params}
-          />
-        )
-      }
-        
-        
+        {entity.name == "Account" && params.entity == "account" && featureFlagValues?.enabled == true && (
+          <CompanyMembersView ref={companyMemberRef} params={params} />
+        )}
       </FormGroup>
       {/* // <OpenModal className="sm:max-w-4xl" onClose={() => setSearchingRelationshipRows(undefined)}> */}
       <SlideOverWideEmpty
@@ -632,7 +634,8 @@ const RowForm = (
             }}
             multipleSelection={selectedRelatedEntity.multiple}
             allEntities={allEntities}
-            distinct={searchingRelationshipRows.distinct} />
+            distinct={searchingRelationshipRows.distinct}
+          />
         )}
       </SlideOverWideEmpty>
       {/* // </OpenModal> */}
@@ -673,13 +676,13 @@ function RelationshipSelector({
   const [entity] = useState(
     type === "parent"
       ? {
-        entity: getChildEntity(relationship)!,
-        view: relationship.parentEntityView,
-      }
+          entity: getChildEntity(relationship)!,
+          view: relationship.parentEntityView,
+        }
       : {
-        entity: getParentEntity(relationship)!,
-        view: relationship.childEntityView,
-      }
+          entity: getParentEntity(relationship)!,
+          view: relationship.childEntityView,
+        }
   );
 
   function getRows(relationship: EntityRelationshipWithDetails) {
@@ -794,37 +797,36 @@ function RelationshipSelector({
                 </div>
               ))} */}
 
-          <div className="flex pt-4 space-x-3">
+          <div className="flex space-x-3 pt-4">
+            {/* <AddMoreCard
+  entity={entity.entity}
+  routes={routes}
+  title={t(entity.entity.title)}
+/> */}
 
-            <AddMoreCard
-              entity={entity.entity}
-              routes={routes}
-              title={t(entity.entity.title)}
-            />
-
-            {!relationship.distinct && (
-              <button
-                onClick={() => onFindEntityRows(relationship)}
-                type="button"
-                className={clsx(
-                  "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
-                  readOnly && "hidden"
-                )}
-              >
-                {type === "parent" && (
-                  <>
-                    <div>{t("shared.select")}</div>
-                    <div className="lowercase">{t(relationship.parent.title)}</div>
-                  </>
-                )}
-                {type === "child" && (
-                  <>
-                    <div>{t("shared.select")}</div>
-                    <div className="lowercase">{t(relationship.child.title)}</div>
-                  </>
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => onFindEntityRows(relationship)}
+              type="button"
+              className={clsx(
+                "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
+                readOnly && "hidden"
+              )}
+            >
+              {type === "parent" && (
+                <>
+                  {/* <div>{t("shared.add")}</div> */}
+                  <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
+                  <div className="lowercase">{t(relationship.parent.title)}</div>
+                </>
+              )}
+              {type === "child" && (
+                <>
+                  {/* <div>{t("shared.add")}</div> */}
+                  <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
+                  <div className="lowercase">{t(relationship.child.title)}</div>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
@@ -892,7 +894,6 @@ function RowGroups({
   const [statesArr, setStatesArr] = useState<string[]>([]);
   const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
 
-
   useEffect(() => {
     const groups: { group?: string; headers: RowValueDto[] }[] = [];
     rowValues.forEach((header) => {
@@ -917,11 +918,10 @@ function RowGroups({
   }, [groups.length, rowValues]);
 
   const hasCountry = useMemo(() => {
-    return groups.some((group) => group.headers.some((header) => header.property.subtype === "country"))
+    return groups.some((group) => group.headers.some((header) => header.property.subtype === "country"));
   }, [groups]);
 
   useEffect(() => {
-
     if (!hasCountry) return;
 
     const populateInitialStates = (country: string | undefined) => {
@@ -930,7 +930,7 @@ function RowGroups({
         let curstates = states[index + 1].split("|");
         setStatesArr(curstates);
       }
-    }
+    };
 
     const addHasCountryToState = () => {
       if (!groups.length || !groups[0].headers.length) return;
@@ -961,10 +961,8 @@ function RowGroups({
       );
     };
 
-
     addHasCountryToState();
   }, [hasCountry]);
-
 
   function isVisible(rowValue: RowValueDto) {
     if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument") {
@@ -994,15 +992,12 @@ function RowGroups({
       });
     });
   }
-  const distributeGroups = (
-    groups: { group?: string; headers: RowValueDto[] }[]
-  ): Array<{ group?: string; headers: RowValueDto[] }[]> => {
+  const distributeGroups = (groups: { group?: string; headers: RowValueDto[] }[]): Array<{ group?: string; headers: RowValueDto[] }[]> => {
     const [left, right] = [[], []] as Array<typeof groups>;
     let leftHeight = 0;
     let rightHeight = 0;
 
-    const estimateHeight = (group: { headers: RowValueDto[] }): number =>
-      group.headers.length * 100; // Adjust height estimation based on inputs
+    const estimateHeight = (group: { headers: RowValueDto[] }): number => group.headers.length * 100; // Adjust height estimation based on inputs
 
     groups.forEach((group) => {
       const height = estimateHeight(group);
@@ -1020,23 +1015,14 @@ function RowGroups({
   const columns = groups.length > 1 ? 2 : 1;
 
   return (
-    <div className={`grid ${columns === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+    <div className={`grid ${columns === 2 ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
       {distributeGroups(groups).map((column, colIndex) => (
-        <div key={colIndex} className={clsx(
-          "space-y-4",
-          colIndex === 0 && "pb-8"
-        )}>
+        <div key={colIndex} className={clsx("space-y-4", colIndex === 0 && "pb-8")}>
           {column.map(({ group, headers }, originalIndex) => {
-            const isMediaGroup = headers.some(h => h.property.type === PropertyType.MEDIA);
+            const isMediaGroup = headers.some((h) => h.property.type === PropertyType.MEDIA);
 
             return (
-              <div
-                key={originalIndex}
-                className={clsx(
-                  "space-y-2",
-                  isMediaGroup && "col-span-2"
-                )}
-              >
+              <div key={originalIndex} className={clsx("space-y-2", isMediaGroup && "col-span-2")}>
                 <InputGroup title={group ? t(group).trim() : t("shared.details")}>
                   <div className="grid grid-cols-12 gap-3">
                     {headers.map((detailValue, idxDetailValue) => {

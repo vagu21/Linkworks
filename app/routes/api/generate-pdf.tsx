@@ -2,44 +2,43 @@ import { json, ActionFunction } from "@remix-run/node";
 import Puppeteer from "puppeteer";
 import { generateResume } from "app/modules/mediaExport/Resume/utils";
 import { generateJD } from "~/modules/mediaExport/Job/utils";
+import { validateRequest } from "~/utils/session.server";
 
 export let action: ActionFunction = async ({ request }) => {
-  const { id, type } = await request.json();
-
-  let html = "";
-
-  switch (type) {
-    case "resume":
-      html = (await generateResume(id)) || "";
-      break;
-    case "job":
-      html = (await generateJD(id)) || "";
-      break;
-    default:
-      html = "";
-      console.warn(`Unhandled type: ${type}`);
-  }
-
   try {
-    const browser = await Puppeteer.launch(
-      {
-        headless: true,
-        executablePath: "/var/lib/snapd/snap/bin/chromium",
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      }
-    );
+    const { id, type } = await request.json();
+
+    let html = "";
+
+    switch (type) {
+      case "resume":
+        html = (await generateResume(id)) || "";
+        break;
+      case "job":
+        html = (await generateJD(id)) || "";
+        break;
+      default:
+        html = "";
+        console.warn(`Unhandled type: ${type}`);
+    }
+
+    const browser = await Puppeteer.launch({
+      headless: true,
+      executablePath: "/var/lib/snapd/snap/bin/chromium",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
-    
+
     await page.setContent(html);
 
     await page.waitForSelector("body");
-    
+
     // Get the content width and height after setting the content
     const content = await page.evaluate(() => {
       const body = document.body;
-      body.style.margin = '0';
-      body.style.padding = '0';
-      body.style.overflow = 'hidden'; // Prevent overflow and extra space
+      body.style.margin = "0";
+      body.style.padding = "0";
+      body.style.overflow = "hidden"; // Prevent overflow and extra space
       return {
         width: Math.max(body.scrollWidth, body.offsetWidth, body.clientWidth),
         height: Math.max(body.scrollHeight, body.offsetHeight, body.clientHeight),
@@ -59,12 +58,11 @@ export let action: ActionFunction = async ({ request }) => {
       height: `${content.height}px`,
       printBackground: true,
       margin: {
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-        left: '0px',
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
       },
-      scale: 1, // Optional: scale if the content is too large
     });
 
     await browser.close();
@@ -76,8 +74,8 @@ export let action: ActionFunction = async ({ request }) => {
         "Content-Disposition": 'attachment; filename="resume.pdf"',
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating PDF:", error);
-    return json({ message: "Error generating PDF" }, { status: 500 });
+    return json({ message: error.message }, { status: 500 });
   }
 };

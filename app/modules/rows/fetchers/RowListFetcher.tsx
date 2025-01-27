@@ -16,6 +16,7 @@ import { EntityViewWithDetails } from "~/utils/db/entities/entityViews.db.server
 import { RowDisplayDefaultProperty } from "~/utils/helpers/PropertyHelper";
 import Loading from "~/components/ui/loaders/Loading";
 import { useTypedFetcher } from "remix-typedjson";
+import { DialogTitle } from "@headlessui/react";
 
 interface Props {
   currentView: EntityViewWithDetails | null;
@@ -74,15 +75,21 @@ export default function RowListFetcher({ currentView, listUrl, newUrl, parentEnt
   }
   
   if (distinct) {
+    const title = parentEntity?.name || "Default Title"; // Replace "Default Title" with a fallback if `parentEntity` doesn't have a name.
+  
     return (
-      <RowNewFetcher
-        url={newUrl}
-        parentEntity={parentEntity}
-        onCreated={(newRow) => {
-          onSelected([newRow]);
-        }}
-        allEntities={allEntities}
-      />
+      <>
+        <DialogTitle className="text-lg font-medium">Create {title}s</DialogTitle>
+        <br />
+        <RowNewFetcher
+          url={newUrl}
+          parentEntity={parentEntity}
+          onCreated={(newRow) => {
+            onSelected([newRow]);
+          }}
+          allEntities={allEntities}
+        />
+      </>
     );
   }
 

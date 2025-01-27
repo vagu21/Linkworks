@@ -1,10 +1,13 @@
 export const getBaseURL = (request: Request, options?: { https?: boolean }) => {
   const url = new URL(request.url);
+  const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
   if (process.env.NODE_ENV === "development") {
-    return `http://${url.host}`;
+    return serverUrl;
+    // return `http://${url.host}`;
   }
   if (options?.https || process.env.NODE_ENV === "production") {
-    return `https://${url.host}`;
+    return serverUrl;
+    // return `https://${url.host}`;
   } else {
     return `${url.protocol}//${url.host}`;
   }

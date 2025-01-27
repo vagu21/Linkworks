@@ -88,7 +88,10 @@ export namespace Rows_Edit {
           "RowsApi.update"
         );
         if (params.entity == "account") {
-          sendInvitation(form, params.id, params, userId, request);
+          const enabled = form.get("enabled");
+          if (enabled == "true") {
+            sendInvitation(form, params.id, params, userId, request);
+          }
         }
         await time(
           FormulaService.trigger({ trigger: "AFTER_UPDATED", rows: [updatedRow], entity: entity, session: { tenantId, userId }, t }),
