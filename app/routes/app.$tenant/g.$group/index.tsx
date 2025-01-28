@@ -1,5 +1,5 @@
 import { json, LoaderFunctionArgs, redirect, MetaFunction } from "@remix-run/node";
-import { useSearchParams } from "@remix-run/react";
+import { useParams, useSearchParams } from "@remix-run/react";
 import { getTranslations } from "~/locale/i18next.server";
 import { getAppDashboardStats } from "~/utils/services/appDashboardService";
 import { DashboardStats } from "~/components/ui/stats/DashboardStats";
@@ -44,7 +44,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     .forEach((stat) => {
       stat.path = tenantId ? `/app/${tenantId}/g/${params.group}/${stat.entity?.slug}` : `/admin/g/${params.group}/${stat.entity?.slug}`;
     });
-
   const data: LoaderData = {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
     group,
@@ -58,6 +57,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.t
 export default function GroupIndexRoute() {
   const { t } = useTranslation();
   const data = useTypedLoaderData<LoaderData>();
+  const {group}=useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   return (
@@ -89,7 +89,7 @@ export default function GroupIndexRoute() {
               />
             </div>
           </div>
-          <DashboardStats items={data.stats} />
+          {group=='recruitment'?<></>:<DashboardStats items={data.stats} />}
         </div>
       )}
     </EditPageLayout>

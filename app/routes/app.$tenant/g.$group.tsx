@@ -1,16 +1,21 @@
 import { LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { useParams, Outlet } from "@remix-run/react";
-import { useState, useEffect, Fragment, useRef } from "react";
+import { useState, useEffect, Fragment, useRef, Suspense } from "react";
 import { useTranslation } from "react-i18next";
+import { useTypedLoaderData } from "remix-typedjson";
 import SidebarIconsLayout, { IconDto } from "~/components/ui/layouts/SidebarIconsLayout";
 import { getTranslations } from "~/locale/i18next.server";
+import DashboardCharts from "~/custom/modules/dashboard/components";
 import UrlUtils from "~/utils/app/UrlUtils";
 import { useAppOrAdminData } from "~/utils/data/useAppOrAdminData";
 import { getEntityGroupBySlug } from "~/utils/db/entities/entityGroups.db.server";
 import { getTenantIdOrNull } from "~/utils/services/.server/urlService";
+import { getDashBoardData } from "~/custom/modules/dashboard/services/index";
+import SkeletonDashboard from "~/custom/modules/dashboard/components/Skeleton";
 
-type LoaderData = {
+export type LoaderData = {
   title: string;
+  dashboardStatsData?: any
 };
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { t } = await getTranslations(request);
@@ -19,8 +24,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!group) {
     throw redirect(tenantId ? UrlUtils.currentTenantUrl(params, "404") : "/404");
   }
+
+  const dashboardStatsData = await getDashBoardData({ request, params });
+
   const data: LoaderData = {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
+    dashboardStatsData: dashboardStatsData
   };
   return json(data);
 };
@@ -32,7 +41,7 @@ export default () => {
   const appOrAdminData = useAppOrAdminData();
   const params = useParams();
   const [items, setItems] = useState<IconDto[]>([]);
-
+  const data = useTypedLoaderData<LoaderData>();
   const mainElement = useRef<HTMLDivElement>(null);
   // useElementScrollRestoration({ apply: false }, mainElement);
 
@@ -79,6 +88,12 @@ export default () => {
       {!params.id ? (
         <SidebarIconsLayout label={{ align: "right" }} items={items}>
           <Outlet />
+          <div className="  mx-auto space-y-3 px-4 pt-3 sm:px-6 lg:px-8 max-w-5xl xl:max-w-7xl 2xl:max-w-screen-2xl">
+            <Suspense fallback={<><SkeletonDashboard/></>}>
+              {data.dashboardStatsData && <DashboardCharts data={data} />}
+            </Suspense>
+          </div>
+
         </SidebarIconsLayout>
       ) : (
         <div className="sm:h-[calc(100vh-56px)]">

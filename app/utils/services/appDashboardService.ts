@@ -3,7 +3,7 @@ import { DefaultEntityTypes } from "~/application/dtos/shared/DefaultEntityTypes
 import { Stat } from "~/application/dtos/stats/Stat";
 import { getStatChangePercentage, getStatChangeType } from "../app/DashboardUtils";
 import { db } from "../db.server";
-import { EntitySimple, getAllEntities } from "../db/entities/entities.db.server";
+import { EntitySimple, getAllEntities, getEntityByName } from "../db/entities/entities.db.server";
 import { TenantSimple } from "../db/tenants.db.server";
 import { getAllTenantTypes } from "../db/tenants/tenantTypes.db.server";
 import { TenantEntitiesApi } from "../api/.server/TenantEntitiesApi";
@@ -108,3 +108,4 @@ export async function getEntitySummaries({
 
   return entitySummaries;
 }
+

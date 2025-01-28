@@ -24,7 +24,7 @@ import { getRowPermissionsCondition } from "~/utils/helpers/.server/PermissionsS
 import { RowValueMultipleDto } from "~/application/dtos/entities/RowValueMultipleDto";
 import { RowValueRangeDto } from "~/application/dtos/entities/RowValueRangeDto";
 import RowModelHelper from "~/utils/helpers/models/RowModelHelper";
-import { isVisible, getEntityNameById  } from "./accessControlHelpers";
+import { isVisible, getEntityNameById } from "./accessControlHelpers";
 
 
 export type RowValueWithDetails = RowValue & {
@@ -48,17 +48,17 @@ export type RowWithDetails = Row & {
   values: RowValueWithDetails[];
   tags: RowTagWithDetails[];
   parentRows:
-    | (RowRelationship & { parent: RowWithValues })[]
-    | (RowRelationship & {
-        parent: RowWithValues & {
-          parentRows: (RowRelationship & {
-            parent: { values: RowValueWithDetails[] };
-          })[];
-          childRows: (RowRelationship & {
-            child: { values: RowValueWithDetails[] };
-          })[];
-        };
+  | (RowRelationship & { parent: RowWithValues })[]
+  | (RowRelationship & {
+    parent: RowWithValues & {
+      parentRows: (RowRelationship & {
+        parent: { values: RowValueWithDetails[] };
       })[];
+      childRows: (RowRelationship & {
+        child: { values: RowValueWithDetails[] };
+      })[];
+    };
+  })[];
   childRows: (RowRelationship & {
     child: RowWithValues & {
       parentRows: (RowRelationship & {
@@ -336,43 +336,43 @@ export async function createRow({
       ...data.properties,
       values: {
         create: data.dynamicProperties
-        // .filter((f) => !f.id)
-        ?.map((value) => {
-          return {
-            propertyId: value.propertyId,
-            textValue: value.textValue,
-            numberValue: value.numberValue,
-            dateValue: value.dateValue,
-            booleanValue: value.booleanValue,
-            media: {
-              create: value.media?.map((m) => {
-                return {
-                  name: m.name,
-                  title: m.title,
-                  type: m.type,
-                  file: m.file,
-                  publicUrl: m.publicUrl,
-                };
-              }),
-            },
-            multiple: {
-              create: value.multiple?.map((m) => {
-                return {
-                  order: m.order,
-                  value: m.value,
-                };
-              }),
-            },
-            range: {
-              create: value.range ? {
-                numberMin: value.range.numberMin,
-                numberMax: value.range.numberMax,
-                dateMin: value.range.dateMin,
-                dateMax: value.range.dateMax,
-              } : undefined,
-            },
-          };
-        }),
+          // .filter((f) => !f.id)
+          ?.map((value) => {
+            return {
+              propertyId: value.propertyId,
+              textValue: value.textValue,
+              numberValue: value.numberValue,
+              dateValue: value.dateValue,
+              booleanValue: value.booleanValue,
+              media: {
+                create: value.media?.map((m) => {
+                  return {
+                    name: m.name,
+                    title: m.title,
+                    type: m.type,
+                    file: m.file,
+                    publicUrl: m.publicUrl,
+                  };
+                }),
+              },
+              multiple: {
+                create: value.multiple?.map((m) => {
+                  return {
+                    order: m.order,
+                    value: m.value,
+                  };
+                }),
+              },
+              range: {
+                create: value.range ? {
+                  numberMin: value.range.numberMin,
+                  numberMax: value.range.numberMax,
+                  dateMin: value.range.dateMin,
+                  dateMax: value.range.dateMax,
+                } : undefined,
+              },
+            };
+          }),
       },
       parentRows: {
         create: data.parentRows?.map(({ relationshipId, parentId }) => {
@@ -398,7 +398,7 @@ export async function createRow({
     });
 
     return row;
-  } catch (error:any) {
+  } catch (error: any) {
     throw new Error(`Failed to create row: ${error.message}`);
   }
 }
@@ -646,3 +646,4 @@ export async function getAccessFilters({ tenantId, userId, entityId }: { tenantI
   };
   return filters;
 }
+
