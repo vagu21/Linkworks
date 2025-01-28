@@ -294,6 +294,7 @@ function exportEntitiesToTemplate(entities: EntityWithDetails[], relationships: 
       hasApi: entity.hasApi ? true : false,
       icon: entity.icon.length > 0 ? entity.icon : undefined,
       active: entity.active ? true : false,
+      showInSidebar: entity.showInSidebar ? true : false,
       hasTags: entity.hasTags ? true : false,
       hasComments: entity.hasComments ? true : false,
       hasTasks: entity.hasTasks ? true : false,

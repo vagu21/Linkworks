@@ -53,7 +53,7 @@ export async function importEntitiesFromTemplate({ template, createdByUserId }: 
           icon: entity.icon ?? "",
           active: entity.active ?? true,
           type: entity.type ?? DefaultEntityTypes.All,
-          showInSidebar: entity.showInSidebar ?? true,
+          showInSidebar: entity.showInSidebar ?? false,
           hasTags: entity.hasTags ?? true,
           hasComments: entity.hasComments ?? true,
           hasTasks: entity.hasTasks ?? false,

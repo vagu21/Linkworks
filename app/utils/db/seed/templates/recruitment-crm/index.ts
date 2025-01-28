@@ -92,6 +92,7 @@ const RECRUITMENT_CRM_PERMISSIONS = [
 ];
 
 async function seedGroups(entities: any[]) {
+	const recruitmentEntities = [ "Account",  "Candidate", "Job", "Job Application", "Employment Contract", "Contact"];
 	const groups = [
 		{
 			slug: "recruitment",
@@ -100,8 +101,9 @@ async function seedGroups(entities: any[]) {
 			collapsible: false,
 			section: null,
 			entities: entities
-				.filter((entity) => ["Job Application", "Requisition", "Contact", "Account", "Candidate", "Job", "Employment Contract"].includes(entity.name))
-				.map((entity) => ({ entityId: entity.id, allViewId: null })),
+				.filter((entity) => recruitmentEntities.includes(entity.name))
+				.sort((a, b) => recruitmentEntities.indexOf(a.name) - recruitmentEntities.indexOf(b.name))
+				.map((entity) => ({ entityId: entity.id, allViewId: null }))
 		},
 	];
 
@@ -145,7 +147,7 @@ async function seedEntities(admin: any) {
 async function seedRolePermissions(admin: any) {
 	const templateSpecificRoles = [DefaultAppRoles.CompanyAdmin, DefaultAppRoles.CompanyMember, DefaultAppRoles.Supplier];
 
-	seedTemplateRoles({
+	await seedTemplateRoles({
 		templateName: "Recruitment CRM",
 		templatePermissions: RECRUITMENT_CRM_PERMISSIONS,
 		templateSpecificRoles: templateSpecificRoles,
