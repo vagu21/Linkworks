@@ -1,51 +1,49 @@
 import { rowFetcher } from "../rowFetcher";
 
-  function getTopSkills(skills: { skillName: string; proficiency: number }[])
-  {
-    return skills.sort((a, b) => b.proficiency - a.proficiency).slice(0,7);
-  }
-  
-  export async function generateResume(id: any) {
-    const data=await rowFetcher(id,"Candidate")
-    let skillBarMapping: any = {
-      0: ` <div class="h-[2px] rounded-[2.5px] bg-[#EE3434]" style="width: 40%"></div>`,
-      1: `<div class="h-[2px] rounded-[2.5px] bg-[#F2A73E]" style="width: 70%"></div>`,
-      2: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
-      3: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
-      4: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 90%"></div>`,
-      5: `<div class="h-[2px] rounded-[2.5px] bg-[#b528d8]" style="width: 95%"></div>`,
-      9: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 100%"></div>`,
-      8: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
-      7: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
+function getTopSkills(skills: { skillName: string; proficiency: number }[]) {
+  return skills.sort((a, b) => b.proficiency - a.proficiency).slice(0, 7);
+}
+
+export async function generateResume(id: any) {
+  const data = await rowFetcher(id, "Candidate");
+  let skillBarMapping: any = {
+    0: ` <div class="h-[2px] rounded-[2.5px] bg-[#EE3434]" style="width: 40%"></div>`,
+    1: `<div class="h-[2px] rounded-[2.5px] bg-[#F2A73E]" style="width: 70%"></div>`,
+    2: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
+    3: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
+    4: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 90%"></div>`,
+    5: `<div class="h-[2px] rounded-[2.5px] bg-[#b528d8]" style="width: 95%"></div>`,
+    9: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 100%"></div>`,
+    8: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
+    7: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
+  };
+
+  let proficiencyMapping: any = {
+    0: "Beginner",
+    1: "Intermediate",
+    2: "Proficient",
+    3: "Advanced",
+    4: " Expert",
+    5: "Master",
+    9: "Master",
+    8: "Advanced",
+    7: "Proficient",
+  };
+
+  let skillRatingMapping: any = {};
+  const skillMapping = data?.["Skills"]?.map((skill: any) => {
+    skillRatingMapping[skill.name] = skill.proficiency;
+
+    return {
+      skillName: skill.name,
+      proficiency: skill.proficiency,
     };
-  
-    let proficiencyMapping: any = {
-      0: "Beginner",
-      1: "Intermediate",
-      2: "Proficient",
-      3: "Advanced",
-      4: " Expert",
-      5: "Master",
-      9: "Master",
-      8: "Advanced",
-      7: "Proficient",
-    };
+  });
 
-    let skillRatingMapping: any = {};
-    const skillMapping = data?.['Skills']?.map((skill: any) => {
-      skillRatingMapping[skill.name] = skill.proficiency;
-  
-      return {
-        skillName: skill.name,
-        proficiency: skill.proficiency,
-      };
-    });
+  let topSkills: any = getTopSkills(skillMapping);
 
-    let topSkills:any=getTopSkills(skillMapping);
-
-    function generateResumeString()
-    {
-           return `
+  function generateResumeString() {
+    return `
         <!doctype html>
       <html lang="en">
         <head>
@@ -87,23 +85,31 @@ import { rowFetcher } from "../rowFetcher";
           </div>
           
         </body>
-      </html>`; 
-    }
-    function headerSection()
-    {
-       return `
+      </html>`;
+  }
+  function headerSection() {
+    return `
         <div class="flex items-center justify-between border-b bg-[#EFF2F8] py-6 pl-6 pr-7">
               <div class="flex items-center gap-[8px]">
-                <div class="flex h-[45px] w-[45px] items-center justify-center rounded-full bg-[#18213F] text-[16px] font-medium leading-[19.36px] text-white">${
-                  data["firstName"][0]
-                }${data["lastName"][0]}</div>
+                <div class="flex h-[45px] w-[45px] items-center justify-center rounded-full bg-[#18213F] text-[16px] font-medium leading-[19.36px] text-white">
+  ${
+    (data?.firstName?.[0] || "") + (data?.lastName?.[0] || "")
+      ? `${data?.firstName?.[0] || ""}${data?.lastName?.[0] || ""}`
+      : '<span style="color: #A0A0A0;">N/A</span>'
+  }
+</div>
+
                 <div class="flex flex-col gap-[6px]">
-                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${data["firstName"]} ${data["lastName"]}</h2>
-                  <div class="text-[12px] font-normal leading-[14.52px] text-[#3C3C3C] flex gap-3 ml-1"><span>${data?.currentDesignation}</span> 
+                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${
+                    data["firstName"]
+                  } ${data["lastName"]}</h2>
+                  <div class="text-[12px] font-normal leading-[14.52px] text-[#3C3C3C] flex gap-3 ml-1"><span>${
+                    data?.currentDesignation || '<span style="color: #A0A0A0;">N/A</span>'
+                  }</span> 
                   
                   <div class="flex gap-1 items-center"> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none">
       <path d="M3.33333 3.33333V2.91667C3.33333 1.99619 4.07953 1.25 5 1.25C5.92047 1.25 6.66667 1.99619 6.66667 2.91667V3.33333M1.25 5L4.66155 6.51624C4.87702 6.61201 5.12298 6.61201 5.33845 6.51625L8.75 5M2.58333 8.75H7.41667C7.88338 8.75 8.11673 8.75 8.29499 8.65917C8.45179 8.57928 8.57928 8.45179 8.65917 8.29499C8.75 8.11673 8.75 7.88338 8.75 7.41667V4.66667C8.75 4.19996 8.75 3.9666 8.65917 3.78834C8.57928 3.63154 8.45179 3.50406 8.29499 3.42416C8.11673 3.33333 7.88338 3.33333 7.41667 3.33333H2.58333C2.11662 3.33333 1.88327 3.33333 1.70501 3.42416C1.54821 3.50406 1.42072 3.63154 1.34083 3.78834C1.25 3.9666 1.25 4.19996 1.25 4.66667V7.41667C1.25 7.88338 1.25 8.11673 1.34083 8.29499C1.42072 8.45179 1.54821 8.57928 1.70501 8.65917C1.88327 8.75 2.11662 8.75 2.58333 8.75Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round"/>
-      </svg> <span> ${data?.totalExperienceInYears}y Exp. </span></div></div>
+      </svg> <span> ${data?.totalExperienceInYears || '<span style="color: #A0A0A0;">N/A</span>'}y Exp. </span></div></div>
                 </div>
               </div>
               <div class="text-center">
@@ -121,12 +127,11 @@ import { rowFetcher } from "../rowFetcher";
       </div>
                 <p class="text-[10px] font-medium leading-[12.1px] text-[#3C3C3C] mt-[10px]"></p>
               </div>
-            </div>`
-    }
+            </div>`;
+  }
 
-    function detailsSection()
-    {
-        return `<div class="flex  flex-col px-6 md:flex-row  relative ml-8 !h-[calc(100vh-140px)]">
+  function detailsSection() {
+    return `<div class="flex  flex-col px-6 md:flex-row  relative ml-8 !h-[calc(100vh-140px)]">
               <!-- Left Section -->
               <div class="py-6 pr-4 md:w-[38.82%] md:pr-8 md:border-r ">
                 <!-- Detailst -->
@@ -144,132 +149,193 @@ import { rowFetcher } from "../rowFetcher";
                           </clipPath>
                         </defs>
                       </svg>
-                      <span>${data["phone"]}</span>
+                      <span>${data["phone"] || '<span style="color: #A0A0A0;">N/A</span>'}</span>
                     </li>
                     <li class="mb-[9px] text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 8" fill="none">
       <path d="M9.16659 1.91675L5.42909 4.29175C5.30045 4.37234 5.15172 4.41509 4.99992 4.41509C4.84812 4.41509 4.69939 4.37234 4.57075 4.29175L0.833252 1.91675M1.66659 0.666748H8.33325C8.79349 0.666748 9.16659 1.03984 9.16659 1.50008V6.50008C9.16659 6.96032 8.79349 7.33341 8.33325 7.33341H1.66659C1.20635 7.33341 0.833252 6.96032 0.833252 6.50008V1.50008C0.833252 1.03984 1.20635 0.666748 1.66659 0.666748Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg> <span>${data["email"]}<span></li>
-                    <li class="text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-start gap-2 ">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none" class="absolute top-[87px] left-0">
-      <path d="M6.25 8.74995V5.41661C6.25 5.30611 6.2061 5.20012 6.12796 5.12198C6.04982 5.04384 5.94384 4.99995 5.83333 4.99995H4.16667C4.05616 4.99995 3.95018 5.04384 3.87204 5.12198C3.7939 5.20012 3.75 5.30611 3.75 5.41661V8.74995M1.25 4.16661C1.24997 4.04539 1.27639 3.92562 1.32741 3.81566C1.37843 3.7057 1.45283 3.60819 1.54542 3.52995L4.46208 1.03036C4.61249 0.903241 4.80307 0.833496 5 0.833496C5.19693 0.833496 5.38751 0.903241 5.53792 1.03036L8.45458 3.52995C8.54717 3.60819 8.62157 3.7057 8.67259 3.81566C8.72361 3.92562 8.75003 4.04539 8.75 4.16661V7.91661C8.75 8.13763 8.6622 8.34959 8.50592 8.50587C8.34964 8.66215 8.13768 8.74995 7.91667 8.74995H2.08333C1.86232 8.74995 1.65036 8.66215 1.49408 8.50587C1.3378 8.34959 1.25 8.13763 1.25 7.91661V4.16661Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-                       <span class="ml-5">${data.Address?.flatHouseNoBuildingCompanyApartment}, ${data?.Address?.landmark}, ${data.Address?.townCity}, ${
-      data.Address?.state
-    }, ${data.Address?.country} </span></li>
-                  </ul>
-                </div>`
-    }
+      </svg> <span>${data["email"] || '<span style="color: #A0A0A0;">N/A</span>'}<span></li>
 
-    function skillsSection()
-    {
-        return ` <div class="mb-[30px]">
+                    <li class="mb-[9px] text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none">
+                <path d="M6.25 8.74995V5.41661C6.25 5.30611 6.2061 5.20012 6.12796 5.12198C6.04982 5.04384 5.94384 4.99995 5.83333 4.99995H4.16667C4.05616 4.99995 3.95018 5.04384 3.87204 5.12198C3.7939 5.20012 3.75 5.30611 3.75 5.41661V8.74995M1.25 4.16661C1.24997 4.04539 1.27639 3.92562 1.32741 3.81566C1.37843 3.7057 1.45283 3.60819 1.54542 3.52995L4.46208 1.03036C4.61249 0.903241 4.80307 0.833496 5 0.833496C5.19693 0.833496 5.38751 0.903241 5.53792 1.03036L8.45458 3.52995C8.54717 3.60819 8.62157 3.7057 8.67259 3.81566C8.72361 3.92562 8.75003 4.04539 8.75 4.16661V7.91661C8.75 8.13763 8.6622 8.34959 8.50592 8.50587C8.34964 8.66215 8.13768 8.74995 7.91667 8.74995H2.08333C1.86232 8.74995 1.65036 8.66215 1.49408 8.50587C1.3378 8.34959 1.25 8.13763 1.25 7.91661V4.16661Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>
+  ${
+    data?.Address?.flatHouseNoBuildingCompanyApartment || data?.Address?.landmark || data?.Address?.townCity || data?.Address?.state || data?.Address?.country
+      ? `${data?.Address?.flatHouseNoBuildingCompanyApartment || ""}, 
+         ${data?.Address?.landmark || ""}, 
+         ${data?.Address?.townCity || ""}, 
+         ${data?.Address?.state || ""}, 
+         ${data?.Address?.country || ""}`
+          .replace(/(, )+/g, ", ")
+          .trim()
+          .replace(/^,|,$/g, "")
+      : '<span style="color: #A0A0A0;">N/A</span>'
+  }
+</span>
+</li>
+                  </ul>
+                </div>`;
+  }
+
+  function skillsSection() {
+    return ` <div class="mb-[30px]">
                   <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Skills</h3>
-                  <ul>
-                  ${topSkills
-                    ?.map(
-                      (
-                        skill: any
-                      ) => `<li class="mb-[12px]">        <div class="flex justify-between"><span class="text-[12px] font-medium leading-[16px] text-[#000000]">${skill.skillName||null}</span>  <span class="text-[10px] font-normal leading-[11.52px] text-[#000000]">${
-                        proficiencyMapping[skillRatingMapping[skill.skillName]]
-                      }</span>    </div><div class="mt-[6px] w-full rounded bg-gray-300">
-                       ${skillBarMapping[skillRatingMapping[skill.skillName]]}
-                      </div></li>`
-                    )
-                    .join("")}
-                   
-                  </ul>
-                </div>
-              </div>`
-    }
-
-    function experienceSection()
-    {
-        return `  <div class="mb-[30px] pt-4">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Experience</h3>
-                  <ul class="space-y-4 text-gray-600">
-                  ${data?.['Work Experience']
-                    ?.map(
-                      (exp: any) => `<li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">${exp?.title}</strong>
-                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">· ${new Date(exp["startDate"]).toLocaleDateString()}-  ${
-                        exp["currentlyWorkingInThisRole"] ? "Present" : new Date(exp["endDate"]).toLocaleDateString()
-                      }</p>
+                   <ul>
+        ${
+          topSkills?.length > 0
+            ? topSkills
+                .map(
+                  (skill) => `
+                    <li class="mb-[12px]">
+                      <div class="flex justify-between">
+                        <span class="text-[12px] font-medium leading-[16px] text-[#000000]">
+                          ${skill?.skillName || '<span style="color: #A0A0A0;">N/A</span>'}
+                        </span>
+                        <span class="text-[10px] font-normal leading-[11.52px] text-[#000000]">
+                          ${proficiencyMapping[skillRatingMapping[skill?.skillName]] || '<span style="color: #A0A0A0;">N/A</span>'}
+                        </span>
                       </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">${exp?.companyName}, ${exp?.location}</p>
-                    </li>`
-                    )
-                    .join("")}
-      
-      
-        
-                  </ul>
-                </div>
-      `
-    }
-
-    function certificationsSection()
-    {
-        return `<div class="mb-[30px]">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Certifications</h3>
-                  <ul class="space-y-4">
-                  ${data?.['Certifications']?.map(
-                    (certification: any) => `<li >
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">${certification?.name}</strong>
-                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">· Valid till ${new Date(
-                          certification["expirationDate"]
-                        ).toLocaleDateString()}</p>
-                      </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">${certification?.issuingOrganization}</p>
-                    </li>`
-                  ).join("")}
-      
-                  </ul>
-                </div>`
-    }
-    function educationSection()
-    {
-        return `<div class="mb-[30px]">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Education</h3>
-                  <ul class="space-y-4">
-                  ${data["Education History"]
-                    ?.map(
-                      (education: any) => `<li >
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">${education?.educationQualification}, ${
-                        education?.educationalSpecialization
-                      }</strong>
-                          <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">· ${new Date(
-                            education["startDate"]
-                          ).toLocaleDateString()} - ${new Date(education["endDate"]).toLocaleDateString()}</p>
-                      </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">${education?.schoolCollegeName}, ${education?.location}</p>
-                    </li>`
-                    )
-                    .join("")}
-                  
-                  </ul>
-                </div>`
-    }
-
-    function referenceSection()
-    {
-        return `<div class="mb-[30px]">
-                  <h3 class="mb-4 text-[14px] font-semibold leading-[18px] text-[#3E6AF2]">Reference</h3>
-                  <ul>
-                    <li>
-                      <div class="mt-[16px] flex gap-[16px] items-center">
-                        <h6 class="text-[12px] font-medium leading-[14.06px] text-[#1C1C1C]">${data?.reference}</h6>
+                      <div class="mt-[6px] w-full rounded bg-gray-300">
+                        ${skillBarMapping[skillRatingMapping[skill?.skillName]] || '<span style="color: #A0A0A0;">N/A</span>'}
                       </div>
                     </li>
-                  </ul>
-                </div>`
-    }
+                  `
+                )
+                .join("")
+            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No skills available.</li>'
+        }
+      </ul>
+                </div>
+              </div>`;
+  }
 
-    function backgroundImage()
-    {
-        return `<div class="absolute top-[50%] translate-y-[-50%] left-[37%]">
+  function experienceSection() {
+    return `  <div class="mb-[30px] pt-4">
+                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Experience</h3>
+                  <ul class="space-y-4 text-gray-600">
+        ${
+          data?.["Work Experience"]?.length > 0
+            ? data["Work Experience"]
+                .map(
+                  (exp) => `
+                    <li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+                      <div class="flex items-center gap-[10px]">
+                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
+                          ${exp?.title || '<span style="color: #A0A0A0;">N/A</span>'}
+                        </strong>
+                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+                          · ${exp?.startDate ? new Date(exp.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
+                    exp?.currentlyWorkingInThisRole
+                      ? "Present"
+                      : exp?.endDate
+                      ? new Date(exp.endDate).toLocaleDateString()
+                      : '<span style="color: #A0A0A0;">N/A</span>'
+                  }
+                        </p>
+                      </div>
+                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
+                        ${exp?.companyName || '<span style="color: #A0A0A0;">N/A</span>'}, ${exp?.location || '<span style="color: #A0A0A0;">N/A</span>'}
+                      </p>
+                    </li>
+                  `
+                )
+                .join("")
+            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No work experience available.</li>'
+        }
+      </ul>
+                </div>
+      `;
+  }
+
+  function certificationsSection() {
+    return `<div class="mb-[30px]">
+                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Certifications</h3>
+                  <ul class="space-y-4">
+        ${
+          data?.["Certifications"]?.length > 0
+            ? data["Certifications"]
+                .map(
+                  (certification) => `
+                    <li>
+                      <div class="flex items-center gap-[10px]">
+                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
+                          ${certification?.name || '<span style="color: #A0A0A0;">N/A</span>'}
+                        </strong>
+                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+                          · Valid till ${
+                            certification?.expirationDate
+                              ? new Date(certification.expirationDate).toLocaleDateString()
+                              : '<span style="color: #A0A0A0;">N/A</span>'
+                          }
+                        </p>
+                      </div>
+                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
+                        ${certification?.issuingOrganization || '<span style="color: #A0A0A0;">N/A</span>'}
+                      </p>
+                    </li>
+                  `
+                )
+                .join("")
+            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No certifications available.</li>'
+        }
+      </ul>
+                </div>`;
+  }
+  function educationSection() {
+    return `<div class="mb-[30px]">
+                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Education</h3>
+                  <ul class="space-y-4">
+        ${
+          data?.["Education History"]?.length > 0
+            ? data["Education History"]
+                .map(
+                  (education) => `
+                    <li>
+                      <div class="flex items-center gap-[10px]">
+                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
+                          ${education?.educationQualification || '<span style="color: #A0A0A0;">N/A</span>'}, 
+                          ${education?.educationalSpecialization || '<span style="color: #A0A0A0;">N/A</span>'}
+                        </strong>
+                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+                          · ${education?.startDate ? new Date(education.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
+                    education?.endDate ? new Date(education.endDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'
+                  }
+                        </p>
+                      </div>
+                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
+                        ${education?.schoolCollegeName || '<span style="color: #A0A0A0;">N/A</span>'}, 
+                        ${education?.location || '<span style="color: #A0A0A0;">N/A</span>'}
+                      </p>
+                    </li>
+                  `
+                )
+                .join("")
+            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No education history available.</li>'
+        }
+      </ul>
+                </div>`;
+  }
+
+  function referenceSection() {
+    return `
+      <div class="mb-[30px]">
+        <h3 class="mb-4 text-[14px] font-semibold leading-[18px] text-[#3E6AF2]">Reference</h3>
+        <ul>
+          <li>
+            <div class="mt-[16px] flex gap-[16px] items-center">
+              <h6 class="text-[12px] font-medium leading-[14.06px] text-[#1C1C1C]">
+                ${data?.reference || '<span style="color: #A0A0A0;">N/A</span>'}
+              </h6>
+            </div>
+          </li>
+        </ul>
+      </div>
+    `;
+  }
+
+  function backgroundImage() {
+    return `<div class="absolute top-[50%] translate-y-[-50%] left-[37%]">
             <svg xmlns="http://www.w3.org/2000/svg" width="195" height="195" viewBox="0 0 195 195" fill="none">
       <g opacity="0.05" clip-path="url(#clip0_83_583)">
       <path d="M0 195H34.4C66.17 195 91.79 170.43 91.79 140.06V0H57.39C25.63 0 0 24.57 0 54.94V195Z" fill="#FFD600"/>
@@ -283,12 +349,11 @@ import { rowFetcher } from "../rowFetcher";
       </defs>
       </svg>
           </div>
-            </div>`
-    }
+            </div>`;
+  }
 
-    function footerSection()
-    {
-        return `<div class=" absolute bottom-0 left-0 right-0 flex flex-col items-center justify-between border-t bg-[#D6DCE8] px-6 py-4 text-center md:flex-row">
+  function footerSection() {
+    return `<div class=" absolute bottom-0 left-0 right-0 flex flex-col items-center justify-between border-t bg-[#D6DCE8] px-6 py-4 text-center md:flex-row">
               <!-- 
       
                  <div class="flex items-center justify-start gap-2">
@@ -342,9 +407,8 @@ import { rowFetcher } from "../rowFetcher";
               </svg>
       
               <p class="text-sm text-gray-500">&copy; Copyright 2022 Linkfields. All Rights Reserved.</p>
-            </div>`
-    }
-    
-    return generateResumeString();
+            </div>`;
   }
-  
+
+  return generateResumeString();
+}

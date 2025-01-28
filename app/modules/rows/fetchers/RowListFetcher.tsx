@@ -75,11 +75,12 @@ export default function RowListFetcher({ currentView, listUrl, newUrl, parentEnt
   }
   
   if (distinct) {
-    const title = parentEntity?.name || "Default Title"; // Replace "Default Title" with a fallback if `parentEntity` doesn't have a name.
+    const title = data?.rowsData?.entity.title; 
   
     return (
       <>
-        <DialogTitle className="text-lg font-medium">Create {title}s</DialogTitle>
+        <DialogTitle className="text-lg font-medium">Create {title}</DialogTitle>
+
         <br />
         <RowNewFetcher
           url={newUrl}

@@ -8,15 +8,15 @@ export async function generateJD(id: any) {
     return `
       <div class="bg-[#F5F7FB]">
         <div class="mb-[8px] flex items-center gap-[8px] p-[24px]">
-          <h1 class="text-[24px] font-semibold leading-[29.05px] text-[#18213F]">${data?.title || null}</h1>
+          <h1 class="text-[24px] font-semibold leading-[29.05px] text-[#18213F]">${data?.title || '<span class="text-[#32CD32]">N/A</span>'}</h1>
           <div class="flex h-[16px] items-center gap-[4px] rounded-[5px] bg-[${bg}] px-[8px] py-[2px] text-[#FFFFFF]">•</span> 
-          <span class="text-[10px] font-medium leading-[18px]"> ${data?.status || null}</span>
+          <span class="text-[10px] font-medium leading-[18px]"> ${data?.status || '<span style="color: #A0A0A0;">N/A</span>'}</span>
           </div>
         </div>
         <div class="px-[24px]">
-          <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Account?.name || null}</p>
+          <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Account?.name || '<span style="color: #A0A0A0;">N/A</span>'}</p>
           <div class="flex flex-col items-start gap-[4px] sm:flex-row sm:items-center">
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || null} ${data?.Contact?.lastName || null} | ${data?.Contact?.phone || null}</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || '<span style="color: #A0A0A0;">N/A</span>'} ${data?.Contact?.lastName || '<span style="color: #A0A0A0;">N/A</span>'} | ${data?.Contact?.phone || '<span style="color: #A0A0A0;">N/A</span>'}</span></p>
 
           </div>
           <hr class="mt-[12px]" />
@@ -34,11 +34,15 @@ export async function generateJD(id: any) {
           </div>
           <div class="hidden h-[10px] w-[1px] border border-[#3C3C3C94] sm:block"></div>
           <div>
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Openings:<span class="font-semibold text-[#3C3C3C]"> ${data?.numberOfOpenings || null}</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Openings:<span class="font-semibold text-[#3C3C3C]"> ${data?.numberOfOpenings || '<span style="color: #A0A0A0;">N/A</span>'}</span></p>
           </div>
         </div>
         <div class="mt-[22px]">
-          <p class="mb-[24px] text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Target date:<span class="font-semibold text-[#3C3C3C]"> ${new Date(data?.targetHiringDate).toLocaleDateString()} </span></p>
+          <p class="mb-[24px] text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Target date:<span class="font-semibold text-[#3C3C3C]"> ${
+            data?.targetHiringDate
+              ? new Date(data.targetHiringDate).toLocaleDateString()
+              : '<span style="color: #A0A0A0;">N/A</span>'
+          } </span></p>
         </div>
       </div>
     `;
@@ -50,15 +54,15 @@ export async function generateJD(id: any) {
         <div class="mb-[51px] flex gap-[36px]">
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Experience</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experience || null} years</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experience || '<span style="color: #A0A0A0;">N/A</span>'} years</p>
           </div>
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Experience Level</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experienceLevel || null}</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.experienceLevel || '<span style="color: #A0A0A0;">N/A</span>'}</p>
           </div>
           <div class="flex flex-col gap-[8px]">
-            <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Salary Range</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency}: ${data?.salary || null} / ${data?.salaryType}</p>
+            <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Salary</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency ||'<span style="color: #A0A0A0;">N/A</span>' } ${data?.salary || '<span style="color: #A0A0A0;">N/A</span>'} / ${data?.salaryType || '<span style="color: #A0A0A0;">N/A</span>'}</p>
           </div>
         </div>
     `;
@@ -68,55 +72,80 @@ export async function generateJD(id: any) {
     return `
       <div class="mb-[48px]">
         <h2 class="mb-[16px] text-[12px] font-semibold leading-[18px] text-[#3E6AF2]">Job Description</h2>
-        <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C]">${data?.description || null}</p>
+        <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C]">
+          ${data?.description || '<span style="color: #A0A0A0;">N/A</span>'}
+        </p>
       </div>
     `;
   }
+  
   
   function jobDetailsFooterSection() {
     return `
       <div class="mb-6 grid grid-cols-1 gap-[14px]">
         <div class="flex items-center gap-[16px]">
           <p class="text-[12px] font-semibold leading-[18px] text-[#3E6AF2]">Job Category</p>
-          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[62px]">${data?.category || null}</p>
+          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[62px]">
+            ${data?.category || '<span style="color: #A0A0A0;">N/A</span>'}
+          </p>
         </div>
         <div class="flex items-center gap-[16px]">
           <p class="text-[12px] font-semibold leading-[18px] text-[#3E6AF2]">Education Qualification</p>
-          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[8px]">${data?.educationalQualification || null}</p>
+          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[8px]">
+            ${data?.educationalQualification || '<span style="color: #A0A0A0;">N/A</span>'}
+          </p>
         </div>
         <div class="flex items-center gap-[16px]">
           <p class="text-[12px] font-semibold leading-[18px] text-[#3E6AF2]">Education Specialization</p>
-          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[4px]">${data?.educationalSpecialization || null}</p>
+          <p class="text-[10px] font-medium leading-[16px] text-[#3C3C3C] ml-[4px]">
+            ${data?.educationalSpecialization || '<span style="color: #A0A0A0;">N/A</span>'}
+          </p>
         </div>
       </div>
       <hr />
     `;
   }
   
+  
   function skillsSection() {
     return `
       <div class="mb-[25px] mt-[24px]">
         <h2 class="mb-2 text-[12px] font-semibold leading-[18px] text-[#3E6AF2]">Skills :</h2>
         <div class="flex flex-wrap gap-[10px]">
-          ${data?.skills
-            .map((skill:any) => {
-              return `<span class="rounded-[5px] bg-[#EFF2F8] px-[8px] py-[2px] text-[10px] font-normal leading-[18px] text-[#3C3C3C]">${skill}</span>`;
-            })
-            .join('')}
+          ${
+            data?.skills && data.skills.length > 0
+              ? data.skills
+                  .map(
+                    (skill:any) =>
+                      `<span class="rounded-[5px] bg-[#EFF2F8] px-[8px] py-[2px] text-[10px] font-normal leading-[18px] text-[#3C3C3C]">${skill}</span>`
+                  )
+                  .join('')
+              : '<span class="rounded-[5px] bg-[#EFF2F8] px-[8px] py-[2px] text-[10px] font-normal leading-[18px] text-[#3C3C3C]">N/A</span>'
+          }
         </div>
       </div>
     `;
   }
   
+  
+  
   function applicationDeadlineSection() {
     return `
       <div class="">
-      <p class="mb-[8px] text-center text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94] ">
-        Job deadline: <span class="text-[10px] font-semibold leading-[14.06px] text-[#3C3C3C]"> ${new Date(data?.applicationDeadline).toLocaleDateString()}</span>
-      </p>
+        <p class="mb-[8px] text-center text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">
+          Job deadline: 
+          <span class="text-[10px] font-semibold leading-[14.06px] text-[#3C3C3C]">
+            ${
+              data?.applicationDeadline
+                ? new Date(data.applicationDeadline).toLocaleDateString()
+                : '<span style="color: #A0A0A0; font-size: 8px;">N/A</span>'
+            }
+          </span>
+        </p>
       </div>
     `;
   }
+  
   
   function footerSection() {
     return `
