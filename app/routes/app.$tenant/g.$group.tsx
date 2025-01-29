@@ -15,8 +15,9 @@ import SkeletonDashboard from "~/custom/modules/dashboard/components/Skeleton";
 
 export type LoaderData = {
   title: string;
-  dashboardStatsData?: any
+  dashboardStatsData?: any;
 };
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { t } = await getTranslations(request);
   const tenantId = await getTenantIdOrNull({ request, params });
@@ -25,11 +26,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw redirect(tenantId ? UrlUtils.currentTenantUrl(params, "404") : "/404");
   }
 
-  const dashboardStatsData = await getDashBoardData({ request, params });
-
   const data: LoaderData = {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
-    dashboardStatsData: dashboardStatsData
+    dashboardStatsData: !params.entity && params.group === "recruitment" ? await getDashBoardData({ request, params }) : null,
   };
   return json(data);
 };
@@ -88,14 +87,19 @@ export default () => {
       {!params.id ? (
         <SidebarIconsLayout label={{ align: "right" }} items={items}>
           <Outlet />
-          { params.entity==undefined && params.group=="recruitment" &&
-          <div className="  mx-auto space-y-3 px-4 pt-3 sm:px-6 lg:px-8 max-w-5xl xl:max-w-7xl 2xl:max-w-screen-2xl">
-            <Suspense fallback={<><SkeletonDashboard/></>}>
-              {data.dashboardStatsData && <DashboardCharts data={data} />}
-            </Suspense>
-          </div>
-}
-
+          {params.entity == undefined && params.group == "recruitment" && data.dashboardStatsData && (
+            <div className="  mx-auto max-w-5xl space-y-3 px-4 pt-3 sm:px-6 lg:px-8 xl:max-w-7xl 2xl:max-w-screen-2xl">
+              <Suspense
+                fallback={
+                  <>
+                    <SkeletonDashboard />
+                  </>
+                }
+              >
+                <DashboardCharts data={data} />
+              </Suspense>
+            </div>
+          )}
         </SidebarIconsLayout>
       ) : (
         <div className="sm:h-[calc(100vh-56px)]">
