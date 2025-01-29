@@ -308,7 +308,6 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
                 setValue={setIsRequired}
               />
             </div>
-
             <div className="w-full">
               <InputCheckboxWithDescription
                 name="is-hidden"

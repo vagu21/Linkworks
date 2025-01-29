@@ -12,9 +12,7 @@ import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
 import  {  getConditionalActions } from "~/modules/customActionComponent";
-import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
-import { DownloadIcon } from "lucide-react";
-import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
+import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 
 interface Props {
   entity: EntityWithDetails;
@@ -57,6 +55,7 @@ export default function RowsListAndTable({
 
   const [headers, setHeaders] = useState<RowHeaderDisplayDto<RowWithDetails>[]>([]);
   const [actions, setActions] = useState<RowHeaderActionDto<RowWithDetails>[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let headers = RowDisplayHeaderHelper.getDisplayedHeaders({
@@ -102,7 +101,7 @@ export default function RowsListAndTable({
       });
     }
 
-    actions.push(...getConditionalActions(entity, onRemove));
+    actions.push(...getConditionalActions(entity, onRemove, setLoading));
     setActions(actions);
   }, [editable, entity, onEditClick, onRemove, routes, t]);
 
@@ -111,6 +110,7 @@ export default function RowsListAndTable({
   }
   return (
     <div className={className}>
+      <FloatingLoader loading={loading} />
       <TableSimple
         headers={headers}
         items={items}

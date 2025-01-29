@@ -86,6 +86,7 @@ export default function RowEditFetcher({ url, onUpdated, allEntities, onDeleted 
                 allEntities={allEntities}
                 entity={data.rowData.entity}
                 routes={data.routes}
+                isSlideOverOrRowList={true}
                 item={data.rowData.item}
                 editing={true}
                 canDelete={getUserHasPermission(appOrAdminData, getEntityPermission(data.rowData.entity, "delete")) && data.rowData.rowPermissions.canDelete}

@@ -88,11 +88,13 @@ export default () => {
       {!params.id ? (
         <SidebarIconsLayout label={{ align: "right" }} items={items}>
           <Outlet />
+          { params.entity==undefined && params.group=="recruitment" &&
           <div className="  mx-auto space-y-3 px-4 pt-3 sm:px-6 lg:px-8 max-w-5xl xl:max-w-7xl 2xl:max-w-screen-2xl">
             <Suspense fallback={<><SkeletonDashboard/></>}>
               {data.dashboardStatsData && <DashboardCharts data={data} />}
             </Suspense>
           </div>
+}
 
         </SidebarIconsLayout>
       ) : (

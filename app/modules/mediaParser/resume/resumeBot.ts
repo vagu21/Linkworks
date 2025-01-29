@@ -47,8 +47,16 @@ Summarize the candidate details below into a JSON with exactly the following str
       "endDate": "The end date of the job period in 'YYYY-MM-DD' format. Leave as an empty string if not found.",
       "description": "Additional details about the job role, responsibilities, or notable achievements, written as a string. If not available, leave this as an empty string."
     }
-  ]
+  ],
+
+ "Skills": [
+                {
+                    "name": "The name of the skill  by the candidate, written as a string.",
+                    "proficiency": "The proficiency level of the skill as a number between 1-5, calculated based on employment or resume details."
+                }
+            ]
 }
+
 The JSON must be valid and enclosed in a proper code block, like this:
 \`\`\`json
 {
@@ -79,8 +87,7 @@ ${extractedText}
     const result = JSON.parse(jsonString!);
     return result;
   } catch (error: any) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return null;
   }
 }
-

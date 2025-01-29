@@ -16,50 +16,68 @@ const DashboardCharts = ({ data }: { data: LoaderData }) => {
     const [lineChartData, setLineChartData] = useState<any>([]);
 
     function mergeMonthlyData(candidates: any, jobApplications: any) {
+
         const allMonths = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
 
-        let candidatesStartingMonth = candidates[0].month
-        let jobApplicationsStartingMonth = jobApplications[0].month
-
-        console.log("candidatesStartingMonth", candidatesStartingMonth);
-        console.log("jobApplicationsStartingMonth", jobApplicationsStartingMonth);
-
         const mergedData = new Map();
 
-        if (allMonths.indexOf(candidatesStartingMonth) < allMonths.indexOf(jobApplicationsStartingMonth)) {
-            jobApplications.forEach(({ month, JobApplication }: any) => {
-                if (!mergedData.has(month)) {
-                    mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
-                }
-                mergedData.get(month).jobApplication = JobApplication;
-            });
+    
+        if (candidates.length > 0 || jobApplications.length > 0) {
+            let candidatesStartingMonth = candidates.length > 0 ? candidates[0].month : null;
+            let jobApplicationsStartingMonth = jobApplications.length > 0 ? jobApplications[0].month : null;
 
-            candidates.forEach(({ month, Candidate }: any) => {
-                if (!mergedData.has(month)) {
-                    mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
-                }
-                mergedData.get(month).candidates = Candidate;
-            });
-        }
+            if (candidatesStartingMonth !== null && jobApplicationsStartingMonth !== null) {
+                if (allMonths.indexOf(candidatesStartingMonth) < allMonths.indexOf(jobApplicationsStartingMonth)) {
+                    jobApplications.forEach(({ month, JobApplication }: any) => {
+                        if (!mergedData.has(month)) {
+                            mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                        }
+                        mergedData.get(month)!.jobApplication = JobApplication;
+                    });
 
-        else {
-            candidates.forEach(({ month, Candidate }: any) => {
-                if (!mergedData.has(month)) {
-                    mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
-                }
-                mergedData.get(month).candidates = Candidate;
-            });
+                    candidates.forEach(({ month, Candidate }: any) => {
+                        if (!mergedData.has(month)) {
+                            mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                        }
+                        mergedData.get(month)!.candidates = Candidate;
+                    });
+                } else {
+                    candidates.forEach(({ month, Candidate }: any) => {
+                        if (!mergedData.has(month)) {
+                            mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                        }
+                        mergedData.get(month)!.candidates = Candidate;
+                    });
 
-            jobApplications.forEach(({ month, JobApplication }: any) => {
-                if (!mergedData.has(month)) {
-                    mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                    jobApplications.forEach(({ month, JobApplication }: any) => {
+                        if (!mergedData.has(month)) {
+                            mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                        }
+                        mergedData.get(month)!.jobApplication = JobApplication;
+                    });
                 }
-                mergedData.get(month).jobApplication = JobApplication;
-            });
+            }
 
+            else if (candidatesStartingMonth !== null) {
+                candidates.forEach(({ month, Candidate }: any) => {
+                    if (!mergedData.has(month)) {
+                        mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                    }
+                    mergedData.get(month)!.candidates = Candidate;
+                });
+            }
+
+            else if (jobApplicationsStartingMonth !== null) {
+                jobApplications.forEach(({ month, JobApplication }: any) => {
+                    if (!mergedData.has(month)) {
+                        mergedData.set(month, { month, jobApplication: 0, candidates: 0 });
+                    }
+                    mergedData.get(month)!.jobApplication = JobApplication;
+                });
+            }
         }
 
 

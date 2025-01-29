@@ -23,19 +23,13 @@ export default function RowRelationshipRow({
   return (
     <Fragment>
       {onRelatedRowClick !== undefined ? (
-        <button type="button" onClick={onRelatedRowClick} className="hover truncate text-left text-sm hover:underline">
+        <button type="button" onClick={onRelatedRowClick} className="hover truncate text-left text-sm">
           {RowHelper.getTextDescription({ entity: entity, item, t })}
         </button>
-      ) : !routes || !EntityHelper.getRoutes({ routes, entity: entity, item })?.overview ? (
-        <div className="hover truncate text-left text-sm hover:underline">{RowHelper.getTextDescription({ entity: entity, item, t })}</div>
       ) : (
-        <Link
-          onClick={(e) => e.stopPropagation()}
-          to={EntityHelper.getRoutes({ routes, entity: entity, item })?.overview ?? ""}
-          className="hover truncate text-left text-sm hover:underline"
-        >
+        <div className="hover truncate text-left text-sm">
           {RowHelper.getTextDescription({ entity: entity, item, t })}
-        </Link>
+        </div>
       )}
     </Fragment>
   );

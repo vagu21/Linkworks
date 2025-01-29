@@ -1,6 +1,4 @@
 "use client"
-
-import { TrendingUp } from "lucide-react"
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
 
 import {
@@ -30,7 +28,9 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function LineChartComponent({ data, barColor = "#2563eb", charTitle, charSubTitle, chartDescription }: any) {
-    const keys = Object.keys(data[0]);
+
+    let keys: any = [];
+    if (data.length) keys = Object.keys(data[0]);
     return (
 
         <Card className="flex flex-col w-full">
@@ -111,7 +111,7 @@ export function LineChartComponent({ data, barColor = "#2563eb", charTitle, char
 
                 </div>
                 <div className="leading-none text-muted-foreground flex gap-2">
-                    {chartDescription}  <TrendingUp className="h-4 w-4" />
+                    {chartDescription} 
                 </div>
             </CardFooter>
         </Card>

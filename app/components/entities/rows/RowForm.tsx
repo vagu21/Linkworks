@@ -105,7 +105,8 @@ const RowForm = (
     template,
     statesArr,
     setStatesArr,
-  }: Props,
+    isSlideOverOrRowList = false,
+  }: Props & { isSlideOverOrRowList?: boolean },
   ref: Ref<RefRowForm>
 ) => {
   const { t } = useTranslation();
@@ -139,7 +140,7 @@ const RowForm = (
 
   async function getFeatureFlags() {
     const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`,{credentials: 'include'});
+    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`, { credentials: 'include' });
     const response = await data.json();
     setFeatureFlagValues(response);
   }
@@ -546,6 +547,7 @@ const RowForm = (
           promptFlows={promptFlows}
           onSaveIfAllSet={onSaveIfAllSet}
           parseMediaFile={parseMediaFile}
+          isSlideOverOrRowList={isSlideOverOrRowList}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -573,6 +575,7 @@ const RowForm = (
                   relationshipRows={relationshipRows}
                   addRelationshipRow={addRelationshipRow}
                   setRelationshipRows={setRelationshipRows}
+                  isSlideOverOrRowList={isSlideOverOrRowList}
                 />
               </div>
             </div>
@@ -657,7 +660,9 @@ function RelationshipSelector({
   relationshipRows,
   addRelationshipRow,
   setRelationshipRows,
+  isSlideOverOrRowList = false,
 }: {
+  isSlideOverOrRowList?: boolean;
   fromEntity: EntityWithDetails;
   type: "child" | "parent";
   relationship: EntityRelationshipWithDetails;
@@ -676,13 +681,13 @@ function RelationshipSelector({
   const [entity] = useState(
     type === "parent"
       ? {
-          entity: getChildEntity(relationship)!,
-          view: relationship.parentEntityView,
-        }
+        entity: getChildEntity(relationship)!,
+        view: relationship.parentEntityView,
+      }
       : {
-          entity: getParentEntity(relationship)!,
-          view: relationship.childEntityView,
-        }
+        entity: getParentEntity(relationship)!,
+        view: relationship.childEntityView,
+      }
   );
 
   function getRows(relationship: EntityRelationshipWithDetails) {
@@ -797,38 +802,38 @@ function RelationshipSelector({
                 </div>
               ))} */}
 
-          <div className="flex space-x-3 pt-4">
-            {/* <AddMoreCard
+          {/* <div className="flex space-x-3 pt-4"> */}
+          {/* <AddMoreCard
   entity={entity.entity}
   routes={routes}
   title={t(entity.entity.title)}
 /> */}
 
-            <button
-              onClick={() => onFindEntityRows(relationship)}
-              type="button"
-              className={clsx(
-                "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
-                readOnly && "hidden"
-              )}
-            >
-              {type === "parent" && (
-                <>
-                  {/* <div>{t("shared.add")}</div> */}
-                  <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
-                  <div className="lowercase">{t(relationship.parent.title)}</div>
-                </>
-              )}
-              {type === "child" && (
-                <>
-                  {/* <div>{t("shared.add")}</div> */}
-                  <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
-                  <div className="lowercase">{t(relationship.child.title)}</div>
-                </>
-              )}
-            </button>
-          </div>
+          <button
+            onClick={() => onFindEntityRows(relationship)}
+            type="button"
+            className={clsx(
+              "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
+              readOnly && "hidden"
+            )}
+          >
+            {type === "parent" && (
+              <>
+                {/* <div>{t("shared.add")}</div> */}
+                <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
+                <div className="lowercase">{t(relationship.parent.title)}</div>
+              </>
+            )}
+            {type === "child" && (
+              <>
+                {/* <div>{t("shared.add")}</div> */}
+                <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
+                <div className="lowercase">{t(relationship.child.title)}</div>
+              </>
+            )}
+          </button>
         </div>
+        // </div>
       )}
       {/* </>
       ) : null} */}
@@ -860,7 +865,9 @@ function RowGroups({
   promptFlows,
   onSaveIfAllSet,
   parseMediaFile,
+  isSlideOverOrRowList = false,
 }: {
+  isSlideOverOrRowList?: boolean;
   item?: RowWithDetails | null;
   entity: EntityWithDetails;
   rowValues: RowValueDto[];
@@ -976,7 +983,7 @@ function RowGroups({
 
   function getPropertyColumnSpan(property: PropertyWithDetails) {
     const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
-    if (columns === undefined || isNaN(columns) || (columns < 1 && columns > 12)) {
+    if (columns === undefined || isNaN(columns) || columns < 1 || columns > 12) {
       return "col-span-12";
     }
     return `col-span-${columns}`;
@@ -1012,10 +1019,10 @@ function RowGroups({
 
     return [left, right];
   };
-  const columns = groups.length > 1 ? 2 : 1;
+  const columns = isSlideOverOrRowList ? 0 : groups.length > 1 ? 2 : 1;
 
   return (
-    <div className={`grid ${columns === 2 ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
+    <div className={`grid ${columns === 2 ? "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2" : "sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1"} gap-4 w-full`}>
       {distributeGroups(groups).map((column, colIndex) => (
         <div key={colIndex} className={clsx("space-y-4", colIndex === 0 && "pb-8")}>
           {column.map(({ group, headers }, originalIndex) => {
@@ -1115,6 +1122,7 @@ function RowGroups({
                               onRemoveRelatedRow={onRemoveRelatedRow}
                               readOnly={item?.id !== undefined && (!editing || !canUpdate)}
                               routes={routes}
+                              isSlideOverOrRowList={true}
                               relationshipRows={relationshipRows}
                               addRelationshipRow={addRelationshipRow}
                               setRelationshipRows={setRelationshipRows}

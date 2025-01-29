@@ -80,6 +80,7 @@ export default function RowNewFetcher({ url, parentEntity, onCreated, allEntitie
               routes={data.routes}
               parentEntity={parentEntity}
               onSubmit={onSubmit}
+              isSlideOverOrRowList={true} // Ensure this prop is passed correctly
               onCreatedRedirect={undefined}
               allEntities={allEntities}
               relationshipRows={data.relationshipRows}

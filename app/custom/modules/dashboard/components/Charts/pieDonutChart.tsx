@@ -23,16 +23,13 @@ import {
 
 export function PieDonutChart({ chartData, charTitle, chartSubTitle, chartDescription }: any) {
 
-  if (chartData.length == 0) return <></>
-  const keys = Object.keys(chartData[0]);
+  let keys: any = []
+  if (chartData.length) keys = Object.keys(chartData[0]);
+
   const totalVisitors = React.useMemo(() => {
+    if (chartData.length == 0) return 0
     return chartData.reduce((acc: any, curr: any) => acc + curr?.[keys[1]], 0)
   }, [chartData])
-
-  chartData.forEach((item: any) => {
-
-    item[keys[1]]
-  });
 
   const chartConfig = {
     candidate: {

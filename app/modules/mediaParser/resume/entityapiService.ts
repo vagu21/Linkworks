@@ -1,17 +1,17 @@
 const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
+
+
 export const saveTenantEntity = async (
     entityName: string,
     entityDataList: any[],
-    tenantData: any
+    tenantData: any,
+    tenantSlug: any, 
   ): Promise<string[]> => {
     const entityIds: string[] = [];
-  
-    if (!tenantData?.rowsData?.views?.[0]?.tenantId) {
+    if (!tenantSlug) {
       return entityIds;
     }
-  
-    const tenant = { tenantId: tenantData.rowsData.views[0].tenantId };
-  
+    const tenant =  tenantSlug; 
     for (const entityData of entityDataList) {
       const formData = new FormData();
       formData.append("entityName", entityName);
@@ -22,6 +22,7 @@ export const saveTenantEntity = async (
         const response = await fetch(`${serverUrl}/api/media-parser/${entityName}`, {
           method: "POST",
           body: formData,
+          credentials:"include",
         });
   
         if (!response.ok) {
@@ -42,7 +43,7 @@ export const saveTenantEntity = async (
     return entityIds;
   };
   
-  export const saveTenantEducationHistory = async (educationHistories: any[], allEducationTent: any) => {
+  export const saveTenantEducationHistory = async (educationHistories: any[], allEducationTent: any, tenantSlug: string|undefined|null) => {
     const formattedEducationHistories = educationHistories.map((education) => ({
       schoolCollegeName: education.schoolCollegeName || "",
       educationQualification: education.educationQualification || "",
@@ -54,10 +55,10 @@ export const saveTenantEntity = async (
       description: education.description || "",
     }));
   
-    return await saveTenantEntity("Education History", formattedEducationHistories, allEducationTent);
+    return await saveTenantEntity("Education History", formattedEducationHistories, allEducationTent, tenantSlug);
   };
   
-  export const saveTenantWorkExperience = async (workExperienceHistories: any[], allWorkExperienceTent: any) => {
+  export const saveTenantWorkExperience = async (workExperienceHistories: any[], allWorkExperienceTent: any,  tenantSlug: string|undefined|null) => {
     const formattedWorkExperienceHistories = workExperienceHistories.map((workExperience) => ({
       title: workExperience.title || "",
       companyName: workExperience.companyName || "",
@@ -71,7 +72,18 @@ export const saveTenantEntity = async (
       description: workExperience.description || "",
     }));
   
-    return await saveTenantEntity("Work Experience", formattedWorkExperienceHistories, allWorkExperienceTent);
+    return await saveTenantEntity("Work Experience", formattedWorkExperienceHistories, allWorkExperienceTent, tenantSlug);
+  };
+
+
+  export const saveTenantTechnicalSkills = async (technicalSkills: any[], allTechnicalSkillsTent: any,  tenantSlug: string|undefined|null) => {
+    const formattedTechnicalSkills = technicalSkills.map((Skill) => ({
+      name: Skill.name || "",
+      proficiency: typeof Skill.proficiency === "number" ? Skill.proficiency : 0,
+      
+    }));
+  
+    return await saveTenantEntity("Skills", formattedTechnicalSkills, allTechnicalSkillsTent, tenantSlug);
   };
   
   export const entityListData = async (entityUrl: string) => {

@@ -28,9 +28,11 @@ interface BarChartProps {
 }
 
 function BarChartComponent({ chartData, barColor = "#2563eb", charTitle, charSubTitle, chartDescription }: BarChartProps) {
-    let keys = Object.keys(chartData[0]);
-    const [dataKeyXAxis, setDataKeyXAxis] = React.useState(keys[0])
-    const [dataKeyYAxis, setDataKeyYAxis] = React.useState(keys[1])
+
+    let keys: any = [];
+    if (chartData.length) keys = Object.keys(chartData[0]);
+    const [dataKeyXAxis, setDataKeyXAxis] = React.useState(keys?.length ? keys[0] : "")
+    const [dataKeyYAxis, setDataKeyYAxis] = React.useState(keys.length ? keys[1] : "")
     const chartConfig = {
         desktop: {
             label: "Desktop",

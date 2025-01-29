@@ -19,7 +19,7 @@ import { getBaseURL } from "~/utils/url.server";
 import EventsService from "~/modules/events/services/.server/EventsService";
 import { MemberInvitationAcceptedDto } from "~/modules/events/dtos/MemberInvitationAcceptedDto";
 
-let companyRoleIDs: any = [];
+// let companyRoleIDs: any = [];
 
 type LoaderData = {
   title: string;
@@ -30,7 +30,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { t } = await getTranslations(request);
 
   const invitation = await getUserInvitation(params.id ?? "");
-  companyRoleIDs = invitation?.roles;
+  // companyRoleIDs = invitation?.roles;
   const existingUser = await getUserByEmail(invitation?.email);
   const data: LoaderData = {
     title: `${t("account.invitation.title")} | ${process.env.APP_NAME}`,
@@ -85,13 +85,13 @@ export const action: ActionFunction = async ({ request, params }) => {
     let AllCompanyRoles = ["Company Member", "Company Admin", "Supplier"];
     const companyRoles: any = roles.filter((role: any) => AllCompanyRoles.includes(role.name));
 
-    function assignRoles() {
-      if (companyRoleIDs.length != 0) {
-        if (companyRoleIDs.length != 0) {
-          return companyRoles?.filter((f: any) => companyRoleIDs.includes(f.id));
-        }
-      } else return roles.filter((f) => f.assignToNewUsers);
-    }
+    // function assignRoles() {
+    //   if (companyRoleIDs.length != 0) {
+    //     if (companyRoleIDs.length != 0) {
+    //       return companyRoles?.filter((f: any) => companyRoleIDs.includes(f.id));
+    //     }
+    //   } else return roles.filter((f) => f.assignToNewUsers);
+    // }
 
     await createTenantUser(
       {
@@ -99,7 +99,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         userId: user.id,
         type: invitation.type,
       },
-      assignRoles()
+      roles.filter((f) => f.assignToNewUsers)
     );
     await EventsService.create({
       request,

@@ -3,7 +3,6 @@ import { downloadAction } from "~/modules/mediaExport";
 import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
 import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
 
-
 function ActionButton({ buttonTitle }: { buttonTitle: string }) {
   return (
     <div>
@@ -15,21 +14,40 @@ function ActionButton({ buttonTitle }: { buttonTitle: string }) {
   );
 }
 
-export function getConditionalActions(entity: any, onRemove: any) {
+export function getConditionalActions(entity: any, onRemove: any, setLoading: any) {
   const actions = [];
-  
+
   switch (entity.name) {
     case "Candidate":
       actions.push({
         title: <ActionButton buttonTitle={"Summary"} />,
-        onClick: (_: any, item: any) => downloadAction(item.id, "resume"),
+
+        onClick: async (_: any, item: any) => {
+          try {
+            setLoading(true);
+            await downloadAction(item.id, "resume");
+            setLoading(false);
+          } catch (error) {
+            console.error(error);
+            setLoading(false);
+          }
+        },
       });
       break;
 
     case "Job":
       actions.push({
         title: <ActionButton buttonTitle={"Download JD"} />,
-        onClick: (_: any, item: any) => downloadAction(item.id, "job"),
+        onClick: async (_: any, item: any) => {
+          try {
+            setLoading(true);
+            await downloadAction(item.id, "job");
+            setLoading(false);
+          } catch (error) {
+            console.error(error);
+            setLoading(false);
+          }
+        },
       });
       break;
 
