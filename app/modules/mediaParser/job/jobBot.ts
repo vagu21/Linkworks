@@ -1,12 +1,3 @@
-import OpenAI from "openai";
-
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
-const openai = new OpenAI({
-  apiKey,
-  dangerouslyAllowBrowser: true,
-});
-
 export async function generateJsonFromJD(extractedText: string) {
   const prompt = `
 Summarize the job description below into a JSON with exactly the following structure{
@@ -43,25 +34,17 @@ Candidate Details:
 ${extractedText}
 `;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: prompt },
-      ],
-      max_tokens: 1500,
-      temperature: 0.5,
-    });
+  const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL
+  const data = await fetch(`${serverUrl}/api/open-AI`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ prompt })
+  })
 
-    const rawResponse = response.choices[0].message.content?.trim();
-    const jsonMatch = rawResponse?.match(/```json\s*([\s\S]*?)```/);
-    const jsonString = jsonMatch ? jsonMatch[1] : rawResponse;
 
-    const result = JSON.parse(jsonString!);
-    return result;
-  } catch (error: any) {
-    console.error('Error:', error);
-    return null;
-  }
+  const response = await data.json();
+  return response;
 }

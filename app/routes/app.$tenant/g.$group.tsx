@@ -5,13 +5,10 @@ import { useTranslation } from "react-i18next";
 import { useTypedLoaderData } from "remix-typedjson";
 import SidebarIconsLayout, { IconDto } from "~/components/ui/layouts/SidebarIconsLayout";
 import { getTranslations } from "~/locale/i18next.server";
-import DashboardCharts from "~/custom/modules/dashboard/components";
 import UrlUtils from "~/utils/app/UrlUtils";
 import { useAppOrAdminData } from "~/utils/data/useAppOrAdminData";
 import { getEntityGroupBySlug } from "~/utils/db/entities/entityGroups.db.server";
 import { getTenantIdOrNull } from "~/utils/services/.server/urlService";
-import { getDashBoardData } from "~/custom/modules/dashboard/services/index";
-import SkeletonDashboard from "~/custom/modules/dashboard/components/Skeleton";
 
 export type LoaderData = {
   title: string;
@@ -28,7 +25,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const data: LoaderData = {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
-    dashboardStatsData: !params.entity && params.group === "recruitment" ? await getDashBoardData({ request, params }) : null,
+
   };
   return json(data);
 };
@@ -43,6 +40,8 @@ export default () => {
   const data = useTypedLoaderData<LoaderData>();
   const mainElement = useRef<HTMLDivElement>(null);
   // useElementScrollRestoration({ apply: false }, mainElement);
+
+
 
   useEffect(() => {
     const group = appOrAdminData.entityGroups.find((f) => f.slug === params.group);
@@ -87,19 +86,6 @@ export default () => {
       {!params.id ? (
         <SidebarIconsLayout label={{ align: "right" }} items={items}>
           <Outlet />
-          {params.entity == undefined && params.group == "recruitment" && data.dashboardStatsData && (
-            <div className="  mx-auto max-w-5xl space-y-3 px-4 pt-3 sm:px-6 lg:px-8 xl:max-w-7xl 2xl:max-w-screen-2xl">
-              <Suspense
-                fallback={
-                  <>
-                    <SkeletonDashboard />
-                  </>
-                }
-              >
-                <DashboardCharts data={data} />
-              </Suspense>
-            </div>
-          )}
         </SidebarIconsLayout>
       ) : (
         <div className="sm:h-[calc(100vh-56px)]">

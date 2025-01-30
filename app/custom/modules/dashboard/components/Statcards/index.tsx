@@ -12,9 +12,9 @@ import CountUp from 'react-countup';
 const StatCard = ({ charTitle, charSubTitle, chartDescription, numericData }: any) => {
     return (
         <>
-            <Card className="flex flex-col  h-[200px]">
+            <Card className="flex flex-col  h-[200px] justify-center text-center">
                 <CardHeader className="items-center pb-0">
-                    <CardTitle>{charTitle}</CardTitle>
+                    <CardTitle style={{  lineHeight: "1.2" }}>{charTitle}</CardTitle>
                     <CardDescription>{charSubTitle}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 pb-0">

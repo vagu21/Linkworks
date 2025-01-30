@@ -1,20 +1,21 @@
 import { RowsApi } from "~/utils/api/.server/RowsApi";
 import { db } from "~/utils/db.server";
 import { getEntityByName } from "~/utils/db/entities/entities.db.server";
+import { getTenantBySlug } from "~/utils/db/tenants.db.server";
 
 
- async function entityRowCountPerMonth(id: string, entity: string) {
+async function entityRowCountPerMonth(id: string, entity: string,tenantId:string) {
     const query = `
       SELECT 
         TO_CHAR(DATE_TRUNC('month', "createdAt"), 'Mon') AS "month",
         COUNT(*) AS "entity_count"
       FROM "Row"
-      WHERE "entityId" = $1
+      WHERE "entityId" = $1 AND "tenantId" = $2
       GROUP BY DATE_TRUNC('month', "createdAt")
       ORDER BY DATE_TRUNC('month', "createdAt") ASC;
     `;
 
-    const data = await db.$queryRawUnsafe<{ month: string; entity_count: bigint }[]>(query, id);
+    const data = await db.$queryRawUnsafe<{ month: string; entity_count: bigint }[]>(query, id,tenantId);
 
     return data.map((row) => ({
         month: row.month,
@@ -95,16 +96,14 @@ function getDateRange(range: String) {
     return { startDate, endDate };
 }
 
-async function getEntityNumericData(entityName: string, urlSearchParams: URLSearchParams, dateFilter?: string) {
+async function getEntityNumericData(entityName: string, urlSearchParams: URLSearchParams, tenantId: string, dateFilter?: string,) {
 
-    let where = {};
-    if (dateFilter && dateFilter !== "all-time") {
-        const { startDate, endDate } = getDateRange(dateFilter);
-        where = {
-            createdAt: {
-                gte: startDate,
-                lte: endDate,
-            }
+    let where: any = { tenantId: tenantId };
+    if (dateFilter !== "all-time") {
+        const { startDate, endDate } = getDateRange(dateFilter == undefined ? "last-30-days" : dateFilter);
+        where.createdAt = {
+            gte: startDate,
+            lte: endDate,
         }
     }
     const data = await RowsApi.getAll({
@@ -120,32 +119,35 @@ export async function getDashBoardData({ request, params }: any) {
     const url = request.url;
     const period = url?.split("?")[1];
     const timePeriod = period?.split("=")[1];
+    const tenantSlug = params.tenant;
 
+    const tenant = await getTenantBySlug(tenantSlug);
+    const tenantId = tenant?.id||'';
 
     let data = {};
 
-    let proposedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Proposed' }), timePeriod);
-    let intervieingCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Interviewing' }), timePeriod);
-    let selctedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Selected' }), timePeriod);
-    let rejectedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Rejected' }), timePeriod);
-    let holdCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Hold' }), timePeriod);
-    let cancelledCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Cancelled' }), timePeriod);
-    let bannedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Banned' }), timePeriod);
-    let openToWorkCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ availability: 'Open to work' }), timePeriod);
+    let proposedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Proposed' }), tenantId,timePeriod);
+    let intervieingCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Interviewing' }),tenantId,timePeriod);
+    let selctedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Selected' }),tenantId,timePeriod);
+    let rejectedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Rejected' }),tenantId,timePeriod);
+    let holdCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Hold' }),tenantId,timePeriod);
+    let cancelledCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Cancelled' }),tenantId,timePeriod);
+    let bannedCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ status: 'Banned' }),tenantId,timePeriod);
+    let openToWorkCandidatesCount = await getEntityNumericData("Candidate", new URLSearchParams({ availability: 'Open to work' }),tenantId,timePeriod);
 
-    let openJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'open' }), timePeriod);
-    let closedJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'closed' }), timePeriod);
-    let filledJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'Filled' }), timePeriod);
+    let openJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'open' }),tenantId,timePeriod);
+    let closedJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'closed' }),tenantId,timePeriod);
+    let filledJobsCount = await getEntityNumericData("Job", new URLSearchParams({ status: 'Filled' }),tenantId,timePeriod);
 
-    let pendingJobApplicationsCount = await getEntityNumericData("Job Application", new URLSearchParams({ status: 'Pending' }), timePeriod);
+    let pendingJobApplicationsCount = await getEntityNumericData("Job Application", new URLSearchParams({ status: 'Pending' }),tenantId,timePeriod);
 
-    const jobdata = await getEntityNumericData("Job Application", new URLSearchParams(), timePeriod);
-    const jobapplicationID = await getEntityByName({ tenantId: null, name: "Job Application" });
-    const CandidateID = await getEntityByName({ tenantId: null, name: "Candidate" });
-    let JobApplicationPerMonthcount = await entityRowCountPerMonth(jobapplicationID.id, "JobApplication");
-    let CandidatePerMonthcount = await entityRowCountPerMonth(CandidateID.id, "Candidate");
+    const jobdata = await getEntityNumericData("Job Application", new URLSearchParams(),tenantId,timePeriod);
+    const jobapplicationID = await getEntityByName({ tenantId: tenantId, name: "Job Application" });
+    const CandidateID = await getEntityByName({ tenantId: tenantId, name: "Candidate" });
+    let JobApplicationPerMonthcount = await entityRowCountPerMonth(jobapplicationID.id, "JobApplication", tenantId);
+    let CandidatePerMonthcount = await entityRowCountPerMonth(CandidateID.id, "Candidate", tenantId);
 
-    let accountsCount = await getEntityNumericData("Account", new URLSearchParams(), timePeriod);
+    let accountsCount = await getEntityNumericData("Account", new URLSearchParams(), tenantId,timePeriod);
 
     data = {
         Candidates: {

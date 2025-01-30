@@ -24,8 +24,6 @@ import { getRowPermissionsCondition } from "~/utils/helpers/.server/PermissionsS
 import { RowValueMultipleDto } from "~/application/dtos/entities/RowValueMultipleDto";
 import { RowValueRangeDto } from "~/application/dtos/entities/RowValueRangeDto";
 import RowModelHelper from "~/utils/helpers/models/RowModelHelper";
-import { isVisible, getEntityNameById } from "./accessControlHelpers";
-
 
 export type RowValueWithDetails = RowValue & {
   media: RowMedia[];
@@ -48,17 +46,17 @@ export type RowWithDetails = Row & {
   values: RowValueWithDetails[];
   tags: RowTagWithDetails[];
   parentRows:
-  | (RowRelationship & { parent: RowWithValues })[]
-  | (RowRelationship & {
-    parent: RowWithValues & {
-      parentRows: (RowRelationship & {
-        parent: { values: RowValueWithDetails[] };
+    | (RowRelationship & { parent: RowWithValues })[]
+    | (RowRelationship & {
+        parent: RowWithValues & {
+          parentRows: (RowRelationship & {
+            parent: { values: RowValueWithDetails[] };
+          })[];
+          childRows: (RowRelationship & {
+            child: { values: RowValueWithDetails[] };
+          })[];
+        };
       })[];
-      childRows: (RowRelationship & {
-        child: { values: RowValueWithDetails[] };
-      })[];
-    };
-  })[];
   childRows: (RowRelationship & {
     child: RowWithValues & {
       parentRows: (RowRelationship & {
@@ -87,6 +85,7 @@ export async function getRows({
   entityId,
   entityName,
   tenantId,
+
   userId,
   take,
   skip,
@@ -99,7 +98,8 @@ export async function getRows({
   entityId?: string;
   entityName?: string;
   tenantId?: string | null;
-  userId: string;
+
+  userId?: string;
   take?: number;
   skip?: number;
   orderBy?: Prisma.RowOrderByWithRelationInput[];
@@ -116,7 +116,7 @@ export async function getRows({
     filterEntity = { entity: { name: entityName } };
   }
 
-  const accessFilters = await getAccessFilters({ tenantId, userId, entityId: entityId || entityName });
+  const accessFilters = await getAccessFilters({ tenantId });
   const where: Prisma.RowWhereInput = {
     AND: [
       { deletedAt: null },
@@ -176,6 +176,7 @@ export async function countRows({
   entityId,
   entityName,
   tenantId,
+
   userId,
   filters,
   rowWhere,
@@ -184,7 +185,8 @@ export async function countRows({
   entityId?: string;
   entityName?: string;
   tenantId?: string | null;
-  userId?: string;
+
+  userId?: string | undefined;
   filters?: RowFiltersDto;
   rowWhere?: Prisma.RowWhereInput;
   includePublic?: boolean;
@@ -197,7 +199,7 @@ export async function countRows({
     filterEntity = { entity: { name: entityName } };
   }
 
-  const accessFilters = await getAccessFilters({ tenantId, userId });
+  const accessFilters = await getAccessFilters({ tenantId });
   const where: Prisma.RowWhereInput = {
     AND: [
       { deletedAt: null },
@@ -214,8 +216,8 @@ export async function countRows({
   });
 }
 
-export async function getRow({ entityId, id, tenantId, userId }: { entityId: string; id: string; tenantId?: string | null; userId?: string | null; }): Promise<RowWithDetails | null> {
-  const accessFilters = await getAccessFilters({ tenantId, userId });
+export async function getRow({ entityId, id, tenantId }: { entityId: string; id: string; tenantId?: string | null }): Promise<RowWithDetails | null> {
+  const accessFilters = await getAccessFilters({ tenantId });
   return await db.row.findFirst({
     where: {
       deletedAt: null,
@@ -288,6 +290,7 @@ export async function createRow({
   entity: EntityWithDetails;
   data: {
     tenantId: string | null;
+
     createdByUserId?: string | null;
     createdByApiKeyId?: string | null;
     properties: any;
@@ -310,97 +313,92 @@ export async function createRow({
   nextOrder?: number | undefined;
 }) {
   let folio = nextFolio ?? 1;
-  let order = nextOrder ?? 1;
-
-  try {
-    if (!nextFolio) {
-      const maxFolio = await getMaxRowFolio({ tenantId: data.tenantId, entityId: entity.id });
-      if (maxFolio && maxFolio._max.folio !== null) {
-        folio = maxFolio._max.folio + 1;
-      }
+  if (!nextFolio) {
+    const maxFolio = await getMaxRowFolio({ tenantId: data.tenantId, entityId: entity.id });
+    if (maxFolio && maxFolio._max.folio !== null) {
+      folio = maxFolio._max.folio + 1;
     }
-    if (!nextOrder) {
-      const maxOrder = await getMaxRowOrder({ tenantId: data.tenantId, entityId: entity.id });
-      if (maxOrder && maxOrder._max.order !== null) {
-        order = maxOrder._max.order + 1;
-      }
-    }
-
-    const createInput: Prisma.XOR<Prisma.RowCreateInput, Prisma.RowUncheckedCreateInput> = {
-      folio,
-      order,
-      entityId: entity.id,
-      tenantId: data.tenantId,
-      createdByUserId: data.createdByUserId ?? null,
-      createdByApiKeyId: data.createdByApiKeyId ?? null,
-      ...data.properties,
-      values: {
-        create: data.dynamicProperties
-          // .filter((f) => !f.id)
-          ?.map((value) => {
-            return {
-              propertyId: value.propertyId,
-              textValue: value.textValue,
-              numberValue: value.numberValue,
-              dateValue: value.dateValue,
-              booleanValue: value.booleanValue,
-              media: {
-                create: value.media?.map((m) => {
-                  return {
-                    name: m.name,
-                    title: m.title,
-                    type: m.type,
-                    file: m.file,
-                    publicUrl: m.publicUrl,
-                  };
-                }),
-              },
-              multiple: {
-                create: value.multiple?.map((m) => {
-                  return {
-                    order: m.order,
-                    value: m.value,
-                  };
-                }),
-              },
-              range: {
-                create: value.range ? {
-                  numberMin: value.range.numberMin,
-                  numberMax: value.range.numberMax,
-                  dateMin: value.range.dateMin,
-                  dateMax: value.range.dateMax,
-                } : undefined,
-              },
-            };
-          }),
-      },
-      parentRows: {
-        create: data.parentRows?.map(({ relationshipId, parentId }) => {
-          return {
-            relationshipId,
-            parentId,
-          };
-        }),
-      },
-      childRows: {
-        create: data.childRows?.map(({ relationshipId, childId }) => {
-          return {
-            relationshipId,
-            childId,
-          };
-        }),
-      },
-      ...data.rowCreateInput,
-    };
-
-    const row = await db.row.create({
-      data: createInput,
-    });
-
-    return row;
-  } catch (error: any) {
-    throw new Error(`Failed to create row: ${error.message}`);
   }
+
+  let order = nextOrder ?? 1;
+  if (!nextOrder) {
+    const maxOrder = await getMaxRowOrder({ tenantId: data.tenantId, entityId: entity.id });
+    if (maxOrder && maxOrder._max.order !== null) {
+      order = maxOrder._max.order + 1;
+    }
+  }
+
+  const createInput: Prisma.XOR<Prisma.RowCreateInput, Prisma.RowUncheckedCreateInput> = {
+    folio,
+    order,
+    entityId: entity.id,
+    tenantId: data.tenantId,
+    createdByUserId: data.createdByUserId ?? null,
+    createdByApiKeyId: data.createdByApiKeyId ?? null,
+    ...data.properties,
+    values: {
+      create: data.dynamicProperties
+        // .filter((f) => !f.id)
+        ?.map((value) => {
+          return {
+            propertyId: value.propertyId,
+            textValue: value.textValue,
+            numberValue: value.numberValue,
+            dateValue: value.dateValue,
+            booleanValue: value.booleanValue,
+            media: {
+              create: value.media?.map((m) => {
+                return {
+                  name: m.name,
+                  title: m.title,
+                  type: m.type,
+                  file: m.file,
+                  publicUrl: m.publicUrl,
+                };
+              }),
+            },
+            multiple: {
+              create: value.multiple?.map((m) => {
+                return {
+                  order: m.order,
+                  value: m.value,
+                };
+              }),
+            },
+            range: {
+              create: {
+                numberMin: value.range?.numberMin,
+                numberMax: value.range?.numberMax,
+                dateMin: value.range?.dateMin,
+                dateMax: value.range?.dateMax,
+              },
+            },
+          };
+        }),
+    },
+    parentRows: {
+      create: data.parentRows?.map(({ relationshipId, parentId }) => {
+        return {
+          relationshipId,
+          parentId,
+        };
+      }),
+    },
+    childRows: {
+      create: data.childRows?.map(({ relationshipId, childId }) => {
+        return {
+          relationshipId,
+          childId,
+        };
+      }),
+    },
+    ...data.rowCreateInput,
+  };
+  const row = await db.row.create({
+    data: createInput,
+  });
+
+  return row;
 }
 
 export async function updateRow(
@@ -625,7 +623,7 @@ export async function updateRowMedia(
   });
 }
 
-export async function getAccessFilters({ tenantId, userId, entityId }: { tenantId?: string | null; userId?: string | null, entityId?: string | null | undefined }): Promise<Prisma.RowWhereInput> {
+async function getAccessFilters({ tenantId, userId }: { tenantId?: string | null; userId?: string }) {
   let tenantFilters: Prisma.RowWhereInput | undefined = undefined;
   let userPermissionFilters: Prisma.RowWhereInput | undefined = undefined;
   if (tenantId !== undefined) {
@@ -634,16 +632,8 @@ export async function getAccessFilters({ tenantId, userId, entityId }: { tenantI
   if (userId) {
     userPermissionFilters = await getRowPermissionsCondition({ tenantId, userId });
   }
-  const AND = [{ ...tenantFilters }, { ...userPermissionFilters }];
-  const entityName = entityId ? await getEntityNameById(entityId) : null;
-  const visible = await isVisible(userId);
-  const normalizedEntityName = entityName ? entityName.toLowerCase() : '';
-  if (visible && normalizedEntityName !== 'job') {
-    AND.push({ createdByUserId: userId });
-  }
   const filters: Prisma.RowWhereInput = {
-    AND: [...AND],
+    AND: [{ ...tenantFilters }, { ...userPermissionFilters }],
   };
   return filters;
 }
-
