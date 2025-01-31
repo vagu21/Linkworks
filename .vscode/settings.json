@@ -26,6 +26,9 @@
   },
   "vite.autoStart": false,
   "cSpell.words": [
+    "aadhaar",
+    "Adhaar",
+    "dtos",
     "entityapi",
     "entityurl",
     "pdftotext",

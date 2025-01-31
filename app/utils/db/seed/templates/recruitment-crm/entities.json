@@ -1217,22 +1217,30 @@
 					"isReadOnly": false,
 					"showInCreate": true,
 					"attributes": [
-						{
-							"name": "FormatNumber",
-							"value": "integer"
-						},
-						{
-							"name": "Max",
-							"value": "100"
-						},
-						{
-							"name": "Group",
-							"value": "Personal Information"
-						},
-						{
-							"name": "DefaultValue",
-							"value": "0"
-						}
+					{
+						"name": "FormatNumber",
+						"value": "decimal"
+					},
+					{
+						"name": "DefaultValue",
+						"value": "0"
+					},
+					{
+						"name": "Step",
+						"value": "0.01"
+					},
+					{
+						"name": "Group",
+						"value": "Personal Information"
+					},
+					{
+						"name": "Max",
+						"value": "50"
+					},
+					{
+						"name": "Min",
+						"value": "0"
+					}
 					]
 				},
 				{
