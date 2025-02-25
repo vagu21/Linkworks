@@ -1,8 +1,8 @@
 trigger:
   - none
-
+ 
 jobs:
-  - job: linkworks_ssh_deployment
+  - job: linkworks_ssh_dev_deployment
     workspace:
       clean: all
     pool:
@@ -23,10 +23,10 @@ jobs:
           TargetFolder: $(Build.SourcesDirectory)/pipeline-publish/applicationcode
       - task: DownloadSecureFile@1
         inputs:
-          secureFile: "linkworks-saasrock.env"
+          secureFile: "linkworks-saasrock-dev.env"
         displayName: download .env file from library
       - script: |
-          mv $(Agent.TempDirectory)/linkworks-saasrock.env $(Build.SourcesDirectory)/pipeline-publish/applicationcode/.env
+          mv $(Agent.TempDirectory)/linkworks-saasrock-dev.env $(Build.SourcesDirectory)/pipeline-publish/applicationcode/.env
         displayName: move .env file to that directory that are zip and publish
       - task: ArchiveFiles@2
         inputs:
@@ -36,23 +36,25 @@ jobs:
           archiveFile: $(Build.SourcesDirectory)/build.zip
           replaceExistingArchive: true
         displayName: "Archieving the source code as zip"
+        
       - task: CopyFilesOverSSH@0
         inputs:
-          sshEndpoint: "linkworks-ssh-cicd"
+          sshEndpoint: "linkworks-dev-ssh-cicd"
           sourceFolder: $(Build.SourcesDirectory)
           contents: build.zip
-          targetFolder: /home/ec2-user/saasrock/
+          targetFolder: /tmp
           overwrite: true
         displayName: "Copy files to AWS instance using ssh"
-
+ 
       - task: SSH@0
         inputs:
-          sshEndpoint: "linkworks-ssh-cicd"
+          sshEndpoint: "linkworks-dev-ssh-cicd"
           runOptions: "commands"
           commands: |
             sudo systemctl stop pm2-root
-            cd /home/ec2-user/saasrock && sudo rm -rf apps-bkp.zip && sudo zip -r apps-bkp.zip apps && sudo rm -rf apps && sudo mkdir apps
-            cd /home/ec2-user/saasrock/apps && sudo unzip /home/ec2-user/saasrock/build.zip && sudo npm i 2>&1 && sudo npm run build 2>&1
+            cd /home/ubuntu/saasrock && sudo rm -rf apps-bkp.zip && sudo zip -r apps-bkp.zip apps && sudo rm -rf apps && sudo mkdir apps
+            sudo cp /tmp/build.zip /home/ubuntu/saasrock
+            cd /home/ubuntu/saasrock/apps && sudo unzip /home/ubuntu/saasrock/build.zip && sudo npm i 2>&1 && sudo npm run build 2>&1
             sudo systemctl restart pm2-root
             sudo systemctl restart nginx
         displayName: "Application Deployment using ssh"
