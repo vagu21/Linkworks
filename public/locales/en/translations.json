@@ -346,7 +346,12 @@
     },
     "google": {
       "button": "Continue with Google"
-    }
+    },
+    
+      "azure":{
+        "button": "Continue with Microsoft"
+      }
+    
   },
   "front": {
       "navbar": {

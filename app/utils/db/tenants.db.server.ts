@@ -396,13 +396,27 @@ export async function createTenant({
   subscriptionCustomerId,
   active,
   slug,
+  isAzureLogin,
 }: {
   name: string;
   icon?: string;
   subscriptionCustomerId?: string | undefined;
   active?: boolean;
   slug?: string;
+  isAzureLogin?: boolean;
 }) {
+  // Check if the tenant already exists by name
+  if (isAzureLogin) {
+    const existingTenants = await db.tenant.findMany({
+      where: { name },
+    });
+
+    if (existingTenants.length > 0) {
+      // If the tenant exists, return it or handle joining logic here
+      return existingTenants[0]; // You may want to add logic to join the user to this tenant
+    }
+  }
+  
   slug = await getAvailableTenantSlug({ name, slug });
   const inboundAddress = await getAvailableTenantInboundAddress(name);
   const tenant = await db.tenant.create({

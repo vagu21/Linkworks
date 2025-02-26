@@ -2,6 +2,7 @@ import { Form, Link, useNavigation, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "~/components/ui/buttons/LoadingButton";
+import AzureIcon from "~/components/ui/icons/AzureIcon";
 import ExclamationTriangleIcon from "~/components/ui/icons/ExclamationTriangleIcon";
 import GitHubIcon from "~/components/ui/icons/GitHubIcon";
 import GoogleIcon from "~/components/ui/icons/GoogleIcon";
@@ -47,7 +48,7 @@ export default function LoginForm({ actionData, redirectTo }: { actionData: Logi
 
       <div className="border-border mx-auto flex flex-col items-center space-y-6 rounded-lg border p-6">
         {/* <!-- SSO: START --> */}
-        {(appConfiguration.auth.authMethods.github.enabled || appConfiguration.auth.authMethods.google.enabled) && (
+        {(appConfiguration.auth.authMethods.github.enabled || appConfiguration.auth.authMethods.google.enabled || appConfiguration.auth.authMethods.azure.enabled) && (
           <>
             <div className="w-full space-y-3 text-center">
               {/* GitHub */}
@@ -72,6 +73,18 @@ export default function LoginForm({ actionData, redirectTo }: { actionData: Logi
                     <GoogleIcon className="mr-2 h-4 w-4 text-white" /> {t("auth.google.button")}
                   </button>
                 </Form>
+              )}
+
+              {appConfiguration.auth.authMethods.azure.enabled && (
+                  <div className="w-full space-y-3 text-center">
+                   <a
+                    className="focus-visible:ring-ring inline-flex h-9 w-full items-center justify-center whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+                    href={appConfiguration.auth.authMethods.azure.authorizationURL}
+                   >
+                    <AzureIcon className="w-18 h-18 mr-1"/>{t("auth.azure.button")}
+
+                    </a>
+                </div>
               )}
               {/* Google: End */}
             </div>

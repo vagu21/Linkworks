@@ -22,6 +22,7 @@ export type UserSimple = {
   phone: string | null;
   githubId: string | null;
   googleId: string | null;
+  azureId: string | null;
   locale: string | null;
   createdAt: Date;
 };
@@ -43,6 +44,7 @@ export type UserWithoutPassword = {
   createdAt: Date;
   githubId: string | null;
   googleId: string | null;
+  azureId: string | null;
   locale: string | null;
 };
 export type UserWithRoles = UserSimple & {
@@ -291,6 +293,7 @@ export async function getUser(userId?: string): Promise<UserWithoutPassword | nu
             createdAt: true,
             githubId: true,
             googleId: true,
+            azureId: true,
             locale: true,
           },
         }),
@@ -346,6 +349,16 @@ export async function getUserByGitHubID(githubId: string) {
   });
 }
 
+export async function getUserByAzureID(azureId: string) {
+  return await db.user.findUnique({
+    where: { azureId },
+    include: {
+      tenants: true,
+      admin: true,
+    },
+  });
+}
+
 export async function register(data: {
   email: string;
   password: string;
@@ -354,13 +367,14 @@ export async function register(data: {
   active?: boolean;
   githubId?: string;
   googleId?: string;
+  azureId?: string;
   avatarURL?: string;
   locale?: string;
   companyId?: string| null;
   defaultTenantId?: string | null;
   request: Request;
 }) {
-  const { email, password, firstName, lastName, active, githubId, googleId, avatarURL, locale, defaultTenantId,companyId } = data;
+  const { email, password, firstName, lastName, active, githubId, googleId,azureId, avatarURL, locale, defaultTenantId,companyId } = data;
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
     data: {
@@ -374,6 +388,7 @@ export async function register(data: {
       active,
       githubId,
       googleId,
+      azureId,
       locale,
       defaultTenantId,
     },
@@ -465,6 +480,21 @@ export async function updateUserDefaultTenantId(data: { defaultTenantId: string 
 }
 
 export async function setUserGitHubAccount(data: { githubId: string }, userId: string) {
+  if (!userId) {
+    return null;
+  }
+  return await db.user
+    .update({
+      where: { id: userId },
+      data,
+    })
+    .then((item) => {
+      clearCacheKey(`user:${userId}`);
+      return item;
+    });
+}
+
+export async function setUserAzureAccount(data: { azureId: string }, userId: string) {
   if (!userId) {
     return null;
   }

@@ -47,6 +47,10 @@ export type AppConfiguration = {
       google: {
         enabled: boolean;
       };
+      azure: {
+        enabled: boolean;
+        authorizationURL: string;
+      }
     };
   };
   analytics: {
@@ -152,6 +156,19 @@ export async function getAppConfiguration({ request }: { request: Request }): Pr
         },
         google: {
           enabled: false,
+        },
+        azure: {
+          enabled: true,
+          authorizationURL: (() => {
+            const url = new URL("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize");
+            url.searchParams.append("client_id", process?.env.AZURE_CLIENT_ID ?? "");
+            url.searchParams.append("redirect_uri", getBaseURL(request) + "/oauth/azure/callback");
+            url.searchParams.append("scope", "openid profile email User.Read");
+            url.searchParams.append("prompt", "consent");
+            url.searchParams.append("access_type", "offline");
+            url.searchParams.append("response_type", "code");
+            return url.toString();
+          })(),
         },
       },
     },

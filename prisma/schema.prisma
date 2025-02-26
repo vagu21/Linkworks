@@ -65,6 +65,7 @@ model User {
   verifyToken                String?
   githubId                   String?                  @unique
   googleId                   String?                  @unique
+  azureId                    String?                  @unique
   locale                     String?
   active                     Boolean                  @default(false)
   admin                      AdminUser? // Has access to the admin panel

@@ -18,9 +18,6 @@ import EventsService from "../../modules/events/services/.server/EventsService";
 import { AccountCreatedDto } from "~/modules/events/dtos/AccountCreatedDto";
 import { autosubscribeToTrialOrFreePlan } from "./.server/pricingService";
 import IpAddressServiceServer from "~/modules/ipAddress/services/IpAddressService.server";
-import { getTenantIdFromUrl } from "./.server/urlService";
-import { json } from "@remix-run/node";
-import { db } from "../db.server";
 
 export type RegistrationData = {
   email?: string;
@@ -61,6 +58,9 @@ export async function validateRegistration({
   stripeCustomerId,
   githubId,
   googleId,
+  azureId,
+  roles,
+  isAzureLogin,
 }: {
   request: Request;
   registrationData: RegistrationData;
@@ -69,6 +69,9 @@ export async function validateRegistration({
   stripeCustomerId?: string;
   githubId?: string;
   googleId?: string;
+  azureId?: string;
+  roles?: string[];
+  isAzureLogin?: boolean;
 }) {
   const { t } = await getTranslations(request);
   const userInfo = await getUserInfo(request);
@@ -77,7 +80,7 @@ export async function validateRegistration({
   if (!email || !UserUtils.validateEmail(email)) {
     throw Error(t("account.register.errors.invalidEmail"));
   }
-  if (!githubId && !googleId) {
+  if (!githubId && !googleId && !azureId) {
     if (!appConfiguration.auth.requireEmailVerification && !UserUtils.validatePassword(password)) {
       throw Error(t("account.register.errors.passwordRequired"));
     } else if (appConfiguration.auth.requireOrganization && typeof company !== "string") {
@@ -114,7 +117,6 @@ export async function validateRegistration({
     await addBlacklistAttempt(blacklistedIp);
     throw Error(t("account.register.errors.blacklist.ip"));
   }
-
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     throw Error(t("api.errors.userAlreadyRegistered"));
@@ -143,9 +145,12 @@ export async function validateRegistration({
     stripeCustomerId,
     githubId,
     googleId,
+    azureId,
     avatarURL,
     locale,
     slug,
+    roles,
+    isAzureLogin,
   });
   if (addToTrialOrFreePlan) {
     await autosubscribeToTrialOrFreePlan({ request, t, tenantId: registered.tenant.id, userId: registered.user.id });
@@ -228,9 +233,12 @@ interface CreateUserAndTenantDto {
   stripeCustomerId?: string;
   githubId?: string;
   googleId?: string;
+  azureId?: string;
   avatarURL?: string;
   locale?: string;
   slug?: string;
+  roles?:string[];
+  isAzureLogin?: boolean;
 }
 export async function createUserAndTenant({
   request,
@@ -242,9 +250,12 @@ export async function createUserAndTenant({
   stripeCustomerId,
   githubId,
   googleId,
+  azureId,
   avatarURL,
   locale,
   slug,
+  roles,
+  isAzureLogin,
 }: CreateUserAndTenantDto) {
   let tenantName = company ?? email.split("@")[0];
   if (!stripeCustomerId && process.env.STRIPE_SK) {
@@ -254,7 +265,7 @@ export async function createUserAndTenant({
     }
     stripeCustomerId = stripeCustomer.id;
   }
-  const tenant = await createTenant({ name: tenantName, subscriptionCustomerId: stripeCustomerId, slug });
+  const tenant = await createTenant({ name: tenantName, subscriptionCustomerId: stripeCustomerId, slug, isAzureLogin });
   if (!tenant) {
     throw Error("Could not create tenant");
   }
@@ -265,22 +276,30 @@ export async function createUserAndTenant({
     lastName: lastName ?? "",
     githubId,
     googleId,
+    azureId,
     avatarURL,
     locale,
     defaultTenantId: tenant.id,
     request,
+    roles,
   });
   if (!user) {
     throw Error("Could not create user");
   }
-  const roles = await getAllRoles("app");
+  const allRoles = await getAllRoles("app");
+  const matchedRoles = allRoles.filter((appRole) => roles.includes(appRole.name));
+  const rolesToAssign = matchedRoles.length > 0 ? matchedRoles : [];
+  const userType = roles.some((role: any) => role.name === 'owner' || role.name === 'OWNER') 
+  ? TenantUserType.OWNER 
+  : TenantUserType.MEMBER;
+
   await createTenantUser(
     {
       tenantId: tenant.id,
       userId: user.id,
-      type: TenantUserType.OWNER,
+      type: userType,
     },
-    roles
+    rolesToAssign
   );
   await TenantTypesApi.setTenantTypes({ tenantId: tenant.id });
 
