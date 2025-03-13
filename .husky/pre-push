@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+ 
+echo 'starting build...'
+npm run build||
+(
+    echo '❌ [BUILD_ERROR] :: Next build failed: View the errors above to see why.'
+    false;
+)
+ 
+# If everything passes... Now we can push
+echo '✅ pushing the code..'

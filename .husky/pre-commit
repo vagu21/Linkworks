@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+ 
+npm run pre-commit ||
+(
+    echo '❌ [PRE_COMMIT_ERROR] :: View the errors above to see why.'
+    false;
+)
+ 
+# If everything passes... Now we can commit
+echo '✅ commiting the code..'

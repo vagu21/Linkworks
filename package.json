@@ -7,6 +7,11 @@
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,css,md,json}": "prettier --write",
+    "**/*.{js,jsx,ts,tsx}": "eslint --fix",
+    "**/*.{ts,tsx}": "tsc --noEmit"
+  },
   "scripts": {
     "dev": "remix vite:dev",
     "build": "prisma generate && remix vite:build && npm run post-build",
@@ -15,7 +20,9 @@
     "typecheck": "tsc -b",
     "test": "vitest app/",
     "prettier": "prettier --write '**/*.{ts,tsx}'",
-    "start": "remix-serve ./build/server/index.js"
+    "start": "remix-serve ./build/server/index.js",
+    "pre-commit": "lint-staged --allow-empty --concurrent false",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@epic-web/cachified": "^4.0.0",
@@ -183,7 +190,9 @@
     "autoprefixer": "^10.4.16",
     "cross-env": "^7.0.3",
     "eslint": "^8.54.0",
+    "husky": "^8.0.0",
     "jsdom": "^23.0.1",
+    "lint-staged": "^15.5.0",
     "postcss": "^8.4.32",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.1.13",
