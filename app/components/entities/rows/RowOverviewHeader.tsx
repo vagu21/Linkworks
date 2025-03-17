@@ -15,9 +15,6 @@ import PencilIcon from "~/components/ui/icons/PencilIcon";
 import RunPromptFlowButtons from "~/modules/promptBuilder/components/run/RunPromptFlowButtons";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
-import  { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
-import { DownloadIcon } from "lucide-react";
-
 
 export default function RowOverviewHeader({
   rowData,

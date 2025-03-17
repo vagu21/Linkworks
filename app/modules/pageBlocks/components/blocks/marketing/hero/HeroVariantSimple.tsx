@@ -56,7 +56,6 @@ export default function HeroVariantSimple({ item }: { item: HeroBlockDto }) {
               );
             })}
           </div> */}
-          
 
           {/* <div className="mt-8 space-y-3">
             {item.bottomText && (

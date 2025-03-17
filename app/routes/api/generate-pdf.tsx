@@ -22,24 +22,27 @@ export let action: ActionFunction = async ({ request }) => {
 
   try {
     const isProduction = process.env.NODE_ENV === "production";
-    const browser = await Puppeteer.launch(isProduction ?{
-      headless:true,
-      executablePath:  "/var/lib/snapd/snap/bin/chromium", 
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], 
-    } : {}
+    const browser = await Puppeteer.launch(
+      isProduction
+        ? {
+            headless: true,
+            executablePath: "/var/lib/snapd/snap/bin/chromium",
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          }
+        : {}
     );
     const page = await browser.newPage();
-    
+
     await page.setContent(html);
 
     await page.waitForSelector("body");
-    
+
     // Get the content width and height after setting the content
     const content = await page.evaluate(() => {
       const body = document.body;
-      body.style.margin = '0';
-      body.style.padding = '0';
-      body.style.overflow = 'hidden'; // Prevent overflow and extra space
+      body.style.margin = "0";
+      body.style.padding = "0";
+      body.style.overflow = "hidden"; // Prevent overflow and extra space
       return {
         width: Math.max(body.scrollWidth, body.offsetWidth, body.clientWidth),
         height: Math.max(body.scrollHeight, body.offsetHeight, body.clientHeight),
@@ -59,10 +62,10 @@ export let action: ActionFunction = async ({ request }) => {
       height: `${content.height}px`,
       printBackground: true,
       margin: {
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-        left: '0px',
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
       },
       scale: 1, // Optional: scale if the content is too large
     });

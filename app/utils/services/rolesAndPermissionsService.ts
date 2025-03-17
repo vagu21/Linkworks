@@ -19,23 +19,29 @@ export interface CreateRoleDto {
 }
 export const defaultAdminRoles: CreateRoleDto[] = [
   // /admin
-  { name: DefaultAdminRoles.SuperAdmin, description: "Has all admin permissions", type: "admin", assignToNewUsers: false,visible: false },
+  { name: DefaultAdminRoles.SuperAdmin, description: "Has all admin permissions", type: "admin", assignToNewUsers: false, visible: false },
   { name: DefaultAdminRoles.ProductDesigner, description: "Manages entities", type: "admin", assignToNewUsers: false, visible: false },
   { name: DefaultAdminRoles.Developer, description: "Manages API Keys", type: "admin", assignToNewUsers: false, visible: false },
   { name: DefaultAdminRoles.Auditor, description: "Views application audit trails", type: "admin", assignToNewUsers: false, visible: false },
-  { name: DefaultAdminRoles.Marketing, description: "Manages blog", type: "admin", assignToNewUsers: false , visible: false},
+  { name: DefaultAdminRoles.Marketing, description: "Manages blog", type: "admin", assignToNewUsers: false, visible: false },
   { name: DefaultAdminRoles.Guest, description: "Views admin pages, but cannot update or delete", type: "admin", assignToNewUsers: true, visible: true },
 ];
 
 export const defaultAppRoles: CreateRoleDto[] = [
   // /app
   { name: DefaultAppRoles.SuperUser, description: "Has all app permissions", type: "app", assignToNewUsers: false, visible: false },
-  { name: DefaultAppRoles.Admin, description: "Has all app permissions but account deletion", type: "app", assignToNewUsers: false , visible: false},
+  { name: DefaultAppRoles.Admin, description: "Has all app permissions but account deletion", type: "app", assignToNewUsers: false, visible: false },
   { name: DefaultAppRoles.BillingAdmin, description: "Has subscription permissions", type: "app", assignToNewUsers: false, visible: false },
-  { name: DefaultAppRoles.User, description: "Has regular permissions", type: "app", assignToNewUsers: true , visible: true},
-  { name: DefaultAppRoles.CompanyAdmin, description: "Can manage company details and Recruitment module", type: "app", assignToNewUsers: false, visible: false },
+  { name: DefaultAppRoles.User, description: "Has regular permissions", type: "app", assignToNewUsers: true, visible: true },
+  {
+    name: DefaultAppRoles.CompanyAdmin,
+    description: "Can manage company details and Recruitment module",
+    type: "app",
+    assignToNewUsers: false,
+    visible: false,
+  },
   { name: DefaultAppRoles.CompanyMember, description: "Can manage Recruitment module", type: "app", assignToNewUsers: false, visible: false },
-  { name: DefaultAppRoles.Supplier, description: "Can Manage supplier module", type: "app", assignToNewUsers: false , visible: false},
+  { name: DefaultAppRoles.Supplier, description: "Can Manage supplier module", type: "app", assignToNewUsers: false, visible: false },
 ];
 
 export interface CreatePermissionDto {

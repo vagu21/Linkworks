@@ -13,7 +13,7 @@ export default function TenantCell({ item }: Props) {
           <span>/app/{item.slug}</span>
         </a>
       ) : (
-        <a href="/admin" className="font-medium text-theme-500 hover:underline" target="_blank" rel="noreferrer">
+        <a href="/admin" className="text-theme-500 font-medium hover:underline" target="_blank" rel="noreferrer">
           <span>/admin</span>
         </a>
       )}

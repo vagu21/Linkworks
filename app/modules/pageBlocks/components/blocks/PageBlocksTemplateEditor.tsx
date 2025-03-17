@@ -45,7 +45,7 @@ export default function PageBlocksTemplateEditor({ items, onSelected }: { items:
               key={t.title}
               type="button"
               onClick={() => setCurrentJson(JSON.stringify(t.blocks, null, "\t"))}
-              className="inline-flex items-center rounded border border-transparent bg-theme-100 px-2 py-2 text-xs font-medium text-theme-700 hover:bg-theme-200 focus:outline-none focus:ring-2 focus:ring-theme-500 focus:ring-offset-2"
+              className="bg-theme-100 text-theme-700 hover:bg-theme-200 focus:ring-theme-500 inline-flex items-center rounded border border-transparent px-2 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
             >
               {t.title}
             </button>

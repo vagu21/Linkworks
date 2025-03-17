@@ -73,10 +73,10 @@ export default function RowListFetcher({ currentView, listUrl, newUrl, parentEnt
   function onConfirm(rows: RowWithDetails[]) {
     onSelected(rows);
   }
-  
+
   if (distinct) {
-    const title = data?.rowsData?.entity.title; 
-  
+    const title = data?.rowsData?.entity.title;
+
     return (
       <>
         <DialogTitle className="text-lg font-medium">Create {title}</DialogTitle>

@@ -54,8 +54,8 @@ export default function HeaderVariantSimple({ item, width = "7xl" }: { item: Hea
                 <div className="flex w-full items-center justify-between md:w-auto">
                   {item.withLogo ? (
                     <>
-                      <Logo className="hidden lg:block" size="h-9"/>
-                      <Icon className="lg:hidden"size="h-9" />
+                      <Logo className="hidden lg:block" size="h-9" />
+                      <Icon className="lg:hidden" size="h-9" />
                     </>
                   ) : (
                     <div></div>

@@ -242,7 +242,7 @@ export default function UsageBasedPricesUnit({ item, onUpdate, disabled }: Props
   return (
     <div className="mt-2 border-t border-gray-100 p-2">
       <div className="space-y-/2">
-        <div className="mt-2 mb-2 flex items-center justify-between space-x-1">
+        <div className="mb-2 mt-2 flex items-center justify-between space-x-1">
           <div className="text-sm font-bold">{t("pricing.usageBased.usageBasedUnit")}</div>
         </div>
 
@@ -313,7 +313,7 @@ export default function UsageBasedPricesUnit({ item, onUpdate, disabled }: Props
           />
         </div>
 
-        <div className="mt-2 mb-1 flex items-center justify-between space-x-1">
+        <div className="mb-1 mt-2 flex items-center justify-between space-x-1">
           <div className="text-sm font-bold">{t("pricing.usageBased.perUnitPrices")}</div>
           {!disabled && <ButtonTertiary onClick={addTier}>{t("pricing.usageBased.addTier")}</ButtonTertiary>}
         </div>
@@ -333,7 +333,7 @@ export default function UsageBasedPricesUnit({ item, onUpdate, disabled }: Props
             },
           ]}
         />
-        <div className="mt-2 mb-1 flex items-center justify-between space-x-1">
+        <div className="mb-1 mt-2 flex items-center justify-between space-x-1">
           <div className="text-sm font-bold">{t("pricing.usageBased.flatFeePrices")}</div>
           {!disabled && <ButtonTertiary onClick={addTier}>{t("pricing.usageBased.addTier")}</ButtonTertiary>}
         </div>

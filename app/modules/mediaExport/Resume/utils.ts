@@ -1,5 +1,16 @@
 import { rowFetcher } from "../rowFetcher";
 
+interface Education {
+  educationQualification: string;
+  educationalSpecialization: string;
+  startDate: Date;
+  endDate: Date;
+  schoolCollegeName: string;
+  location: string;
+}
+
+const getDate = (date: Date) => (date ? new Date(date).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>');
+
 function getTopSkills(skills: { skillName: string; proficiency: number }[]) {
   return skills.sort((a, b) => b.proficiency - a.proficiency).slice(0, 7);
 }
@@ -31,7 +42,7 @@ export async function generateResume(id: any) {
   };
 
   let skillRatingMapping: any = {};
-  const skillMapping = data?.["Skills"]?.map((skill: any) => {
+  const skillMapping = data?.["Skills"]?.map((skill: { name: string; proficiency: number }) => {
     skillRatingMapping[skill.name] = skill.proficiency;
 
     return {
@@ -100,9 +111,7 @@ export async function generateResume(id: any) {
 </div>
 
                 <div class="flex flex-col gap-[6px]">
-                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${
-                    data["firstName"]
-                  } ${data["lastName"]}</h2>
+                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${data["firstName"]} ${data["lastName"]}</h2>
                   <div class="text-[12px] font-normal leading-[14.52px] text-[#3C3C3C] flex gap-3 ml-1"><span>${
                     data?.currentDesignation || '<span style="color: #A0A0A0;">N/A</span>'
                   }</span> 
@@ -186,7 +195,7 @@ export async function generateResume(id: any) {
           topSkills?.length > 0
             ? topSkills
                 .map(
-                  (skill) => `
+                  (skill: any) => `
                     <li class="mb-[12px]">
                       <div class="flex justify-between">
                         <span class="text-[12px] font-medium leading-[16px] text-[#000000]">
@@ -218,7 +227,7 @@ export async function generateResume(id: any) {
           data?.["Work Experience"]?.length > 0
             ? data["Work Experience"]
                 .map(
-                  (exp) => `
+                  (exp: any) => `
                     <li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
                       <div class="flex items-center gap-[10px]">
                         <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
@@ -226,11 +235,7 @@ export async function generateResume(id: any) {
                         </strong>
                         <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
                           · ${exp?.startDate ? new Date(exp.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
-                    exp?.currentlyWorkingInThisRole
-                      ? "Present"
-                      : exp?.endDate
-                      ? new Date(exp.endDate).toLocaleDateString()
-                      : '<span style="color: #A0A0A0;">N/A</span>'
+                    exp?.currentlyWorkingInThisRole ? "Present" : getDate(exp?.endDate)
                   }
                         </p>
                       </div>
@@ -256,18 +261,14 @@ export async function generateResume(id: any) {
           data?.["Certifications"]?.length > 0
             ? data["Certifications"]
                 .map(
-                  (certification) => `
+                  (certification: any) => `
                     <li>
                       <div class="flex items-center gap-[10px]">
                         <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
                           ${certification?.name || '<span style="color: #A0A0A0;">N/A</span>'}
                         </strong>
                         <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                          · Valid till ${
-                            certification?.expirationDate
-                              ? new Date(certification.expirationDate).toLocaleDateString()
-                              : '<span style="color: #A0A0A0;">N/A</span>'
-                          }
+                          · Valid till ${getDate(certification?.expirationDate)}
                         </p>
                       </div>
                       <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
@@ -282,6 +283,7 @@ export async function generateResume(id: any) {
       </ul>
                 </div>`;
   }
+
   function educationSection() {
     return `<div class="mb-[30px]">
                   <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Education</h3>
@@ -290,7 +292,7 @@ export async function generateResume(id: any) {
           data?.["Education History"]?.length > 0
             ? data["Education History"]
                 .map(
-                  (education) => `
+                  (education: Education) => `
                     <li>
                       <div class="flex items-center gap-[10px]">
                         <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
@@ -298,9 +300,7 @@ export async function generateResume(id: any) {
                           ${education?.educationalSpecialization || '<span style="color: #A0A0A0;">N/A</span>'}
                         </strong>
                         <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                          · ${education?.startDate ? new Date(education.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
-                    education?.endDate ? new Date(education.endDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'
-                  }
+                          · ${getDate(education?.startDate)} - ${getDate(education?.endDate)}}
                         </p>
                       </div>
                       <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">

@@ -16,7 +16,18 @@ export type TenantRelationshipWithDetails = TenantRelationship & {
   fromTenant: TenantSimple;
   toTenant: TenantSimple & {
     users: (TenantUser & {
-      user: UserSimple;
+      user: {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        phone: string | null;
+        githubId: string | null;
+        googleId: string | null;
+        azureId: string | null;
+        locale: string | null;
+        createdAt: Date;
+      };
     })[];
   };
   createdByUser: UserSimple | null;

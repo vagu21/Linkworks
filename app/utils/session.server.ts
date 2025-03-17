@@ -153,13 +153,11 @@ export async function validateCSRFToken(request: Request) {
   // we don't need to return anything, if the validation fail it will throw an error
 }
 
-export async function validateRequest(request:Request)
-{
-  const session = await getUserSession(request)||null;
+export async function validateRequest(request: Request) {
+  const session = (await getUserSession(request)) || null;
 
-  let userId=session?.data?.userId||null;
-  if(session==null || userId==null)
-  {
-    throw new Error("User Unauthorized")
+  let userId = session?.data?.userId || null;
+  if (session == null || userId == null) {
+    throw new Error("User Unauthorized");
   }
-} 
+}

@@ -95,7 +95,6 @@ export default () => {
                 pagination={data.entitiesData[entity.name].pagination}
                 currentView={allView}
               />
-              
             </div>
           );
         })}

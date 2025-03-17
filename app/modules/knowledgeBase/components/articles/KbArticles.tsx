@@ -18,16 +18,16 @@ export default function KbArticles({
   }[];
 }) {
   return (
-    <div className="rounded-md border border-border bg-background py-3">
+    <div className="border-border bg-background rounded-md border py-3">
       {items.map((item) => {
         return (
           <div key={item.title} className={clsx("group", ColorHoverUtils.getBorder500(kb.color))}>
             <Link to={item.href}>
-              <div className="flex items-center justify-between space-x-2 px-6 py-3 hover:bg-secondary">
+              <div className="hover:bg-secondary flex items-center justify-between space-x-2 px-6 py-3">
                 <div className="">
                   <div className={clsx(" text-muted-foreground group-hover:text-foreground")}>{item.title}</div>
                 </div>
-                <RightIcon className={clsx("h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-foreground")} />
+                <RightIcon className={clsx("text-muted-foreground group-hover:text-foreground h-5 w-5 flex-shrink-0")} />
               </div>
             </Link>
           </div>

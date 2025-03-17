@@ -1,15 +1,14 @@
-export async function downloadAction(id: any,type:String) {
-
+export async function downloadAction(id: any, type: String) {
   const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-    const response = await fetch(`${serverUrl}/api/generate-pdf`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Api-Key": ``,
-        // "Authorizariton":`Bearer ${token}`
-      },
-      body: JSON.stringify({id,type}),
-    });
+  const response = await fetch(`${serverUrl}/api/generate-pdf`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": ``,
+      // "Authorizariton":`Bearer ${token}`
+    },
+    body: JSON.stringify({ id, type }),
+  });
 
   if (response.ok) {
     const blob = await response.blob();

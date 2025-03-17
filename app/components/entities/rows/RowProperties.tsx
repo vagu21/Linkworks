@@ -3,7 +3,7 @@ import RowValueInput from "./RowValueInput";
 import clsx from "clsx";
 import PropertyAttributeHelper from "~/utils/helpers/PropertyAttributeHelper";
 import { PropertyAttributeName } from "~/application/enums/entities/PropertyAttributeName";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import { updateItemByIdx } from "~/utils/shared/ObjectUtils";
 import RowHelper from "~/utils/helpers/RowHelper";
 import { RowValueDto } from "~/application/dtos/entities/RowValueDto";

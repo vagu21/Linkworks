@@ -46,8 +46,6 @@ export default function RoleForm({ item, permissions, onCancel, canUpdate = true
   function hasPermission(permission: PermissionWithRoles) {
     return rolePermissions.includes(permission.name);
   }
-  
-
 
   function setPermission(permission: PermissionWithRoles, add: any) {
     if (add) {

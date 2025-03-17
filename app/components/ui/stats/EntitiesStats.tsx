@@ -17,7 +17,7 @@ export function EntitiesStats({ items }: Props) {
       <h3 className=" font-medium leading-4 text-gray-900">{t("app.shared.periods.LAST_30_DAYS")}</h3>
       <dl
         className={clsx(
-          "mt-3 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:divide-y-0 md:divide-x",
+          "mt-3 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:divide-x md:divide-y-0",
           items.length === 1 && "md:grid-cols-1",
           items.length === 2 && "md:grid-cols-2",
           items.length === 3 && "md:grid-cols-3",

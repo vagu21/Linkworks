@@ -21,7 +21,6 @@ import toast from "react-hot-toast";
 import ActionResultModal from "~/components/ui/modals/ActionResultModal";
 import RowOverviewHeader from "~/components/entities/rows/RowOverviewHeader";
 
-
 type EditRowOptions = {
   hideTitle?: boolean;
   hideMenu?: boolean;

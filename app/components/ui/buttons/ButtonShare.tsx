@@ -19,7 +19,7 @@ export default function ButtonFlyout({ className, disabled, children }: Props) {
             disabled={disabled}
             className={clsx(
               className,
-              "inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus:border-accent-300 focus:outline-none focus:ring-2",
+              "focus:border-accent-300 inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2",
               disabled && "cursor-not-allowed opacity-75",
               "text-accent-700",
               !disabled && "hover:border-accent-300 hover:text-accent-900 focus:ring-accent-500"

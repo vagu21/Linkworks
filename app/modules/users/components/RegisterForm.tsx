@@ -61,13 +61,14 @@ export const RegisterForm = ({ requireRecaptcha = false, isVerifyingEmail = fals
               {/* Google: End */}
 
               {appConfiguration.auth.authMethods.azure.enabled && (
-                  <div className="w-full space-y-3 text-center">
-                   <a
+                <div className="w-full space-y-3 text-center">
+                  <a
                     className="focus-visible:ring-ring inline-flex h-9 w-full items-center justify-center whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
                     href={appConfiguration.auth.authMethods.azure.authorizationURL}
-                   >
-                    <AzureIcon className="w-4 h-4 mr-4"/>{t("auth.azure.button")}
-                    </a>
+                  >
+                    <AzureIcon className="mr-4 h-4 w-4" />
+                    {t("auth.azure.button")}
+                  </a>
                 </div>
               )}
             </div>

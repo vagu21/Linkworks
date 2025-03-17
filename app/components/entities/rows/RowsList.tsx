@@ -350,7 +350,6 @@ function RowsListWrapped({
           ) : (
             // <div className="flex space-x-2 overflow-x-scroll">
             <div className="grid grid-cols-1 gap-2">
-
               {items.map((item) => {
                 let className = clsx("w-full");
                 if (onSelected && selectedRows !== undefined) {
@@ -414,7 +413,17 @@ function RowsListWrapped({
   );
 }
 
-export function AddMoreCard({ entity, routes, className, title }: { entity: EntityWithDetails; routes?: EntitiesApi.Routes; className?: string; title?: string }) {
+export function AddMoreCard({
+  entity,
+  routes,
+  className,
+  title,
+}: {
+  entity: EntityWithDetails;
+  routes?: EntitiesApi.Routes;
+  className?: string;
+  title?: string;
+}) {
   const { t } = useTranslation();
   return (
     <Fragment>
@@ -431,9 +440,7 @@ export function AddMoreCard({ entity, routes, className, title }: { entity: Enti
             {/* <div className="mx-auto flex justify-center text-center align-middle text-sm font-medium text-gray-700">{t("shared.add")}</div> */}
             <div className="flex items-center">
               <div className="">{t("shared.add")}</div>
-              {title && (
-                <div className="lowercase ml-1">{title}</div>
-              )}
+              {title && <div className="ml-1 lowercase">{title}</div>}
             </div>
           </Link>
         )}

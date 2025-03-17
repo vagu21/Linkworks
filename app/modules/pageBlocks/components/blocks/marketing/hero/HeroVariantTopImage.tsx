@@ -12,7 +12,7 @@ export default function HeroVariantTopImage({ item }: { item: HeroBlockDto }) {
     <section className="body-font">
       <div className="container mx-auto flex flex-col items-center justify-center px-5 py-16">
         <img
-          className="border-border mb-10 w-5/6 rounded-lg border-2 object-cover object-center shadow-sm dark:border-gray-600 md:w-3/6"
+          className="border-border mb-10 w-5/6 rounded-lg border-2 object-cover object-center shadow-sm md:w-3/6 dark:border-gray-600"
           alt="hero"
           src={item.image}
         />

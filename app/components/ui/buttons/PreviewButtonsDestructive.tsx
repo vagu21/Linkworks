@@ -7,7 +7,7 @@ export default function PreviewButtonsDestructive() {
     <div id="buttons-as-links">
       <div className="border border-dashed border-gray-300 bg-white p-6">
         <div className="w-full space-y-2">
-          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-y-0 sm:space-x-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-x-4 sm:space-y-0">
             <ButtonPrimary onClick={() => alert("Clicked primary destructive button")} destructive={true}>
               Primary
             </ButtonPrimary>
@@ -18,7 +18,7 @@ export default function PreviewButtonsDestructive() {
               Tertiary
             </ButtonTertiary>
           </div>
-          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-y-0 sm:space-x-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-x-4 sm:space-y-0">
             <ButtonPrimary disabled={true} destructive={true}>
               Primary
             </ButtonPrimary>

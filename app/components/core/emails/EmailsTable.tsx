@@ -82,7 +82,7 @@ export default function EmailsTable({ items, withTenant, pagination }: Props) {
       <TableSimple
         onClickRoute={(_, i) => i.id}
         className={(_, i) =>
-          i._count.reads === 0 ? "cursor-pointer bg-white group-hover:border-theme-500" : "cursor-pointer bg-gray-100 group-hover:border-theme-500"
+          i._count.reads === 0 ? "group-hover:border-theme-500 cursor-pointer bg-white" : "group-hover:border-theme-500 cursor-pointer bg-gray-100"
         }
         items={items}
         actions={[

@@ -71,7 +71,7 @@ function KanbanColumnCard<T>({ idx, columns, column, items, withTitle }: KanbanC
 
       <div
         className={clsx(
-          "group h-full overflow-x-hidden border-0 border-dashed border-gray-200 bg-gray-50 py-3 px-2",
+          "group h-full overflow-x-hidden border-0 border-dashed border-gray-200 bg-gray-50 px-2 py-3",
           idx === 0 && "border-r-0",
           idx === columns.length && "border-l-0"
         )}

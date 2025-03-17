@@ -173,7 +173,7 @@ export namespace EntitiesApi {
     };
     return routes;
   }
-  
+
   export async function fillSystemProperties({
     entity,
     tenantId,

@@ -93,9 +93,9 @@ export async function getWorkflowExecutions(
 ): Promise<WorkflowExecutionWithDetails[]> {
   const where: Prisma.WorkflowExecutionWhereInput = {
     workflowId,
-  }
+  };
   if (session.tenantId !== null) {
-    where.tenantId = session.tenantId
+    where.tenantId = session.tenantId;
   }
   return db.workflowExecution.findMany({
     where,

@@ -6,6 +6,7 @@ export const selectSimpleUserProperties = {
   phone: true,
   githubId: true,
   googleId: true,
+  azureId: true,
   locale: true,
   createdAt: true,
 };

@@ -14,7 +14,6 @@ type ProcessCandidateArgs = {
   childrenEntities: { visible: EntityRelationshipWithDetails[]; hidden: EntityRelationshipWithDetails[] };
 };
 
-
 const propertyMappings = {
   description: "Description",
   title: "Title",
@@ -208,8 +207,6 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
         }
       }
 
-            
-
       const technicalSkills = openAiJson.Skills || [];
       const technicalSkillsSlugEntityTenant = { slug: "skills", onEdit: null };
       const allTechnicalSkillsTent = await entityListData(
@@ -250,8 +247,7 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
           }
         }
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -279,7 +275,7 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
       console.warn("Entity is undefined");
       return;
     }
-  
+
     try {
       switch (entity.name) {
         case "Job":
@@ -295,7 +291,6 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
       console.error("Error occurred while parsing media file:", error);
     }
   };
-  
 
   return { parseMediaFile, isLoading };
 };

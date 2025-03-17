@@ -9,7 +9,7 @@ import { isCompanyEmail } from "company-email-validator";
 import { companyFromEmail } from "~/utils/helpers/EmailHelper";
 import UrlUtils from "~/utils/app/UrlUtils";
 import axios from "axios";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 type ActionData = { error?: string };
 const badRequest = (data: ActionData) => json(data, { status: 400 });
@@ -28,7 +28,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   let userProfile;
   let idToken: any;
-  let roles: string[] = [];  
+  let roles: string[] = [];
   try {
     // Step 1: Exchange code for access token
     const tokenResponse = await axios.post(
@@ -39,7 +39,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         code: code,
         redirect_uri: AZURE_REDIRECT_URL,
         grant_type: "authorization_code",
-        scope: 'openid profile email User.Read',
+        scope: "openid profile email User.Read",
         response_type: "code",
         prompt: "consent",
         access_type: "offline",
@@ -49,9 +49,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     const accessToken = tokenResponse.data.access_token;
     idToken = tokenResponse.data.id_token;
-    const role = jwt.decode(idToken);  // Decode roles here
-    roles= role?.roles?.length? role.roles : [];
-    
+    const role = jwt.decode(idToken) as jwt.JwtPayload; // Decode roles here
+    roles = role?.roles?.length ? (role.roles as string[]) : [];
+
     // Step 2: Fetch user info from Microsoft Graph API
     const userResponse = await axios.get("https://graph.microsoft.com/v1.0/me", {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -77,7 +77,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   // Step 4: Sign up new user
-  return signUpAzureUser(request, userProfile, roles);  
+  return signUpAzureUser(request, userProfile, roles);
 };
 
 const signInAzureUser = async (request: Request, user: UserWithoutPassword) => {
@@ -96,7 +96,7 @@ const signInAzureUser = async (request: Request, user: UserWithoutPassword) => {
   );
 };
 
-const signUpAzureUser = async (request: Request, userProfile: any, roles:any) => {
+const signUpAzureUser = async (request: Request, userProfile: any, roles: any) => {
   const { t } = await getTranslations(request);
   const userInfo = await getUserInfo(request);
   const [firstName, lastName] = userProfile.displayName?.split(" ") ?? ["", ""];
@@ -134,7 +134,6 @@ const signUpAzureUser = async (request: Request, userProfile: any, roles:any) =>
         lng: result.registered.user.locale ?? userInfo.lng,
       },
       `/app/${encodeURIComponent(result.registered.tenant.slug)}/dashboard`
-
     );
   }
 

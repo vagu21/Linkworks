@@ -11,7 +11,7 @@ import { RowHeaderActionDto } from "~/application/dtos/data/RowHeaderActionDto";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import EntityHelper from "~/utils/helpers/EntityHelper";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
-import  {  getConditionalActions } from "~/modules/customActionComponent";
+import { getConditionalActions } from "~/modules/customActionComponent";
 import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 
 interface Props {

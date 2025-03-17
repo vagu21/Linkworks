@@ -108,4 +108,3 @@ export async function getEntitySummaries({
 
   return entitySummaries;
 }
-

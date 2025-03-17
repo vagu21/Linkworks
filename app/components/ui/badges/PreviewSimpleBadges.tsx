@@ -6,7 +6,7 @@ export default function PreviewBadges() {
     <div id="badges-simple">
       <div className="border border-dashed border-gray-300 bg-white p-6">
         <div id="badges" className="w-full space-y-2">
-          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-y-0 sm:space-x-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-x-4 sm:space-y-0">
             <SimpleBadge title={"GRAY"} color={Colors.GRAY} />
             <SimpleBadge title={"RED"} color={Colors.RED} />
             <SimpleBadge title={"ORANGE"} color={Colors.ORANGE} />

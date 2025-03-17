@@ -905,4 +905,3 @@ export const ADDRESS_ENTITY: EntitiesTemplateDto = {
   ],
   relationships: [],
 };
-

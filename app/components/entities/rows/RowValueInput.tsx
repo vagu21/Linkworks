@@ -319,7 +319,7 @@ const RowValueInput = (
                 }))}
               />
             </>
-          ) : selected.subtype == "state" && selected.hasCountry  ? (
+          ) : selected.subtype == "state" && selected.hasCountry ? (
             <>
               <InputSelect
                 name={selected.name}

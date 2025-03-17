@@ -92,14 +92,14 @@ export default function InputSelect({
           <SelectTrigger
             type="button"
             className="w-full"
-          // onClick={() => {
-          //   if (refSearch.current) {
-          //     setTimeout(() => {
-          //       refSearch.current?.focus();
-          //       refSearch.current?.select();
-          //     }, 2000);
-          //   }
-          // }}
+            // onClick={() => {
+            //   if (refSearch.current) {
+            //     setTimeout(() => {
+            //       refSearch.current?.focus();
+            //       refSearch.current?.select();
+            //     }, 2000);
+            //   }
+            // }}
           >
             <SelectValue placeholder={withLabel ? placeholder || `${t("shared.select")}...` : title || `${t("shared.select")}...`} />
           </SelectTrigger>
@@ -126,17 +126,21 @@ export default function InputSelect({
               )}
               {filteredOptions().map((item, idx) => {
                 return (
-                  <SelectItem key={idx} disabled={item.disabled} value={item.value !== undefined && item.value !== null && item.value.toString().trim() !== ""? item.value.toString(): "fallback_value"}>
-                      {item.component || (
-                        <div className="flex items-center space-x-2">
-                          {withColors && <ColorBadge color={item.color} />}
-                          <div>{item.name}</div>
-                        </div>
-                      )}
-                    </SelectItem>
-                    );
+                  <SelectItem
+                    key={idx}
+                    disabled={item.disabled}
+                    value={item.value !== undefined && item.value !== null && item.value.toString().trim() !== "" ? item.value.toString() : "fallback_value"}
+                  >
+                    {item.component || (
+                      <div className="flex items-center space-x-2">
+                        {withColors && <ColorBadge color={item.color} />}
+                        <div>{item.name}</div>
+                      </div>
+                    )}
+                  </SelectItem>
+                );
               })}
-                  </SelectGroup>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

@@ -16,8 +16,7 @@ export default function FooterVariantColumns({ item }: { item: FooterBlockDto })
         Footer
       </h2>
       {/* <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"> */}
-      <div className="flex justify-center items-center mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16 text-center">
-
+      <div className="mx-auto flex max-w-7xl items-center justify-center px-4 pb-12 text-center sm:px-6 lg:px-8 lg:pb-16">
         <div className="xl:grid xl:grid-cols-1 xl:gap-4">
           <div className="space-y-8 xl:col-span-1">
             {/* <Icon className="h-10 w-auto" /> */}

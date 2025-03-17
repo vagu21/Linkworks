@@ -75,7 +75,7 @@ export type TemplateRelationshipDto = {
   cascade?: boolean;
   readOnly?: boolean;
   hiddenIfEmpty?: boolean;
-  distinct?:boolean;
+  distinct?: boolean;
 };
 export type EntitiesTemplateDto = {
   entities: TemplateEntityDto[];

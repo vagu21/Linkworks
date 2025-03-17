@@ -38,7 +38,7 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
         <select
           id="tabs"
           name="tabs"
-          className="block w-full rounded-md border-gray-300 focus:border-accent-500 focus:ring-accent-500"
+          className="focus:border-accent-500 focus:ring-accent-500 block w-full rounded-md border-gray-300"
           value={tabs.find((tab) => tab.current)?.name}
           onChange={(e) => {
             const tab = tabs.find((tab) => tab.name === e.target.value);
@@ -65,7 +65,7 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
           breakpoint === "2xl" && "hidden 2xl:block"
         )}
       >
-        <div className="border-b border-border">
+        <div className="border-border border-b">
           <nav
             className={clsx(
               "-mb-px flex space-x-4",

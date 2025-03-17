@@ -21,7 +21,7 @@ export default function DropdownWithClick({ button, to, options, right, onClick,
         <Link
           to={to}
           className={clsx(
-            "relative -mr-1 inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 focus:z-10 focus:border-theme-500 focus:outline-none focus:ring-1 focus:ring-theme-500",
+            "focus:border-theme-500 focus:ring-theme-500 relative -mr-1 inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 focus:z-10 focus:outline-none focus:ring-1",
             disabled ? "cursor-not-allowed opacity-80" : "hover:bg-gray-50 focus:bg-gray-50"
           )}
         >
@@ -33,7 +33,7 @@ export default function DropdownWithClick({ button, to, options, right, onClick,
           disabled={disabled}
           type="button"
           className={clsx(
-            "relative -mr-1 inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 focus:z-10 focus:border-theme-500 focus:outline-none focus:ring-1 focus:ring-theme-500",
+            "focus:border-theme-500 focus:ring-theme-500 relative -mr-1 inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 focus:z-10 focus:outline-none focus:ring-1",
             disabled ? "cursor-not-allowed opacity-80" : "hover:bg-gray-50 focus:bg-gray-50"
           )}
         >
@@ -41,7 +41,7 @@ export default function DropdownWithClick({ button, to, options, right, onClick,
         </button>
       )}
       <Menu as="span" className="relative -ml-px block">
-        <Menu.Button className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:border-theme-500 focus:outline-none focus:ring-1 focus:ring-theme-500">
+        <Menu.Button className="focus:border-theme-500 focus:ring-theme-500 relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"

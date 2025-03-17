@@ -65,13 +65,13 @@ export default function PlanFeatureDescription({ feature, editing, onClickFeatur
           {feature.name === DefaultFeatures.Credits && onClickFeature && CreditTypes.length ? (
             <button
               type="button"
-              className="hover:text-primary ml-2 truncate text-sm font-medium text-muted-foreground underline"
+              className="hover:text-primary text-muted-foreground ml-2 truncate text-sm font-medium underline"
               onClick={() => onClickFeature(feature.name)}
             >
               <FeatureTitle feature={feature} />
             </button>
           ) : (
-            <span className="ml-2 truncate text-sm font-medium text-muted-foreground">
+            <span className="text-muted-foreground ml-2 truncate text-sm font-medium">
               <FeatureTitle feature={feature} />
             </span>
           )}

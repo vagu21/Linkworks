@@ -49,7 +49,7 @@ export default function WizardSteps({ steps, selectedStep, onSetStep, children, 
         <select
           id="tabs"
           name="tabs"
-          className="block w-full rounded-md border-gray-300 focus:border-accent-500 focus:ring-accent-500"
+          className="focus:border-accent-500 focus:ring-accent-500 block w-full rounded-md border-gray-300"
           onChange={(e) => onSetStep(Number(e.target.value), undefined)}
           value={selectedStep}
         >
@@ -87,9 +87,9 @@ export default function WizardSteps({ steps, selectedStep, onSetStep, children, 
                         )}
                       >
                         {stepIdx === selectedStep ? (
-                          <span className="h-2.5 w-2.5 rounded-full bg-theme-600" />
+                          <span className="bg-theme-600 h-2.5 w-2.5 rounded-full" />
                         ) : (
-                          <span className="h-2.5 w-2.5 rounded-full bg-gray-400 group-hover:bg-theme-600" />
+                          <span className="group-hover:bg-theme-600 h-2.5 w-2.5 rounded-full bg-gray-400" />
                         )}
                       </span>
                     </span>
