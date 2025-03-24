@@ -8,10 +8,10 @@ resources:
       ref: main
 jobs:
   - job:
-  - template: templates/rds-postgresql-backup.yml@pipelineTemplatesRepo
+  - template: backups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
     parameters:
         awsCredentials: linkworks-ssh-cicd
-        DBInstance_Identifier: database-1
+        dbInstanceIdentifier: database-1
         takeRDSBackup: ${{ parameters.takeRDSBackup }}
         snapshotsToKeep: 2
   # - job: linkworks_ssh_deployment
