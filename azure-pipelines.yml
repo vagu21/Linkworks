@@ -10,7 +10,7 @@ jobs:
   - job:
   - template: backups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
     parameters:
-        awsCredentials: linkworks-prod-cicd
+        awsCredentials: linkworks-prod
         dbInstanceIdentifier: database-1
         takeRDSBackup: true 
         snapshotsToKeep: 30
