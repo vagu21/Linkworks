@@ -8,7 +8,7 @@ resources:
       ref: main
 jobs:
   - job:
-  - template: backups/rds-aurora-mysql/rds-aurora-mysql-backup.yml@pipelineTemplatesRepo
+  - template: ackups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
     parameters:
         awsCredentials: linkworks-ssh-cicd
         dbInstanceIdentifier: database-1
