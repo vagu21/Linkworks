@@ -8,12 +8,12 @@ resources:
       ref: main
 jobs:
   - job:
-  - template: backups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
+  - template: backups/rds-aurora-mysql/rds-aurora-mysql-backup.yml@pipelineTemplatesRepo
     parameters:
         awsCredentials: linkworks-ssh-cicd
         dbInstanceIdentifier: database-1
-        takeRDSBackup: ${{ parameters.takeRDSBackup }}
-        snapshotsToKeep: 2
+        # takeRDSBackup: ${{ parameters.takeRDSBackup }}
+        snapshotsToKeep: 30
   # - job: linkworks_ssh_deployment
   #   workspace:
   #     clean: all
