@@ -15,6 +15,7 @@ jobs:
         takeRDSBackup: true 
         snapshotsToKeep: 30
   - job: linkworks_ssh_deployment
+    dependsOn: TakeRDSClusterBackup
     workspace:
       clean: all
     pool:
