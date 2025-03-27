@@ -12,7 +12,7 @@ jobs:
         awsCredentials: linkworks-prod
         dbInstanceIdentifier: database-1
         takeRDSBackup: true 
-        snapshotsToKeep: 30
+        snapshotsToKeep: 1
   - job: linkworks_ssh_deployment
     dependsOn: TakeRDSDBInstanceBackup
     workspace:
