@@ -7,7 +7,6 @@ resources:
       name: Linkfields-DevOps/linkfields.devops.ado-pipeline-templates
       ref: main
 jobs:
-  - job:
   - template: backups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
     parameters:
         awsCredentials: linkworks-prod
@@ -15,7 +14,7 @@ jobs:
         takeRDSBackup: true 
         snapshotsToKeep: 30
   - job: linkworks_ssh_deployment
-    dependsOn: TakeRDSClusterBackup
+    dependsOn: TakeRDSDBInstanceBackup
     workspace:
       clean: all
     pool:
