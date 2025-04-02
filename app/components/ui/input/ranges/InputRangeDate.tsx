@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import EntityIcon from "~/components/layouts/icons/EntityIcon";
 import HintTooltip from "~/components/ui/tooltips/HintTooltip";
 import { Input } from "../../input";
@@ -48,7 +48,8 @@ export default function InputDateRangeDate({
 
   const [actualMin, setActualMin] = useState<string>("");
   const [actualMax, setActualMax] = useState<string>("");
-
+  const minDatePickerRef = useRef(null);
+  const maxDatePickerRef = useRef(null);
   useEffect(() => {
     const value = valueMin || defaultValueMin;
     if (value) {
@@ -90,10 +91,10 @@ export default function InputDateRangeDate({
   }, [actualMax]);
 
   return (
-    <div className={clsx(className, !darkMode && "")}>
+    <div className={clsx(className, !darkMode && "flex flex-col gap-[2px]")}>
       <label htmlFor={name} className="flex justify-between space-x-2 text-xs font-medium">
         <div className=" flex items-center space-x-1">
-          <div className="truncate">
+          <div className="truncate  text-body font-normal text-label">
             {title}
             {required && <span className="ml-1 text-red-500">*</span>}
           </div>
@@ -112,6 +113,7 @@ export default function InputDateRangeDate({
         <div className="flex w-full items-center space-x-2">
           <Input
             type="date"
+            ref={minDatePickerRef}
             id={name}
             name={`${name}-min`}
             required={required}
@@ -121,7 +123,8 @@ export default function InputDateRangeDate({
             readOnly={readOnly}
             autoFocus={autoFocus}
             className={clsx(
-              icon && "pl-10"
+              icon && "pl-10",
+              "rounded-lg"
               // "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
               // className,
               // (disabled || readOnly) && "cursor-not-allowed bg-gray-100",
@@ -130,6 +133,7 @@ export default function InputDateRangeDate({
           <span className="text-muted-foreground">-</span>
           <Input
             type="date"
+            ref={maxDatePickerRef}
             id={name}
             name={`${name}-max`}
             required={required}
@@ -139,7 +143,8 @@ export default function InputDateRangeDate({
             readOnly={readOnly}
             autoFocus={autoFocus}
             className={clsx(
-              icon && "pl-10"
+              icon && "pl-10",
+              "rounded-lg"
               // "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
               // className,
               // (disabled || readOnly) && "cursor-not-allowed bg-gray-100",

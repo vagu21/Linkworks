@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL") // uses connection pooling
 }
 
+
 model AppConfiguration {
   id                                     String   @id @default(cuid())
   updatedAt                              DateTime @updatedAt
@@ -1044,6 +1045,7 @@ model RowTask {
   rowId             String
   title             String
   description       String
+  priority          String @default("Low")
   completed         Boolean
   completedAt       DateTime?
   completedByUserId String?
@@ -2435,3 +2437,73 @@ model Widget {
 
   @@unique([tenantId, name])
 }
+
+model ChartConfig {
+  id             String           @id @default(cuid())  // Unique identifier for the chart config
+  entityId       String           // ID of the entity to which the chart applies
+  title          String           // Title of the chart
+  tenantId       String[]
+  groupSlug      String?
+  entitySlug     String?
+  graphWidth     String? @default("100")
+  description    String           // Description of the chart
+  visualizationType String        // Type of visualization (e.g., "trend-chart")
+  groupBy        GraphGropBy[]        // Grouping properties for the chart (now supports multiple properties)
+  subGroupBy     String[]        // Sub-grouping properties for the chart
+  metrics        GraphMetric[]        // List of metrics to be displayed on the chart
+  filters        GraphFilter[]      // List of filters to apply on the chart data
+  computedFields GraphComputedField[]   // List of computed fields for the chart
+  timeGranularity String         // Time granularity (e.g., "day", "month", "year")
+  dateField      String           // Field representing the date for time-based aggregations
+  compareWith    GraphCompareWith?    // Comparison configuration for the chart
+}
+ 
+model GraphGropBy {
+  id            String   @id @default(cuid())  // Unique identifier
+  property      String   // Property to group by (e.g., "createdAt", "region")
+  propertyId    String 
+  type          String   // Granularity type (e.g., "month", "year")
+  chartConfigId String   // Foreign key linking to the ChartConfig
+  chartConfig   ChartConfig @relation(fields: [chartConfigId], references: [id], onDelete: Cascade)
+}
+ 
+model GraphMetric {
+  id            String   @id @default(cuid())  // Unique identifier
+  name          String   // Name of the metric (e.g., "candidates")
+  property      String?  // Property to perform the operation on
+  propertyId    String
+  operation     String   // Operation to apply (e.g., "count", "sum", etc.)
+  chartConfigId String
+  chartConfig   ChartConfig @relation(fields: [chartConfigId], references: [id], onDelete: Cascade)
+}
+ 
+model GraphFilter {
+  id            String   @id @default(cuid())  // Unique identifier
+  field         String   // Field name to filter on
+  fieldId       String
+  operator      String   // Operator (e.g., "=", "<", ">", etc.)
+  value         String   // Value to compare with
+  chartConfigId String
+  chartConfig   ChartConfig @relation(fields: [chartConfigId], references: [id] ,onDelete: Cascade)
+}
+ 
+model GraphComputedField {
+  id            String   @id @default(cuid())  // Unique identifier
+  fieldA        String   // First field in the computation
+  fieldB        String?  // Second field in the computation (optional)
+  operator      String   // Operation to apply (e.g., "+", "-", "*", etc.)
+  field_a_id    String
+  field_b_id    String
+  chartConfigId String
+  chartConfig   ChartConfig @relation(fields: [chartConfigId], references: [id], onDelete: Cascade)
+}
+ 
+model GraphCompareWith {
+  id            String   @id @default(cuid())  // Unique identifier
+  entityId      String   // Entity ID to compare with
+  dateField     String   // Date field to compare with
+  timeShift     String   // Time shift for comparison (e.g., "last month", "last quarter")
+  chartConfigId String @unique
+  chartConfig   ChartConfig @relation(fields: [chartConfigId], references: [id], onDelete: Cascade)
+}
+ 

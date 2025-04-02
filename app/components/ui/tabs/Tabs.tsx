@@ -106,7 +106,7 @@ export default function Tabs({ className = "", breakpoint = "md", tabs = [], asL
         {(() => {
           if (asLinks) {
             return (
-              <nav className="flex space-x-4" aria-label="Tabs">
+              <nav className="flex space-x-4 mb-[12px]" aria-label="Tabs">
                 {tabs
                   .filter((f) => f.routePath)
                   .map((tab, idx) => {
@@ -116,7 +116,7 @@ export default function Tabs({ className = "", breakpoint = "md", tabs = [], asL
                         to={tab.routePath ?? ""}
                         className={clsx(
                           "truncate",
-                          isCurrent(idx) ? " text-secondary-foreground bg-secondary" : "text-muted-foreground hover:text-foreground hover:bg-secondary",
+                          isCurrent(idx) ? " text-secondary-foreground bg-[#F2F2F8]" : "text-muted-foreground hover:text-foreground hover:bg-secondary",
                           "rounded-sm px-3 py-2 text-sm font-medium"
                         )}
                       >

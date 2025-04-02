@@ -373,8 +373,9 @@ export async function register(data: {
   companyId?: string| null;
   defaultTenantId?: string | null;
   request: Request;
+  roles?:any;
 }) {
-  const { email, password, firstName, lastName, active, githubId, googleId,azureId, avatarURL, locale, defaultTenantId,companyId } = data;
+  const { email, password, firstName, lastName, active, githubId, googleId,azureId, avatarURL, locale, defaultTenantId,companyId,roles } = data;
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
     data: {
@@ -391,6 +392,7 @@ export async function register(data: {
       azureId,
       locale,
       defaultTenantId,
+      roles:roles.length?roles:undefined
     },
   });
   await CrmService.createContact({

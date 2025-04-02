@@ -287,9 +287,9 @@ export async function createUserAndTenant({
     throw Error("Could not create user");
   }
   const allRoles = await getAllRoles("app");
-  const matchedRoles = allRoles.filter((appRole) => roles.includes(appRole.name));
+  const matchedRoles = allRoles.filter((appRole) => roles?.includes(appRole.name));
   const rolesToAssign = matchedRoles.length > 0 ? matchedRoles : [];
-  const userType = roles.some((role: any) => role.name === 'owner' || role.name === 'OWNER') 
+  const userType = roles?.some((role: any) => role.name === 'owner' || role.name === 'OWNER') 
   ? TenantUserType.OWNER 
   : TenantUserType.MEMBER;
 

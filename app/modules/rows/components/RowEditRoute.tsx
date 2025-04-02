@@ -39,6 +39,8 @@ export default function RowEditRoute({ rowFormChildren, options }: Props) {
     <NewPageLayout
       title={t("shared.edit") + " " + t(rowData.entity.title)}
       menu={EntityHelper.getLayoutBreadcrumbsMenu({ type: "edit", t, appOrAdminData, entity: rowData.entity, item: rowData.item, params, routes })}
+      className="mx-auto mt-4 min-h-full w-full max-w-[1930px] space-y-3 pr-4 pl-12 pb-6 sm:pr-6 sm:pl-12 sm:pt-3 lg:pr-[75px] lg:pl-28"
+
     >
       <RowForm
         allEntities={allEntities}

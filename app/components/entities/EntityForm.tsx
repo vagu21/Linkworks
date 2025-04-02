@@ -78,7 +78,7 @@ export default function EntityForm({ item }: Props) {
   // }, [titlePlural]);
 
   return (
-    <FormGroup id={item?.id} onCancel={() => navigate("/admin/entities")} editing={true} canDelete={false}>
+    <FormGroup id={item?.id} onCancel={() => navigate("/admin/entities")} className="pl-4" editing={true} canDelete={false}>
       <InputGroup title="Entity">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
           <InputText

@@ -39,7 +39,7 @@ export default function BlogView() {
         </>
       }
     >
-      <div className="mx-auto max-w-5xl space-y-2 px-4 pb-10 pt-2 sm:px-6 lg:px-8 xl:max-w-7xl">
+      <div className="space-y-2">
         <div>
           <div className="text-sm font-bold text-gray-800">Total views: {data.views.length}</div>
         </div>

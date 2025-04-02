@@ -418,6 +418,7 @@ const RowValueInput = (
           hint={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HintText) ?? "")}
           help={t(PropertyAttributeHelper.getPropertyAttributeValue_String(selected, PropertyAttributeName.HelpText) ?? "")}
           autoFocus={autoFocus}
+          maxSize={PropertyAttributeHelper.getPropertyAttributeValue_Number(selected, PropertyAttributeName.MaxSize)}
         />
       ) : selected?.type === PropertyType.MULTI_SELECT ? (
         <>

@@ -14,6 +14,7 @@ import { EntityRelationshipWithDetails } from "../db/entities/entityRelationship
 import EntityViewHelper from "./EntityViewHelper";
 import { mapToEntityTemplateType } from "./PropertyHelper";
 import Constants from "~/application/Constants";
+import EntityIcon from "~/components/layouts/icons/EntityIcon";
 
 // const getEntityFromParams = async (params: Params) => {
 //   return await getEntityBySlug(params.entity ?? "");
@@ -165,13 +166,16 @@ function getLayoutBreadcrumbsMenu({
   params: Params;
   appOrAdminData: AppOrAdminData;
 }) {
-  let menu: { title: string; routePath?: string }[] = [];
+  let menu: { title: string; routePath?: string; icon?: JSX.Element | string | undefined }[] = [];  
   if (params.group) {
     const group = appOrAdminData.entityGroups.find((f) => f.slug === params.group);
     if (group) {
       menu.push({
         title: group.title,
         routePath: params.tenant ? `/app/${params.tenant}/g/${params.group}` : `/admin/g/${params.group}`,
+        icon: entity?.icon ? (
+          <EntityIcon className="h-4 w-4" icon={group?.icon} />
+        ) : undefined,
       });
     }
   }
@@ -188,7 +192,9 @@ function getLayoutBreadcrumbsMenu({
         routePath: getRoutes({ routes, entity: entity, item: item })?.edit,
       },
     ];
-  } else if (type === "new") {
+  } 
+  
+  else if (type === "new") {
     menu = [
       ...menu,
       {
@@ -196,22 +202,24 @@ function getLayoutBreadcrumbsMenu({
         routePath: getRoutes({ routes, entity })?.list,
       },
       {
-        title: t("shared.new"),
+        title: `${t("shared.addnew")} ${entity.title}`,
         routePath: getRoutes({ routes, entity })?.new,
       },
     ];
-  } else if (type === "overview") {
+  } 
+
+  else if (type === "overview") {
     menu = [
       ...menu,
       {
         title: t(entity.titlePlural),
         routePath: getRoutes({ routes, entity: entity, item: item })?.list,
       },
-      {
-        title: RowHelper.getRowFolio(entity, item!),
-        routePath: getRoutes({ routes, entity: entity, item: item })?.overview,
-      },
-      { title: t("shared.overview") },
+      // {
+      //   title: RowHelper.getRowFolio(entity, item!),
+      //   routePath: getRoutes({ routes, entity: entity, item: item })?.overview,
+      // },
+      { title: `${entity.title} ${t("shared.details")}` }
     ];
   }
   return menu;

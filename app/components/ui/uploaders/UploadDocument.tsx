@@ -118,7 +118,8 @@ export default function UploadDocuments({
   return (
     <div
       className={clsx(
-        "drop border-border hover:bg-background/90 flex items-center overflow-hidden rounded-md border-2 border-dashed text-center",
+        "flex flex-col justify-center drop  items-center p-4 text-sm bg-inside rounded-lg border-2  text-center border-dashed !bg-[#FAFAFA] !border-[#E6E6E6]",
+ 
         customClasses,
         className
       )}
@@ -135,43 +136,54 @@ export default function UploadDocuments({
               <div className="text-primary mx-auto text-sm font-bold">{title}</div>
               <div className="manual">
                 <div className="space-y-1 text-center">
-                  {icon}
-                  <div className="flex flex-col text-sm text-gray-600">
-                    <label
-                      htmlFor={name}
-                      className={clsx(
-                        " text-foreground focus-within:ring-ring relative cursor-pointer rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2",
-                        !disabled && ""
-                      )}
-                    >
-                      <span></span>
-                      <label htmlFor={name}>
-                        <p className={clsx("text-sm font-semibold underline", !disabled ? "cursor-pointer" : "cursor-not-allowed")}>
-                          {uploadText ?? <span>{t("app.shared.buttons.uploadDocument")}</span>}
-                        </p>
-                      </label>
-                      <input
-                        className="uploadmyfile"
-                        disabled={disabled}
-                        type="file"
-                        id={name}
-                        accept={accept}
-                        multiple={multiple}
-                        onChange={requestUploadFile}
-                        autoFocus={autoFocus}
-                      />
+                  <label htmlFor={name} className="cursor-pointer">
+                    <div className="flex items-center justify-center space-x-2">
+                      {/* Icon */}
+                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_205_16188)">
+                          <path
+                            d="M16.625 8.36671C16.0583 5.49171 13.5333 3.33337 10.5 3.33337C8.09167 3.33337 6 4.70004 4.95833 6.70004C2.45 6.96671 0.5 9.09171 0.5 11.6667C0.5 14.425 2.74167 16.6667 5.5 16.6667H16.3333C18.6333 16.6667 20.5 14.8 20.5 12.5C20.5 10.3 18.7917 8.51671 16.625 8.36671ZM16.3333 15H5.5C3.65833 15 2.16667 13.5084 2.16667 11.6667C2.16667 9.95837 3.44167 8.53337 5.13333 8.35837L6.025 8.26671L6.44167 7.47504C7.23333 5.95004 8.78333 5.00004 10.5 5.00004C12.6833 5.00004 14.5667 6.55004 14.9917 8.69171L15.2417 9.94171L16.5167 10.0334C17.8167 10.1167 18.8333 11.2084 18.8333 12.5C18.8333 13.875 17.7083 15 16.3333 15ZM7.16667 10.8334H9.29167V13.3334H11.7083V10.8334H13.8333L10.5 7.50004L7.16667 10.8334Z"
+                            fill="#FF7800"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_205_16188">
+                            <rect width="20" height="20" fill="white" transform="translate(0.5)" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </div>
+                  </label>
+
+
+                  <div className="flex items-center space-x-1">
+                    <label htmlFor={name}>
+                      <p
+                        className={clsx(
+                          "text-sm font-bold underline",
+                          !disabled ? "cursor-pointer" : "cursor-not-allowed"
+                        )}
+                      >
+                        <span>{t("app.shared.buttons.uploadDocument")}</span>                      </p>
                     </label>
-                    {/* <p className="pl-1 lowercase">
-                      {t("shared.or")} {t("shared.dragAndDrop")}
-                    </p> */}
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {description ?? (
-                      <span className="lowercase">
+                    <p className="text-xs text-black">
+                    <span className="lowercase">
                         {t("shared.or")} {t("shared.dragAndDrop")}
                       </span>
-                    )}
-                  </p>
+                    </p>
+                  </div>
+
+                  <input
+                    className="uploadmyfile"
+                    disabled={disabled}
+                    type="file"
+                    id={name}
+                    accept={accept}
+                    multiple={multiple}
+                    onChange={requestUploadFile}
+                    autoFocus={autoFocus}
+                    hidden
+                  />
                 </div>
               </div>
             </div>

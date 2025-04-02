@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { Colors } from "~/application/enums/shared/Colors";
 import ColorBadge from "~/components/ui/badges/ColorBadge";
+import { getBadgeColor } from "~/utils/shared/ColorUtils";
 import { SelectOptionsDisplay } from "~/utils/shared/SelectOptionsUtils";
 
 export default function RenderOption({
@@ -104,9 +105,10 @@ export default function RenderOption({
                 {display === "ValueAndColor" && (
                   <Fragment>
                     <div>
-                      <ColorBadge color={option.color} />
+                      {/* <ColorBadge color={option.color} /> */}
+                      
                     </div>
-                    <div>{option.value}</div>
+                    <div className={`!text-${getBadgeColor(option.color)} !border-none`}>{option.value}</div>
                   </Fragment>
                 )}
               </div>

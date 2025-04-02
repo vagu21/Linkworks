@@ -18,6 +18,8 @@ import RowTagsCell from "~/components/entities/rows/cells/RowTagsCell";
 import RowOrderButtons from "~/components/entities/rows/RowOrderButtons";
 import RowRelationshipRow from "~/components/entities/rows/cells/RowRelationshipRow";
 import RowRelationshipRowsByEntity from "~/components/entities/rows/cells/RowRelationshipRowsByEntity";
+import { PropertyType } from "~/application/enums/entities/PropertyType";
+import clsx from "clsx";
 
 function isColumnVisible(columns?: ColumnDto[], name?: string) {
   if (!columns) {
@@ -81,7 +83,23 @@ function displayProperty(entity: EntityWithDetails, property: PropertyWithDetail
     name: property.name,
     title: property.title,
     value: (item) => RowHelper.getPropertyValue({ entity, item, property }),
-    formattedValue: (item) => <div className="max-w-sm truncate">{RowHelper.getCellValue({ entity, property, item })}</div>,
+    formattedValue: (item) => {
+      const propertyId = (item?.values ?? []).find((v: any) => v?.textValue === RowHelper.getPropertyValue({ entity, item, property }))?.propertyId;
+      const propertyDetails = entity?.properties?.find((p: any) => p.id === propertyId);
+      
+      const isRichText = propertyDetails
+        ? ["EditorSize", "editor", "EditorLanguage"].some((attr) =>
+            propertyDetails.attributes?.some((attribute: any) => attribute.name === attr)
+          ) || propertyDetails.type === PropertyType.MEDIA
+        : false;
+    
+      return (
+        <div className={clsx(!isRichText ? "max-w-sm truncate" : "")}>
+          {RowHelper.getCellValue({ entity, property, item })}
+        </div>
+      );
+    }
+    
   };
 }
 

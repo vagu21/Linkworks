@@ -145,7 +145,7 @@ export default function () {
 
       <div className="space-y-2">
         <h2 className="text-lg font-bold">Previews</h2>
-        <div className="space-y-2 rounded-lg border-2 border-dashed border-gray-300 px-3 pb-3 pt-3">
+        <div className="space-y-2 rounded-lg border-2 border-dashed border-gray-300 px-3 pb-3 pt-3 bg-white shadow-[0px_12px_24px_-4px_rgba(145,158,171,0.12)]">
           {entity.properties.filter((f) => !f.isDefault).length === 0 ? (
             <InfoBanner title="No properties" text="Add some properties to see previews" />
           ) : (

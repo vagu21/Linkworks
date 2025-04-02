@@ -10,7 +10,7 @@ export default function SearchButton({ onClick }: Props) {
         <button
           onClick={onClick}
           className={clsx(
-            "relative inline-flex items-center rounded-full border border-gray-100 bg-gray-50 p-2 font-medium text-gray-500 shadow-inner hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            "relative inline-flex  items-center rounded-full border border-gray-100 bg-gray-50 p-2 mb-2 font-medium text-gray-500 shadow-inner hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2"
           )}
         >
           <span className="inline-block h-5 w-5 overflow-hidden rounded-full">

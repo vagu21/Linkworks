@@ -244,7 +244,7 @@ export default function AdminTenantsRoute() {
         onClose={() => {
           setCreatingNewAccount(false);
         }}
-        className="sm:max-w-sm"
+        className="sm:max-w-2xl"
         overflowYScroll={true}
       >
         <div className="-mx-1 -mt-3">

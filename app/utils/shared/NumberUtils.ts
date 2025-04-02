@@ -19,7 +19,7 @@ const numberFormat = (value: number): string => {
 };
 const decimalFormat = (value: number, decimalPlaces: number = 2): string => {
   try {
-    return numeral(value).format(`0,0.${"0".repeat(decimalPlaces)}`);
+    return numeral(value).format(`0,0.0`);
   } catch (e) {
     return value?.toString();
   }

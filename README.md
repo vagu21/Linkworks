@@ -1,4 +1,4 @@
-# SaasRock Enterprise 🚀 Edition
+# LFIApps Enterprise 🚀 Edition
 
 ## Getting Started
 

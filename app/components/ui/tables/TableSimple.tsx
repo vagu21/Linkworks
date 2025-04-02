@@ -144,7 +144,7 @@ function Table<T>({
   }
 
   return (
-    <div className={clsx("shadow-xs border-border w-full overflow-hidden rounded-lg border", darkMode && "")}>
+    <div className={clsx("shadow-xs border-border w-full overflow-hidden rounded-lg border mt-[20px]", darkMode && "")}>
       <div className="bg-background w-full overflow-x-auto">
         <table className="whitespace-no-wrap w-full">
           <thead className={clsx("", darkMode && "")}>
@@ -207,7 +207,7 @@ function Table<T>({
               {actions.filter((f) => !f.firstColumn).length > 0 && <th scope="col" className="px-2 py-1"></th>}
             </tr>
           </thead>
-          <tbody className={clsx("divide-divide divide-y", darkMode && "")}>
+          <tbody className={clsx("divide-divide divide-y border-b", darkMode && "")}>
             {items.length === 0 ? (
               <tr className={clsx("", darkMode && "")}>
                 <td colSpan={headers.filter((f) => !f.hidden).length + actions.length + (onSelected ? 1 : 0)} className="text-center">

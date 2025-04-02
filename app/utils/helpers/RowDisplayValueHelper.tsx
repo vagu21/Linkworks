@@ -6,6 +6,15 @@ import InputNumber from "~/components/ui/input/InputNumber";
 import InputSelect from "~/components/ui/input/InputSelect";
 import InputText from "~/components/ui/input/InputText";
 
+function getRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: T, idxRow: number) {
+  if(!header.setValue) {
+    return header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow);
+  } else if(((header.type === undefined && (header.type === InputType.TEXT || header.type === InputType.NUMBER)) || header.type === InputType.NUMBER || header.type === InputType.SELECT)) {
+    return header.value(item, idxRow);
+  }
+  return '';
+}
+
 function displayRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: T, idxRow: number) {
   return (
     <>
@@ -84,5 +93,6 @@ function displayRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: 
 }
 
 export default {
+  getRowValue,
   displayRowValue,
 };

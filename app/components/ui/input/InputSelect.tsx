@@ -64,12 +64,12 @@ export default function InputSelect({
     });
   };
   return (
-    <div className={clsx(className, "")}>
+    <div className={clsx(className, "flex flex-col gap-[2px]")}>
       {withLabel && title && (
         <label htmlFor={name} className="flex justify-between space-x-2 truncate text-xs font-medium">
           <div className="flex items-center space-x-1 truncate">
             <div className="flex space-x-1 truncate">
-              <div className="truncate">{title}</div>
+              <div className="truncate text-body font-normal text-label">{title}</div>
               {required && title && <div className="ml-1 text-red-500">*</div>}
             </div>
 
@@ -101,15 +101,18 @@ export default function InputSelect({
           //   }
           // }}
           >
+            
             <SelectValue placeholder={withLabel ? placeholder || `${t("shared.select")}...` : title || `${t("shared.select")}...`} />
+          
           </SelectTrigger>
           <SelectContent className="max-h-64 overflow-auto">
             {withSearch && options.length > 0 && (
+              
               <Input
                 ref={refSearch}
                 autoFocus
                 type="text"
-                className="mb-1 px-2 py-1.5"
+                className="mb-1 px-2 py-1.5 rounded-lg"
                 placeholder={t("shared.search")}
                 value={inputSearch}
                 onChange={(e) => setInputSearch(e.target.value)}
@@ -120,6 +123,7 @@ export default function InputSelect({
             )}
             <SelectGroup>
               {filteredOptions().length === 0 && (
+                
                 <SelectItem disabled value={"{empty}"}>
                   <div className="text-center text-gray-400">{t("shared.noRecords")}</div>
                 </SelectItem>

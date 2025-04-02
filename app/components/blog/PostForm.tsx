@@ -166,7 +166,7 @@ export default function PostForm({ item, categories, tags, canUpdate = true, can
             </InputGroup>
           ) : null}
         </div>
-        <div className="space-y-3 lg:col-span-4">
+        <div className="space-y-3 lg:col-span-4 pl-[50px] pt-[30px]">
           <InputGroup
             title="Content"
             right={
@@ -258,7 +258,7 @@ export default function PostForm({ item, categories, tags, canUpdate = true, can
             </div>
           </InputGroup>
 
-          <InputGroup title="Details">
+          <InputGroup title="Details" isLast={true}>
             <div className="grid gap-3 rounded-md bg-white">
               {!addingCategory ? (
                 <InputSelector

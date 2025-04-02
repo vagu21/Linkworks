@@ -1,9 +1,14 @@
+import { useParams } from "@remix-run/react";
 import clsx from "clsx";
 import { Fragment } from "react";
 import { MediaDto } from "~/application/dtos/entities/MediaDto";
 import DownloadIcon from "~/components/ui/icons/DownloadIcon";
+import { DownloadButton } from "~/custom/components/button/DownloadButton";
 
 export default function RowMediaCell({ media, layout = "table" }: { media: MediaDto[] | undefined; layout?: string }) {
+
+  const params: any = useParams();
+
   const onDownload = (media: MediaDto) => {
     const downloadLink = document.createElement("a");
     downloadLink.href = media.publicUrl ?? media.file;
@@ -33,17 +38,32 @@ export default function RowMediaCell({ media, layout = "table" }: { media: Media
           ?.filter((f) => !f.type.includes("image"))
           .map((item, idx) => {
             return (
-              <button
-                type="button"
-                key={idx}
-                onClick={() => onDownload(item)}
-                className={
-                  "flex items-center space-x-1 border-b border-transparent text-xs text-gray-600 hover:border-dashed hover:border-gray-300 hover:text-gray-800"
-                }
-              >
-                <div className="font-normal">{getFileName(item.title)}</div>
-                <DownloadIcon className="h-3 w-3" />
-              </button>
+              <Fragment key={idx}>
+                {params?.entity === "candidate" ? (
+                  <>
+                    <DownloadButton text="Download Resume" key={idx}
+
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onDownload(item); 
+                      }}
+                    />
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    key={idx}
+                    onClick={() => onDownload(item)}
+                    className={
+                      "flex items-center space-x-1 border-b border-transparent text-xs text-gray-600 hover:border-dashed hover:border-gray-300 hover:text-gray-800"
+                    }
+                  >
+                    <div className="font-normal">{getFileName(item.title)}</div>
+                    <DownloadIcon className="h-3 w-3" />
+                  </button>
+                )}
+              </Fragment>
             );
           })}
       </div>

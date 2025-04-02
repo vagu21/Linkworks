@@ -6,7 +6,7 @@ import InputUrl from "./InputUrl";
 import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db.server";
 
 type InputTextSubtypeProps = {
-  subtype: "singleLine" | "email" | "phone" | "url" | null;
+  subtype: "singleLine" | "email" | "phone" | "url" | "currency" | null;
   name?: string;
   title?: string;
   withLabel?: boolean;

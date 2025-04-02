@@ -40,3 +40,5 @@ aws-lightsail-containers.json
 tsconfig.tsbuildinfo
 
 .DS_Store
+
+stats.html

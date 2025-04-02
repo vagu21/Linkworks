@@ -8,11 +8,10 @@ import { updateItemByIdx } from "~/utils/shared/ObjectUtils";
 import FilterEmptyIcon from "../icons/FilterEmptyIcon";
 import FilterFilledIcon from "../icons/FilterFilledIcon";
 import InputCheckboxInline from "./InputCheckboxInline";
-import InputSearch from "./InputSearch";
 import InputSelect from "./InputSelect";
 import { Input } from "../input";
 import { Button } from "../button";
-// import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../dropdown-menu";
+import { useOuterClick } from "~/utils/shared/KeypressUtils";
 
 export type FilterDto = {
   name: string;
@@ -31,11 +30,6 @@ interface Props {
   filters: FilterDto[];
   withSearch?: boolean;
   withName?: boolean;
-  // saveEntityFilters?: {
-  //   entity: EntityWithDetails;
-  //   currentView: EntityView | null;
-  //   onSaveFilters: (filters: FilterValueDto[]) => void;
-  // };
 }
 
 export default function InputFilters({ filters, withSearch = true }: Props) {
@@ -77,25 +71,6 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     }
   }, [items, searchInput, searchParams, withSearch]);
 
-  // useEffect(() => {
-  //     const searchInput = searchParams.get("q");
-  //     setSearchInput(searchInput ?? "");
-
-  //     const newItems = items;
-  //     items.forEach((item, idx) => {
-  //       const valueInParam = searchParams.get(item.name);
-  //       if (valueInParam) {
-  //         newItems[idx].selected = true;
-  //         newItems[idx].value = valueInParam.toString();
-  //       } else {
-  //         newItems[idx].selected = false;
-  //         newItems[idx].value = undefined;
-  //       }
-  //     });
-  //     setItems(newItems);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchParams]);
-
   function onClear() {
     setOpened(false);
 
@@ -116,8 +91,8 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     items.forEach((item) => {
-      if (item.selected && item.value) {
-        searchParams.set(item.name, item.value?.toString() ?? "");
+      if (item.selected && item.value?.trim()) {
+        searchParams.set(item.name, item.value?.toString().trim() ?? "");
       } else {
         searchParams.delete(item.name);
       }
@@ -132,37 +107,38 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     setOpened(false);
   }
 
-  // const clickOutside = useOuterClick(() => setOpened(false));
+  const clickOutside = useOuterClick(() => setOpened(false));
 
   return (
     <Fragment>
-      <div className="relative">
+      <div className="relative" ref={clickOutside}>
         <button
           onClick={() => setOpened(!opened)}
-          className="focus:border-accent-500 focus:ring-accent-500 relative z-0 inline-flex rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
+          className="focus:border-bg-gray-50 relative z-0 inline-flex !rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-0 "
         >
           <span
             className={clsx(
-              "relative inline-flex items-center space-x-2 border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-600 sm:py-2",
-              filteredItems === 0 ? "rounded-md" : "rounded-l-md"
+              "border-border bg-background-subtle relative inline-flex items-center space-x-2 border px-3 py-3 text-sm font-normal text-[rgba(0,0,0,0.88)] hover:bg-[#F2F2F2] sm:py-2",
+              filteredItems === 0 ? "rounded-[6px]" : "rounded-md bg-[#F2F2F2]",
+              opened ? "bg-[#F2F2F2]" : ""
             )}
           >
             <div>
               {filteredItems === 0 && <FilterEmptyIcon className="h-3 w-3" />}
               {filteredItems > 0 && <FilterFilledIcon className="h-3 w-3" />}
             </div>
-            <div className="hidden sm:block">{t("shared.filters")}</div>
+            <div className=" text-left text-sm font-normal text-[rgba(0,0,0,0.88)] sm:block">{t("shared.filters")}</div>
+            {filteredItems > 0 && (
+              <span
+                className={clsx(
+                  "relative  inline-flex items-center rounded-md border border-gray-300 px-1.5 py-[1px] sm:text-xs",
+                  filteredItems > 0 ? "bg-[#190C00] text-[#FFFFFF]" : "bg-white text-gray-700"
+                )}
+              >
+                {filteredItems}
+              </span>
+            )}
           </span>
-          {filteredItems > 0 && (
-            <span
-              className={clsx(
-                "relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 px-3 py-2 font-medium sm:text-sm",
-                filteredItems > 0 ? "bg-theme-50 text-theme-500" : "bg-white text-gray-700"
-              )}
-            >
-              {filteredItems}
-            </span>
-          )}
         </button>
 
         <Transition
@@ -178,7 +154,7 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
           <Form
             onSubmit={onSubmit}
             method="get"
-            className="absolute right-0 z-40 mt-2 w-64 origin-top-right divide-y divide-gray-200 overflow-visible rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="absolute right-0 z-40 mt-2 h-60 overflow-y-auto w-64 origin-top-right divide-y divide-gray-200 overflow-visible rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="flex items-center justify-between px-2 py-2 text-sm">
               <Button type="button" variant="outline" onClick={onClear}>
@@ -190,118 +166,93 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
               </Button>
             </div>
             <div className="divide-y divide-gray-200 rounded-b-md bg-white text-sm">
-              {withSearch && (
-                <div className="p-2">
-                  <InputSearch value={searchInput} setValue={setSearchInput} placeholder={t("shared.searchAll") + "..."} />
-                </div>
-              )}
-              {items.map((filter, idx) => {
-                return (
-                  <div key={filter.name} className="divide-y divide-gray-200">
-                    <div className="divide-y divide-gray-300 px-2 py-2">
-                      <InputCheckboxInline
-                        name={"filter-" + filter.name}
-                        title={filter.title.includes(".") ? t(filter.title) : filter.title}
-                        value={filter.selected}
-                        setValue={(e) => {
-                          updateItemByIdx(items, setItems, idx, {
-                            selected: Boolean(e),
-                          });
-                        }}
-                      />
-                    </div>
-                    {filter.selected && (
-                      <div className="bg-gray-50 px-2 py-1">
-                        {filter.options && filter.options.length > 0 ? (
-                          <div className="flex items-center space-x-2">
-                            <InputSelect
-                              // withSearch={!filter.hideSearch}
-                              name={filter.name}
-                              title={""}
-                              // withColors={true}
-                              placeholder={t("shared.select") + "..."}
-                              options={filter.options.map((item) => {
-                                return {
-                                  value: item.value,
-                                  name: item.name && item.name.includes(".") ? t(item.name) : item.name,
-                                  color: item.color,
-                                };
-                              })}
-                              value={filter.value}
-                              withLabel={false}
-                              setValue={(e) => {
-                                updateItemByIdx(items, setItems, idx, {
-                                  value: e,
-                                });
-                              }}
-                              className="bg-background w-full pb-1"
-                            />
-                          </div>
-                        ) : filter.isBoolean ? (
-                          <div className="flex items-center space-x-2">
-                            <InputSelect
-                              // withSearch={!filter.hideSearch}
-                              name={filter.name}
-                              title={""}
-                              placeholder={t("shared.select") + "..."}
-                              options={[
-                                { name: t("shared.yes"), value: "true" },
-                                { name: t("shared.no"), value: "false" },
-                              ]}
-                              value={filter.value}
-                              withLabel={false}
-                              setValue={(e) => {
-                                updateItemByIdx(items, setItems, idx, {
-                                  value: e,
-                                });
-                              }}
-                              className="bg-background w-full pb-1"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-2">
-                            <div className="flex-shrink-0 truncate text-gray-500">contains</div>
-                            <Input
-                              type="text"
-                              name={filter.name}
-                              autoComplete="off"
-                              className="focus:border-accent-500 focus:ring-accent-500 bg-background block w-full min-w-0 flex-1 rounded-md border-gray-300 p-1 text-sm"
-                              required
-                              value={filter.value ?? ""}
-                              onChange={(e) => {
-                                updateItemByIdx(items, setItems, idx, {
-                                  value: e.currentTarget.value,
-                                });
-                              }}
-                            />
-                          </div>
-                        )}
+              {items.map((filter) => {
+                  const idx = items.findIndex((item) => item.name === filter.name);
+                  return (
+                    <div key={filter.name} className="divide-y divide-gray-200">
+                      <div className="divide-y divide-gray-300 px-2 py-2">
+                        <InputCheckboxInline
+                          name={"filter-" + filter.name}
+                          title={filter.title.includes(".") ? t(filter.title) : filter.title}
+                          value={filter.selected}
+                          setValue={(e) => {
+                            updateItemByIdx(items, setItems, idx, {
+                              selected: Boolean(e),
+                            });
+                          }}
+                        />
                       </div>
-                    )}
-                  </div>
-                );
-              })}
-              {/* {saveEntityFilters && (
-                <div className="divide-y divide-gray-200">
-                  <div className="flex justify-end space-x-2 px-2 py-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        saveEntityFilters?.onSaveFilters(items.filter((f) => f.value));
-                        setOpened(false);
-                      }}
-                      className={clsx(
-                        "rounded-md border border-gray-300  px-2 py-0.5",
-                        false
-                          ? " bg-gray-100 text-gray-400"
-                          : "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      {filter.selected && (
+                        <div className="bg-gray-50 px-2 py-1">
+                          {filter.options && filter.options.length > 0 ? (
+                            <div className="flex items-center space-x-2">
+                              <InputSelect
+                                // withSearch={!filter.hideSearch}
+                                name={filter.name}
+                                title={""}
+                                // withColors={true}
+                                placeholder={t("shared.select") + "..."}
+                                options={filter.options.map((item) => {
+                                  return {
+                                    value: item.value,
+                                    name: item.name && item.name.includes(".") ? t(item.name) : item.name,
+                                    color: item.color,
+                                  };
+                                })}
+                                value={filter.value}
+                                withLabel={false}
+                                setValue={(e) => {
+                                  updateItemByIdx(items, setItems, idx, {
+                                    value: e,
+                                  });
+                                }}
+                                className="bg-background w-full pb-1"
+                              />
+                            </div>
+                          ) : filter.isBoolean ? (
+                            <div className="flex items-center space-x-2">
+                              <InputSelect
+                                name={filter.name}
+                                title={""}
+                                placeholder={t("shared.select") + "..."}
+                                options={[
+                                  { name: t("shared.yes"), value: "true" },
+                                  { name: t("shared.no"), value: "false" },
+                                ]}
+                                value={filter.value}
+                                withLabel={false}
+                                setValue={(e) => {
+                                  updateItemByIdx(items, setItems, idx, {
+                                    value: e,
+                                  });
+                                }}
+                                className="bg-background w-full pb-1"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-2">
+                              <div className="flex-shrink-0 truncate text-gray-500">contains</div>
+                              <Input
+                                type="text"
+                                name={filter.name}
+                                autoComplete="off"
+                                className="focus:border-accent-500 focus:ring-accent-500 bg-background block w-full min-w-0 flex-1 rounded-md border-gray-300 p-1 text-sm"
+                                required
+                                value={filter.value ?? ""}
+                                onChange={(e) => {
+                                  updateItemByIdx(items, setItems, idx, {
+                                    value: e.currentTarget.value,
+                                  });
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       )}
-                    >
-                      {saveEntityFilters.currentView ? <div>{t("shared.updateView")}</div> : <div>{t("shared.createView")}</div>}
-                    </button>
-                  </div>
-                </div>
-              )} */}
+                    </div>
+                  );
+                })}
+              
             </div>
           </Form>
         </Transition>
@@ -309,19 +260,3 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     </Fragment>
   );
 }
-
-// function InputFilters2({ filters, withSearch }: Props) {
-//   return (
-//     <DropdownMenu>
-//       <DropdownMenuTrigger>Open</DropdownMenuTrigger>
-//       <DropdownMenuContent>
-//         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuItem>Profile</DropdownMenuItem>
-//         <DropdownMenuItem>Billing</DropdownMenuItem>
-//         <DropdownMenuItem>Team</DropdownMenuItem>
-//         <DropdownMenuItem>Subscription</DropdownMenuItem>
-//       </DropdownMenuContent>
-//     </DropdownMenu>
-//   );
-// }

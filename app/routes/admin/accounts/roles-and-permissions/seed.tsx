@@ -115,7 +115,7 @@ export default function () {
 
   return (
     <EditPageLayout>
-      <InputGroup title={"Missing roles & permissions"} className="bg-red-50">
+      <InputGroup title={"Missing roles & permissions"} className="bg-red-50 px-4 py-5 border border-border rounded-md">
         <div className="space-y-2">
           <h3 className="text-lg font-medium text-gray-800">Roles</h3>
           <TableSimple
@@ -164,7 +164,7 @@ export default function () {
           />
 
           <div className="flex justify-end">
-            <ButtonSecondary disabled={!getUserHasPermission(appOrAdminData, "admin.roles.create")} destructive onClick={onSeed}>
+            <ButtonSecondary className="bg-red-600 text-white hover:bg-[#E63D3D]" disabled={!getUserHasPermission(appOrAdminData, "admin.roles.create")} destructive onClick={onSeed}>
               Seed default: {data.roles.missing.length}/{data.roles.all.length} roles and {data.permissions.missing.length}/{data.permissions.all.length}{" "}
               permissions
             </ButtonSecondary>

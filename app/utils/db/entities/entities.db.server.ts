@@ -136,6 +136,15 @@ export async function getAllEntities({
   return allEntities;
 }
 
+export async function getAllGroups() {
+  const allGroups = await db.entityGroup.findMany({
+    select: {
+      slug: true,
+    },
+  });
+  return allGroups;
+}
+
 export async function getAllEntitiesSimple({ active, types }: { active?: boolean; types?: string[] } = {}): Promise<EntitySimple[]> {
   let where: Prisma.EntityWhereInput = {};
   if (active) {

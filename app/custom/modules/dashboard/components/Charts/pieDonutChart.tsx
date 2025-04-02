@@ -112,7 +112,8 @@ export function PieDonutChart({ chartData, charTitle, chartSubTitle, chartDescri
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          {keys[1][0].toUpperCase() + keys[1].slice(1) + 's'}
+                          {charTitle}
+                          {/* {keys[1][0].toUpperCase() + keys[1].slice(1) + 's'} */}
                         </tspan>
                       </text>
                     )

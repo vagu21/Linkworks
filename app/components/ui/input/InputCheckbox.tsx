@@ -55,11 +55,11 @@ export default function InputCheckbox({
   }, [actualValue]);
 
   return (
-    <div className={clsx(className, "")}>
+    <div className={clsx(className, "flex flex-col gap-[2px]")}>
       {withLabel && title && (
         <label htmlFor={name} className="mb-1 flex justify-between space-x-2 text-xs font-medium">
           <div className=" flex items-center space-x-1">
-            <div className="truncate">
+            <div className="truncate text-body font-normal text-label ">
               {title}
               {required && <span className="ml-1 text-red-500">*</span>}
             </div>
@@ -68,7 +68,7 @@ export default function InputCheckbox({
           {hint}
         </label>
       )}
-      <div className={clsx("relative flex w-full rounded-md")}>
+      <div className={clsx("relative flex w-full rounded-md ")}>
         {icon && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <EntityIcon className="h-5 w-5 text-gray-400" icon={icon} />
@@ -82,7 +82,8 @@ export default function InputCheckbox({
             disabled={disabled || readOnly}
             autoFocus={autoFocus}
             className={clsx(
-              actualValue ? "bg-primary" : " bg-secondary ",
+              "min-w-[44px]",
+              actualValue ? "bg-tertiary-foreground" : " bg-gray-200 ",
               "focus:ring-primary relative inline-flex h-5 w-8 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
               icon && "pl-10",
               (disabled || readOnly) && "cursor-not-allowed opacity-60"
@@ -91,7 +92,7 @@ export default function InputCheckbox({
             <span
               aria-hidden="true"
               className={clsx(
-                actualValue ? "translate-x-3" : "translate-x-0",
+                actualValue ? "translate-x-6" : "translate-x-0",
                 "bg-background pointer-events-none inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out"
               )}
             />
@@ -105,6 +106,7 @@ export default function InputCheckbox({
             autoFocus={autoFocus}
             checked={actualValue}
             className={clsx(
+              "rounded-lg ",
               (disabled || readOnly) && "cursor-not-allowed bg-gray-100",
               " text-primary focus:ring-primary mt-1 h-6 w-6 cursor-pointer rounded border-gray-300",
               className,

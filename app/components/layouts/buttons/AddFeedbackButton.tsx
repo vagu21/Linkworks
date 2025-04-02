@@ -20,7 +20,7 @@ export default function AddFeedbackButton() {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 type="button"
-                className="relative inline-flex items-center rounded-full border border-gray-100 bg-gray-50 p-2 font-medium text-gray-500 shadow-inner hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                className="relative inline-flex items-center rounded-full border border-gray-100 bg-gray-50 p-2 font-medium mb-2 text-gray-500 shadow-inner hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2"
                 aria-haspopup="listbox"
                 aria-expanded="true"
                 aria-labelledby="chat-label"

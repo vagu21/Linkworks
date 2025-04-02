@@ -61,7 +61,7 @@ export default function TenantSelector({ className }: Props) {
           group,
           value: f.tenant.slug,
           name: (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               {f.tenant.icon ? (
                 <img className="inline-block h-4 w-4 shrink-0 rounded-md shadow-sm" src={f.tenant.icon} alt={f.tenant.name} />
               ) : (

@@ -8,7 +8,7 @@ import { useAppOrAdminData } from "~/utils/data/useAppOrAdminData";
 import { getUserHasPermission } from "~/utils/helpers/PermissionsHelper";
 import AddFeedbackButton from "./buttons/AddFeedbackButton";
 import ChatSupportButton from "./buttons/ChatSupportButton";
-import CurrentSubscriptionButton from "./buttons/CurrentSubscriptionButton";
+// import CurrentSubscriptionButton from "./buttons/CurrentSubscriptionButton";
 import LinkedAccountsButton from "./buttons/LinkedAccountsButton";
 import OnboardingButton from "./buttons/OnboardingButton";
 import ProfileButton from "./buttons/ProfileButton";
@@ -31,12 +31,12 @@ import { useTranslation } from "react-i18next";
 import NewTenantSelector from "./selectors/NewTenantSelector";
 import LogoDark from "~/assets/img/logo-dark.png";
 import LogoLight from "~/assets/img/logo-light.png";
+import IconLight from "~/assets/img/icon-light.png";
 import { Inbox } from "@novu/react";
 import NotificationsButton from "./buttons/NotificationsButton";
-
-function classNames(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import PrimaryMenu, { PrimaryMenuItemDivider, PrimaryMenuOption } from "~/custom/components/SideNav/PrimaryMenu";
+import SearchTableIcon from "../ui/icons/SearchTableIcon";
+import StarsIconFilled from "../ui/icons/StarsIconFilled";
 
 interface Props {
   layout: "app" | "admin" | "docs";
@@ -189,11 +189,170 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
     setSidebarOpen(false);
   }
 
+  const NEW_NAV_THEME = true;
+
+  if (NEW_NAV_THEME) {
+    return (
+      <PrimaryMenu
+        layout={layout}
+        logo={appConfiguration.branding.logoDarkMode || appConfiguration.branding.logo || LogoLight}
+        logoIcon={appConfiguration.branding.icon || IconLight}
+        menuItems={({ isCollapsed }) => (
+          <>
+            {/* @toDo pending UI */}
+            {/* {layout === "app" && <div>{appData?.currentTenant && <NewTenantSelector key={params.tenant} />}</div>} */}
+            {getMenu().map((group, index) => {
+              return (
+                <div role="listitem" key={index} className="select-none">
+                  <div className="space-y-1" role="list">
+                    {t(group.title) ? (
+                      <section
+                        role="listitem"
+                        className={clsx("mt-4 overflow-hidden whitespace-nowrap px-1 transition-all", !isCollapsed && "opacity-0")}
+                        aria-hidden="true"
+                      >
+                        <h3 id="Group-headline" className="text-muted-white px-1 text-xs font-bold uppercase leading-4 tracking-wider">
+                          {t(group.title)}
+                        </h3>
+                      </section>
+                    ) : null}
+                    {index > 0 ? <PrimaryMenuItemDivider /> : <div className="mt-4" />}
+                    {group.items.map((menuItem, index) => {
+                      return (
+                        <section role="listitem" key={index} className="">
+                          {(() => {
+                            if (!menuItem.items || menuItem.items.length === 0) {
+                              return (
+                                <Link
+                                  prefetch="intent"
+                                  id={UrlUtils.slugify(getPath(menuItem))}
+                                  to={menuItem.redirectTo ?? getPath(menuItem)}
+                                  onClick={onSelected}
+                                >
+                                  <PrimaryMenuOption
+                                    isCollapsed={isCollapsed}
+                                    icon={
+                                      menuItem.icon !== undefined || menuItem.entityIcon !== undefined ? (
+                                        <SidebarIcon className="h-5 w-5 " item={menuItem} />
+                                      ) : null
+                                    }
+                                    label={
+                                      <>
+                                        <div className="flex items-center space-x-5">
+                                          <div>{t(menuItem.title)}</div>
+                                        </div>
+                                        {menuItem.side}
+                                      </>
+                                    }
+                                    labelText={t(menuItem.title)}
+                                    variant={isCurrent(menuItem) ? "active" : "default"}
+                                  />
+                                </Link>
+                              );
+                            } else {
+                              return (
+                                <div>
+                                  <button type="button" className="w-full" onClick={() => toggleMenuItem(menuItem.path)}>
+                                    <PrimaryMenuOption
+                                      isCollapsed={isCollapsed}
+                                      icon={
+                                        menuItem.icon !== undefined || menuItem.entityIcon !== undefined ? (
+                                          <SidebarIcon className="h-5 w-5" item={menuItem} />
+                                        ) : null
+                                      }
+                                      label={
+                                        <div className="flex w-full justify-between">
+                                          <div className="flex items-center space-x-5">
+                                            <div>{t(menuItem.title)}</div>
+                                          </div>
+                                          {menuItem.side ?? (
+                                            <svg
+                                              className={clsx(
+                                                "ml-auto h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out",
+                                                menuItemIsExpanded(menuItem.path)
+                                                  ? "ml-auto h-3 w-3 rotate-90 transform  transition-colors duration-150 ease-in-out"
+                                                  : "ml-auto h-3 w-3 transform  transition-colors duration-150 ease-in-out"
+                                              )}
+                                              viewBox="0 0 20 20"
+                                            >
+                                              <path d="M6 6L14 10L6 14V6Z" fill="currentColor" />
+                                            </svg>
+                                          )}
+                                        </div>
+                                      }
+                                      labelText={t(menuItem.title)}
+                                      variant={menuItemIsExpanded(menuItem.path) ? "expanded" : "default"}
+                                    />
+                                  </button>
+
+                                  {/*Expandable link section, show/hide based on state. */}
+                                  {menuItemIsExpanded(menuItem.path) && (
+                                    <div className={clsx(isCollapsed ? "border-t border-black border-opacity-10 bg-[#FFEFC9]" : "")}>
+                                      {menuItem.items.map((subItem, index) => {
+                                        return (
+                                          <Fragment key={index}>
+                                            <Link
+                                              prefetch="intent"
+                                              id={UrlUtils.slugify(getPath(subItem))}
+                                              to={subItem.redirectTo ?? getPath(subItem)}
+                                              onClick={onSelected}
+                                            >
+                                              <PrimaryMenuOption
+                                                isCollapsed={isCollapsed}
+                                                icon={
+                                                  subItem.icon !== undefined || subItem.entityIcon !== undefined ? (
+                                                    <SidebarIcon className="h-5 w-5 " item={subItem} />
+                                                  ) : null
+                                                }
+                                                label={
+                                                  <>
+                                                    <div className="flex items-center space-x-5">
+                                                      <div>{t(subItem.title)}</div>
+                                                    </div>
+                                                    {subItem.side}
+                                                  </>
+                                                }
+                                                labelText={t(subItem.title)}
+                                                variant={isCurrent(subItem) ? "active" : "default"}
+                                              />
+                                            </Link>
+                                          </Fragment>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                          })()}
+                        </section>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+        footer={({ isCollapsed }) => (
+          <>
+            {layout == "app" && <SearchButton onClick={onOpenCommandPalette}></SearchButton>}
+            {layout === "app" && <AddFeedbackButton />}
+            {layout == "app" && <NewTenantSelect newNavTheme={true} isCollapsed={isCollapsed} onOpenCommandPalette={onOpenCommandPalette} />}
+          </>
+        )}
+      >
+        {children}
+      </PrimaryMenu>
+    );
+  }
+
   return (
     <>
       <div>
         <OnboardingSession open={onboardingModalOpen} setOpen={setOnboardingModalOpen} />
 
+        {/* Dialog based sidebar for mobile */}
         <Dialog
           open={sidebarOpen}
           onClose={setSidebarOpen}
@@ -317,13 +476,8 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
         </Dialog>
 
         {/* Static sidebar for desktop */}
-        <div
-          className={clsx(
-            "text-foreground hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col",
 
-            layout === "admin" ? "dark" : "dark"
-          )}
-        >
+        <div className={clsx("text-foreground hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col", layout === "admin" ? "dark" : "dark")}>
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="bg-navBar border-border flex grow flex-col overflow-y-auto border-r px-6 pb-4 shadow-sm dark:border-r-0">
             <div className="flex h-16 shrink-0 items-center justify-center border-b border-transparent">
@@ -366,10 +520,10 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                                         id={UrlUtils.slugify(getPath(menuItem))}
                                         to={menuItem.redirectTo ?? getPath(menuItem)}
                                         className={clsx(
-                                          "group mt-1 flex text-white items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
+                                          "group mt-1 flex items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 text-white transition duration-150 ease-in-out  focus:outline-none",
                                           menuItem.icon !== undefined && "px-4",
                                           isCurrent(menuItem)
-                                            ? "bg-onSelect text-white dark:text-secondary-foreground"
+                                            ? "bg-onSelect dark:text-secondary-foreground text-white"
                                             : "hover:bg-navBarHover hover:text-secondary-foreground text-secondary-foreground/70",
                                           "group flex gap-x-3 rounded-md p-2 text-sm leading-5"
                                         )}

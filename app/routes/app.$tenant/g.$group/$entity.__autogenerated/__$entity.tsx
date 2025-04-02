@@ -19,6 +19,7 @@ export default function () {
     <RowsViewRoute
       key={data.rowsData.entity.id}
       rowsData={data.rowsData}
+      data={data}
       items={data.rowsData.items}
       routes={data.routes}
       saveCustomViews={true}

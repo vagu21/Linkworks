@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useRef } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import ButtonSecondary from "~/components/ui/buttons/ButtonSecondary";
 import TrashEmptyIcon from "~/components/ui/icons/TrashEmptyIcon";
 import EntityHelper from "~/utils/helpers/EntityHelper";
@@ -15,8 +15,7 @@ import PencilIcon from "~/components/ui/icons/PencilIcon";
 import RunPromptFlowButtons from "~/modules/promptBuilder/components/run/RunPromptFlowButtons";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
-import  { downloadResumeAction } from "~/modules/rows/components/ResumeGenerator";
-import { DownloadIcon } from "lucide-react";
+import EntityContactInfo from "~/custom/components/RowOverviewRoute/components/EntityInfo";
 
 
 export default function RowOverviewHeader({
@@ -55,7 +54,6 @@ export default function RowOverviewHeader({
   const appOrAdminData = useAppOrAdminData();
   const navigation = useNavigation();
   const submit = useSubmit();
-
   const confirmDelete = useRef<RefConfirmModal>(null);
 
   function getEditRoute() {
@@ -81,64 +79,67 @@ export default function RowOverviewHeader({
   }
 
   return (
-    <div className="relative items-center justify-between space-y-2 border-b border-gray-200 pb-4 sm:flex sm:space-x-4 sm:space-y-0">
-      <div className={clsx(truncate && "truncate", "flex flex-col")}>
-        <div className={clsx(truncate && "truncate", "flex items-center space-x-2 text-xl font-bold")}>
-          {title ?? <RowTitle entity={rowData.entity} item={item} />}
+    <>
+      <div className="relative items-center justify-between space-y-2 border-b border-border pb-4 sm:flex sm:space-x-4 sm:space-y-0">
+        <div className={clsx(truncate && "truncate", "flex flex-col")}>
+          <div className={clsx(truncate && "truncate", "flex items-center space-x-2 text-xl font-bold")}>
+            {title ?? <RowTitle entity={rowData.entity} item={item} />}
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-shrink-0 items-center space-x-2 sm:justify-end">
-        <div className="flex items-end space-x-2 space-y-0">
-          {canUpdate || item.createdByUserId === appOrAdminData?.user?.id || appOrAdminData?.isSuperUser ? (
-            <Fragment>
-              {customActions
-                ?.filter((f) => f.entity === rowData.entity.name)
-                .map((customAction) => {
-                  return (
-                    <ButtonSecondary
-                      key={customAction.action}
-                      isLoading={navigation.state === "submitting" && navigation.formData?.get("action") === customAction.action}
-                      onClick={() => {
-                        const form = new FormData();
-                        form.set("action", customAction.action);
-                        form.set("id", item.id);
-                        submit(form, {
-                          method: "post",
-                        });
-                      }}
-                    >
-                      <span className="text-xs">{customAction.label}</span>
-                    </ButtonSecondary>
-                  );
-                })}
-              {buttons}
-              {!options?.hideShare && (item.createdByUserId === appOrAdminData?.user?.id || appOrAdminData.isSuperAdmin) && (
-                <ButtonSecondary to="share">
-                  <ShareIcon className="h-4 w-4 text-gray-500" />
-                </ButtonSecondary>
-              )}
-              {rowData.entity.onEdit !== "overviewAlwaysEditable" && (
-                <ButtonSecondary disabled={!EntityHelper.getRoutes({ routes, entity: rowData.entity, item })?.edit} to={getEditRoute()}>
-                  <PencilIcon className="h-4 w-4 text-gray-500" />
-                </ButtonSecondary>
-              )}
-              {isEditing && (
-                <ButtonSecondary onClick={onDelete} disabled={!canDelete()}>
-                  <TrashEmptyIcon className="h-4 w-4 text-gray-500" />
-                </ButtonSecondary>
-              )}
-              <RunPromptFlowButtons type="edit" row={item} promptFlows={rowData.promptFlows} />
-            </Fragment>
-          ) : appOrAdminData.isSuperAdmin ? (
-            <ButtonSecondary to="share">
-              <ShareIcon className="h-4 w-4 text-gray-500" />
-            </ButtonSecondary>
-          ) : null}
+        <div className="flex flex-shrink-0 items-center space-x-2 sm:justify-end">
+          <div className="flex items-end space-x-2 space-y-0">
+            {canUpdate || item.createdByUserId === appOrAdminData?.user?.id || appOrAdminData?.isSuperUser ? (
+              <Fragment>
+                {customActions
+                  ?.filter((f) => f.entity === rowData.entity.name)
+                  .map((customAction) => {
+                    return (
+                      <ButtonSecondary
+                        key={customAction.action}
+                        isLoading={navigation.state === "submitting" && navigation.formData?.get("action") === customAction.action}
+                        onClick={() => {
+                          const form = new FormData();
+                          form.set("action", customAction.action);
+                          form.set("id", item.id);
+                          submit(form, {
+                            method: "post",
+                          });
+                        }}
+                      >
+                        <span className="text-xs">{customAction.label}</span>
+                      </ButtonSecondary>
+                    );
+                  })}
+                {buttons}
+                {!options?.hideShare && (item.createdByUserId === appOrAdminData?.user?.id || appOrAdminData.isSuperAdmin) && (
+                  <ButtonSecondary to="share">
+                    <ShareIcon className="h-4 w-4 text-gray-500" />
+                  </ButtonSecondary>
+                )}
+                {rowData.entity.onEdit !== "overviewAlwaysEditable" && (
+                  <ButtonSecondary disabled={!EntityHelper.getRoutes({ routes, entity: rowData.entity, item })?.edit} to={getEditRoute()}>
+                    <PencilIcon className="h-4 w-4 text-gray-500" />
+                  </ButtonSecondary>
+                )}
+                {isEditing && (
+                  <ButtonSecondary onClick={onDelete} disabled={!canDelete()}>
+                    <TrashEmptyIcon className="h-4 w-4 text-gray-500" />
+                  </ButtonSecondary>
+                )}
+                <RunPromptFlowButtons type="edit" row={item} promptFlows={rowData.promptFlows} />
+              </Fragment>
+            ) : appOrAdminData.isSuperAdmin ? (
+              <ButtonSecondary to="share">
+                <ShareIcon className="h-4 w-4 text-gray-500" />
+              </ButtonSecondary>
+            ) : null}
+          </div>
         </div>
-      </div>
 
-      <ConfirmModal ref={confirmDelete} destructive onYes={onDeleteConfirm} />
-    </div>
+        <ConfirmModal ref={confirmDelete} destructive onYes={onDeleteConfirm} />
+      </div>
+      <EntityContactInfo item={item} rowData={rowData} />
+    </>
   );
 }

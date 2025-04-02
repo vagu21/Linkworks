@@ -44,7 +44,7 @@ export const defaultTestimonials: TestimonialDto[] = [
     name: "Praney Behl",
     createdAt: new Date("2024-01-06T17:47:00"),
     title: "Can't praise it enough!",
-    quote: `SassRock is a great Saas starter template. The codebase is massive and packs a ton of features, sometime feels like way too many :) Alex, SaasRock's dev is an awesome guy, he is very active and responsive to questions, concerns and feature requests.
+    quote: `LFIApps is a great Saas starter template. The codebase is massive and packs a ton of features, sometime feels like way too many :) Alex, SaasRock's dev is an awesome guy, he is very active and responsive to questions, concerns and feature requests.
 
 Highly recommended product for your next Saas project!`,
     quoteUrl: "https://www.trustpilot.com/reviews/6599e69a47c3817c3c44c93b",

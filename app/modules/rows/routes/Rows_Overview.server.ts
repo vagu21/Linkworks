@@ -236,6 +236,9 @@ export namespace Rows_Overview {
       return json({ deletedComment: rowCommentId }, { headers: getServerTimingHeader() });
     } else if (action === "task-new") {
       const taskTitle = form.get("task-title")?.toString();
+      const taskDescription = form.get("task-description")?.toString();
+      const taskPriority = form.get("priority")?.toString();
+
       if (!taskTitle) {
         return json({ error: t("shared.invalidForm") }, { status: 400, headers: getServerTimingHeader() });
       }
@@ -244,6 +247,8 @@ export namespace Rows_Overview {
           createdByUserId: userId,
           rowId: item.id,
           title: taskTitle,
+          description: taskDescription,
+          priority: taskPriority,
         }),
         "createRowTask"
       );
@@ -259,7 +264,31 @@ export namespace Rows_Overview {
         } satisfies RowTasksCreatedDto,
       });
       return json({ newTask: task }, { headers: getServerTimingHeader() });
-    } else if (action === "task-complete-toggle") {
+    }
+    else if (action == "task-edit")
+    { 
+      const id:any = form.get('task-id')?.toString();
+       const taskTitle = form.get("task-title")?.toString();
+       const taskDescription = form.get("task-description")?.toString();
+       const taskPriority = form.get("priority")?.toString();
+
+       if (!taskTitle) {
+         return json({ error: t("shared.invalidForm") }, { status: 400, headers: getServerTimingHeader() });
+      }
+        const task = await time(
+          updateRowTask(id,{
+            title: taskTitle,
+            description: taskDescription,
+            priority: taskPriority,
+          }),
+          "updateRowTask"
+      );
+      
+       
+          return json({ updatedTask: task }, { headers: getServerTimingHeader() });
+    }
+    
+    else if (action === "task-complete-toggle") {
       const taskId = form.get("task-id")?.toString() ?? "";
       const task = await time(getRowTask(taskId), "getRowTask");
       if (task) {

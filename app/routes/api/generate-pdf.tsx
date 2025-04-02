@@ -22,18 +22,18 @@ export let action: ActionFunction = async ({ request }) => {
 
   try {
     const isProduction = process.env.NODE_ENV === "production";
-    const browser = await Puppeteer.launch(isProduction ?{
-      headless:true,
-      executablePath:  "/var/lib/snapd/snap/bin/chromium", 
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], 
+    const browser = await Puppeteer.launch(isProduction ? {
+      headless: true,
+      executablePath: "/var/lib/snapd/snap/bin/chromium",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     } : {}
     );
     const page = await browser.newPage();
-    
+
     await page.setContent(html);
 
     await page.waitForSelector("body");
-    
+
     // Get the content width and height after setting the content
     const content = await page.evaluate(() => {
       const body = document.body;

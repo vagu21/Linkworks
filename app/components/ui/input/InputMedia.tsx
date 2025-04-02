@@ -52,18 +52,16 @@ export default function InputMedia({
   const [error, setError] = useState<string | undefined>(undefined);
   const [items, setItems] = useState<MediaDto[]>(initialMedia ?? []);
   const [selectedItem, setSelectedItem] = useState<MediaDto>();
-
+  let supportedFormats = accept?.split(",");
   useEffect(() => {
     if (onSelected) {
       onSelected(items);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
-
   function deleteMedia(idx: number) {
     setItems(items.filter((_f, index) => index !== idx));
   }
-
   function onDroppedFiles(e: FileBase64[]) {
     setError(undefined);
     if (max) {
@@ -131,17 +129,38 @@ export default function InputMedia({
   }
   return (
     <div className={clsx(className, "")}>
-      <label htmlFor={name} className="flex justify-between space-x-2 text-xs font-medium">
-        <div className=" flex items-center space-x-1">
-          <div className="truncate">
-            {title && (
-              <>
-                {t(title)}
-                {required && <span className="ml-1 text-red-500">*</span>}
-              </>
-            )}
+      <label htmlFor={name} className="flex w-full justify-between text-xs font-medium mb-3">
+        <div className=" flex items-center ">
+          <div className="text-body-semibold text-uploadLabel  w-full truncate !text-[16px]">
+            <div className="text-body text-[#0A0501] min-w-0 truncate font-medium">
+              {title && (
+                <>
+                  {t(title)}
+                  {required && <span className="ml-1 text-red-500">*</span>}
+                </>
+              )}
+            </div>
           </div>
+
           <div className="">{help && <HintTooltip text={help} />}</div>
+        </div>
+        <div className="ml-auto mr-1 flex">
+          {supportedFormats?.length ? (
+            <div className="flex items-center gap-1">
+              <span className="text-[#0A0501] text-xs font-bold">Supported files : </span>
+              {supportedFormats.map((format, index) => {
+                return (
+                  <div className="text-[#0A0501] text-sm font-normal" key={format}>
+                    {format}
+                    {index !== supportedFormats.length - 1 ? "," : ""}
+                  </div>
+                );
+              })}
+              <span className="text-[#FF7800] text-xs font-semibold"> (Max file size : {maxSize} mb)</span>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
         <div>{error && <span className="text-red-500">{error}</span>}</div>
         {hint}

@@ -21,28 +21,110 @@ const config = {
         "2xl": "1400px",
       },
     },
+    fontSize: {
+      xs: ['12px', '16px'],
+      sm: ['14px', '19px'],
+      base: ['16px', '21px'],
+      lg: ['18px', '22px'],
+      xl: ['20px', '24px'],
+      '2xl': ['24px', '29px'],
+      '3xl': ['28px', '34px'],
+      '4xl': ['32px', '40px'],
+      '5xl': ['36px', '45px'],
+ 
+      'h1': ['36px', '45px'],
+      'h2': ['32px', '40px'],
+      'h3': ['28px', '34px'],
+      'h4': ['24px', '29px'],
+      'h5': ['20px', '24px'],
+      'sub-heading-1': ['18px', '22px'],
+      'sub-heading-2': ['16px', '21px'],
+      'body': ['14px', '19px'],
+      'small': ['12px', '16px'],
+    },
     extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(90deg, #FFFAF6 0%, #FFF7F6 100%)',
+        'AI-gradient': 'linear-gradient(90deg, #FF7800 0%, #FFA200 100%)',
+      },
       colors: {
-        border: "hsl(var(--border))",
+        border: {
+          DEFAULT:"hsl(var(--border))",
+          subtle:"hsl(var(--border-subtle))",
+          dark:"hsl(var(--border-dark))",
+          lighter:"hsl(var(--border-lighter))",
+          label:"hsl(var(--label))",
+          relation:"#FFDBCD",
+        },
+        gradientStart: '#FFFAF6',
+        gradientEnd: '#FFF7F6',
+        relationTitle:"#180505",
+        cardBg:"#FAFAFA",
+        cardBorder:"#EAEAEA",
+        selectRelationBtn:"#FF7800",
         input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        ring: {
+          DEFAULT:"hsl(var(--ring))",
+          secondary:"hsl(var(--ring-secondary))",
+        },
+        background:{
+          DEFAULT:"hsl(var(--background))",
+          subtle:"hsl(var(--background-subtle))",
+          disabled:"hsl(var(--background-disabled))",
+          disabledLight:"hsl(var(--background-disabledLight))"
+        },
+
+        label:"hsl(var(--label))",
+  
+
+        text: {
+          DEFAULT:"hsl(var(--text))",
+          body:"hsl(var(--text-body))",
+          subtitle:"hsl(var(--text-subtitle))",
+          caption:"hsl(var(--text-caption))",
+          negative:"hsl(var(--text-negative))",
+          disabled:"hsl(var(--text-disabled))",
+        },
+          
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          border: "hsl(var(--primary-border))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          border: "hsl(var(--secondary-border))",
+        },
+        tertiary:{
+                DEFAULT: "hsl(var(--tertiary))",
+                foreground: "hsl(var(--tertiary-foreground))",
+                border: "hsl(var(--tertiary-border))",
+                lighter:"hsl(var(--tertiary-lighter))"
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          border:"hsl(var(--destructive-border))"
         },
-        navBar:"#3B82F6",
-        navBarHover:"#2D58C0",
-        onSelect:"#0c4a6e",
+        disbaled:{
+         DEFAULT: "hsl(var(--disabled))",
+         border: "hsl(var(--disabled-border))",
+         foreground: "hsl(var(--disabled-foreground))",
+        },
+        navBar: "#3B82F6",
+        navBarHover: "#2D58C0",
+        onSelect: "#0c4a6e",
+        inputFieldLabel:"#151B21",
+        inputFieldStroke:"#D9D9D9",
+        invalidInput:"#FF5555",
+        inputEmailIcon:"#151B21",
+        inputEmailIconBg:"rgba(21, 27, 33, 0.02)",
+        // warning:"#FAAD14",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -58,6 +140,23 @@ const config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+
+        error:{
+          DEFAULT:"hsl(var(--error))"
+        },
+
+        warning:{
+             DEFAULT:"hsl(var(--warning))"
+        },
+
+        chip:{
+          DEFAULT: "hsl(var(--chip))",
+          selected: "hsl(var(--chip-selected))",
+          border: "hsl(var(--chip-border))",
+          text: "hsl(var(--chip-text))",
+          icon: "hsl(var(--chip-icon))",
+          placeholder: "hsl(var(--chip-placeholder))",
         },
         theme: {
           50: colors.violet[50],
@@ -233,6 +332,34 @@ const config = {
         "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
         "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
         "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+        "heading-1-regular": ["36px", { lineHeight: "45px", fontWeight: "400" }],
+        "heading-1-medium": ["36px", { lineHeight: "45px", fontWeight: "500" }],
+        "heading-1-semibold": ["36px", { lineHeight: "45px", fontWeight: "600" }],
+        "heading-1-bold": ["36px", { lineHeight: "45px", fontWeight: "700" }],
+        "heading-2-regular": ["32px", { lineHeight: "40px", fontWeight: "400" }],
+        "heading-2-medium": ["32px", { lineHeight: "40px", fontWeight: "500" }],
+        "heading-2-semibold": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+        "heading-2-bold": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "heading-3-regular": ["28px", { lineHeight: "34px", fontWeight: "400" }],
+        "heading-3-medium": ["28px", { lineHeight: "34px", fontWeight: "500" }],
+        "heading-3-semibold": ["28px", { lineHeight: "34px", fontWeight: "600" }],
+        "heading-3-bold": ["28px", { lineHeight: "34px", fontWeight: "700" }],
+        "heading-4-regular": ["24px", { lineHeight: "29px", fontWeight: "400" }],
+        "heading-4-medium": ["24px", { lineHeight: "29px", fontWeight: "500" }],
+        "heading-4-semibold": ["24px", { lineHeight: "29px", fontWeight: "600" }],
+        "heading-4-bold": ["24px", { lineHeight: "29px", fontWeight: "700" }],
+        "heading-5-regular": ["20px", { lineHeight: "24px", fontWeight: "400" }],
+        "heading-5-medium": ["20px", { lineHeight: "24px", fontWeight: "500" }],
+        "heading-5-semibold": ["20px", { lineHeight: "24px", fontWeight: "600" }],
+        "heading-5-bold": ["20px", { lineHeight: "24px", fontWeight: "700" }],
+        "body-regular": ["14px", { lineHeight: "19px", fontWeight: "400" }],
+        "body-medium": ["14px", { lineHeight: "19px", fontWeight: "500" }],
+        "body-semibold": ["14px", { lineHeight: "19px", fontWeight: "600" }],
+        "body-bold": ["14px", { lineHeight: "19px", fontWeight: "700" }],
+        "small-regular": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+        "small-medium": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+        "small-semibold": ["12px", { lineHeight: "16px", fontWeight: "600" }],
+        "small-bold": ["12px", { lineHeight: "16px", fontWeight: "700" }],
       },
     },
   },

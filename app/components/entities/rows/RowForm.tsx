@@ -32,9 +32,11 @@ import { useProcessMediaFile } from "~/modules/mediaParser/useProcessMedia";
 import FloatingLoader from "~/components/ui/loaders/FloatingLoader";
 import { appendUserFormValues } from "~/modules/companyMembers/utils";
 import { CompanyMembersView } from "~/modules/companyMembers/companyMembersView";
+
 export interface RefRowForm {
   save: () => void;
 }
+
 
 interface Props {
   entity: EntityWithDetails;
@@ -67,6 +69,9 @@ interface Props {
   template?: { title: string; config: string } | null;
   statesArr?: string[];
   setStatesArr?: Dispatch<SetStateAction<string[]>>;
+  fields: string[];
+  totalFields: number;
+  formData: Record<string, string>;
 }
 interface formDataCompany extends FormData {
   userEmail?: "string";
@@ -106,6 +111,9 @@ const RowForm = (
     statesArr,
     setStatesArr,
     isSlideOverOrRowList = false,
+    fields,
+    totalFields,
+    formData,
   }: Props & { isSlideOverOrRowList?: boolean },
   ref: Ref<RefRowForm>
 ) => {
@@ -140,7 +148,7 @@ const RowForm = (
 
   async function getFeatureFlags() {
     const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`, { credentials: 'include' });
+    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`, { credentials: "include" });
     const response = await data.json();
     setFeatureFlagValues(response);
   }
@@ -465,11 +473,22 @@ const RowForm = (
     // }
   }
 
-
-  const { parseMediaFile, isLoading } = useProcessMediaFile({
+  const { parseMediaFile, isLoading, isAIAvailable } = useProcessMediaFile({
     addDynamicRow,
     childrenEntities,
+    entityName: entity.name
   });
+  function onChangePrefill(rowValue: RowValueDto) {
+    setHeaders((prev) => {
+      return prev.map((f) => {
+        if (f.propertyId === rowValue.propertyId) {
+          return rowValue;
+        }
+        return f;
+      });
+    });
+  }
+ 
   // Function to get distinct values from relationships
   return (
     <>
@@ -480,6 +499,7 @@ const RowForm = (
       )}
       <FormGroup
         ref={formGroup}
+        isDrawer={isSlideOverOrRowList}
         id={item?.id}
         editing={editing}
         canDelete={canDelete}
@@ -497,6 +517,13 @@ const RowForm = (
             ? { success: t("shared.created") + ": " + RowHelper.getTextDescription({ entity, item: createdRow, t, defaultsToFolio: true }) }
             : undefined
         }
+        headers={headers}
+        onChangePrefill={onChangePrefill}
+        item={item}
+        entity={entity}
+        routes={routes}
+        isAIAvailable={isAIAvailable}
+
       >
         {hiddenFields &&
           Object.keys(hiddenFields).map((f) => {
@@ -548,37 +575,47 @@ const RowForm = (
           onSaveIfAllSet={onSaveIfAllSet}
           parseMediaFile={parseMediaFile}
           isSlideOverOrRowList={isSlideOverOrRowList}
+          fields={fields}
+          totalFields={totalFields}
+          formData={formData}
         />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-12 pl-4">
           {childrenEntities.visible.map((relationship) => (
             <div key={relationship.id} className="col-span-12">
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium leading-3 text-gray-800">
-                  <div className="flex items-center space-x-1">
-                    <div>
-                      <span className=" font-light italic"></span> {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
-                      {/* {relationship.required && <span className="ml-1 text-red-500">*</span>} */}
-                    </div>
+              <section className="w-full">
+                <div className=" p-4 w-full bg-white rounded-xl border shadow-lg border-zinc-100">
+                  <div className="mb-3">
+                    <h3 className="text-body text-label truncate font-bold">
+                      <div className="flex items-center space-x-1">
+                        <div>
+                          <span className="text-[16px] font-bold leading-[19px] text-[#121212] "></span>{" "}
+                          {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
+                        </div>
+                      </div>
+                    </h3>
                   </div>
-                </h3>
-                <RelationshipSelector
-                  fromEntity={entity}
-                  type="child"
-                  relationship={relationship}
-                  relatedRows={relatedRows}
-                  onFindEntityRows={onFindEntityRows}
-                  allEntities={allEntities}
-                  onRemoveRelatedRow={onRemoveRelatedRow}
-                  readOnly={item?.id !== undefined && (!editing || !canUpdate)}
-                  routes={routes}
-                  relationshipRows={relationshipRows}
-                  addRelationshipRow={addRelationshipRow}
-                  setRelationshipRows={setRelationshipRows}
-                  isSlideOverOrRowList={isSlideOverOrRowList}
-                />
-              </div>
+                  <div>
+                    <RelationshipSelector
+                      fromEntity={entity}
+                      type="child"
+                      relationship={relationship}
+                      relatedRows={relatedRows}
+                      onFindEntityRows={onFindEntityRows}
+                      allEntities={allEntities}
+                      onRemoveRelatedRow={onRemoveRelatedRow}
+                      readOnly={item?.id !== undefined && (!editing || !canUpdate)}
+                      routes={routes}
+                      relationshipRows={relationshipRows}
+                      addRelationshipRow={addRelationshipRow}
+                      setRelationshipRows={setRelationshipRows}
+                      isSlideOverOrRowList={isSlideOverOrRowList}
+                    />
+                  </div>
+                </div>
+              </section>
             </div>
+
           ))}
 
           {isAddingOrEditing() && (
@@ -619,28 +656,43 @@ const RowForm = (
       </FormGroup>
       {/* // <OpenModal className="sm:max-w-4xl" onClose={() => setSearchingRelationshipRows(undefined)}> */}
       <SlideOverWideEmpty
-        withTitle={false}
+        withTitle={true}
         withClose={false}
-        title={t("shared.select")}
+        title=
+        {
+          <>
+            <span style={{ color: 'black', fontWeight: '600' }}>
+              {t("shared.add")} {((selectedRelatedEntity?.entity as any)?.name) || ''}
+            </span>
+          </>
+        }
         open={searchingRelationshipRows !== undefined}
         onClose={() => setSearchingRelationshipRows(undefined)}
+        size="5xl"
       >
         {selectedRelatedEntity && searchingRelationshipRows && (
           <RowListFetcher
+            titleop={entity.name}
             currentView={selectedRelatedEntity.view}
             listUrl={EntityHelper.getRoutes({ routes, entity: selectedRelatedEntity.entity })?.list + "?view=null"}
             newUrl={EntityHelper.getRoutes({ routes, entity: selectedRelatedEntity.entity })?.new ?? ""}
             parentEntity={entity}
             onSelected={(rows) => {
+              if (rows.some(row => row.entityId === entity.id)) {
+                console.error("Cannot create a relationship with the same entity.");
+                return;
+              }
               addRelationshipRow(searchingRelationshipRows, rows);
               setSearchingRelationshipRows(undefined);
             }}
             multipleSelection={selectedRelatedEntity.multiple}
-            allEntities={allEntities}
+            allEntities={allEntities.filter(e => e.id !== entity.id)} // Exclude current entity from the list
             distinct={searchingRelationshipRows.distinct}
+            onClose={() => setSearchingRelationshipRows(undefined)}
           />
         )}
       </SlideOverWideEmpty>
+
       {/* // </OpenModal> */}
     </>
   );
@@ -733,13 +785,15 @@ function RelationshipSelector({
       ) : RelationshipHelper.getInputType({ fromEntityId: fromEntity.id, relationship }) === "multi-select" ? (
         <> */}
       {getRows(relationship).length === 0 ? (
-        <button
-          onClick={() => onFindEntityRows(relationship)}
-          type="button"
-          disabled={readOnly}
+        <div
+          // onClick={() => onFindEntityRows(relationship)}
+          // type="button"
+          // disabled={readOnly}
           className={clsx(
-            "relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-4 text-center",
-            readOnly ? "cursor-not-allowed bg-gray-100" : "bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            "  !border-[#E6E6E6] !bg-[#FAFAFA] relative block w-full  rounded-lg border-2 border-dashed px-4 py-3 text-center",
+            readOnly
+              ? "!bg-[#FAFAFA] cursor-not-allowed"
+              : "!bg-[#FAFAFA] hover:border-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-gray-500"
           )}
         >
           <span className="flex items-center space-x-1 text-xs font-normal text-gray-500">
@@ -749,22 +803,52 @@ function RelationshipSelector({
               <>
                 {type === "parent" && (
                   <>
-                    <div>{t("shared.select")}</div>
-                    <div className="lowercase">{t(relationship.parent.title)}</div>
+                    <div className="flex w-full flex-col justify-between sm:flex-row ">
+                      <div className="text-small text-relationTitle flex flex-col items-center gap-1 font-normal italic leading-[14px] sm:flex-row">
+                        <div>{t("shared.no")}</div>
+                        <div className="lowercase">{t(relationship.parent.titlePlural)}</div>
+                        <div>have been added</div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onFindEntityRows(relationship);
+                        }}
+                        className="bg-orange-50 border-[1px] border-orange-500 rounded-md px-4 py-0.5 text-sm font-semibold leading-[24px] text-orange-500 hover:bg-orange-100 hover:text-orange-500 hover:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                      >
+                        Add {t(relationship.parent.titlePlural)}
+                      </button>
+                    </div>
                   </>
                 )}
                 {type === "child" && (
                   <>
-                    <div>{t("shared.add")}</div>
-                    <div className="lowercase">{t(relationship.child.title)}</div>
+                    <div className="flex flex-col sm:flex-row w-full justify-between ">
+                      <div className="text-small flex flex-col sm:flex-row items-center gap-1 font-normal italic leading-[14px] text-[#180505]">
+                        <div>{t("shared.no")}</div>
+                        <div className="lowercase">{t(relationship.child.titlePlural)}</div>
+                        <div>have been added yet</div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onFindEntityRows(relationship);
+                        }}
+                        className="bg-orange-50 border-[1px] border-orange-500 rounded-md px-4 py-0.5 text-sm font-semibold leading-[24px] text-orange-500 hover:bg-orange-100 hover:text-orange-500 hover:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                      >
+                        Add {t(relationship.child.titlePlural)}
+                      </button>
+                    </div>
                   </>
                 )}
               </>
             )}
           </span>
-        </button>
+        </div>
       ) : (
-        <div className="relative space-y-2 overflow-visible">
+        <div className="relative space-y-2 overflow-visible w-full">
           <RowsList
             entity={entity.entity}
             items={getRows(relationship) as RowWithDetails[]}
@@ -792,7 +876,7 @@ function RelationshipSelector({
                       readOnly ? "cursor-not-allowed" : "hover:text-red-500 group-hover:flex"
                     )}
                   >
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0  0 24 24" strokeWidth="1.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </button>
@@ -808,30 +892,31 @@ function RelationshipSelector({
   routes={routes}
   title={t(entity.entity.title)}
 /> */}
-
-          <button
-            onClick={() => onFindEntityRows(relationship)}
-            type="button"
-            className={clsx(
-              "relative flex  w-64 space-x-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
-              readOnly && "hidden"
-            )}
-          >
-            {type === "parent" && (
-              <>
-                {/* <div>{t("shared.add")}</div> */}
-                <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
-                <div className="lowercase">{t(relationship.parent.title)}</div>
-              </>
-            )}
-            {type === "child" && (
-              <>
-                {/* <div>{t("shared.add")}</div> */}
-                <div>{t(relationship.distinct ? "shared.add" : "shared.select")}</div>
-                <div className="lowercase">{t(relationship.child.title)}</div>
-              </>
-            )}
-          </button>
+          <div className="flex justify-end gap-1 pt-2">
+            <button
+              onClick={() => onFindEntityRows(relationship)}
+              type="button"
+              className={clsx(
+                "relative flex  space-x-1 rounded-[4px] border-[1px]  border-gray-300 px-2 py-1 text-center text-xs text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500",
+                readOnly && "hidden"
+              )}
+            >
+              {type === "parent" && (
+                <>
+                  {/* <div>{t("shared.add")}</div> */}
+                  <div className="text-body font-medium leading-5 text-black">{t(relationship.distinct ? "shared.add" : "Add")}</div>
+                  <div className="text-body font-medium lowercase leading-5 text-black ">{t(relationship.parent.title)}</div>
+                </>
+              )}
+              {type === "child" && (
+                <>
+                  {/* <div>{t("shared.add")}</div> */}
+                  <div className="text-body font-medium leading-5 text-black">{t(relationship.distinct ? "shared.add" : "Add")}</div>
+                  <div className="text-body font-medium lowercase leading-5 text-black">{t(relationship.child.title)}</div>
+                </>
+              )}
+            </button>
+          </div>
         </div>
         // </div>
       )}
@@ -866,9 +951,15 @@ function RowGroups({
   onSaveIfAllSet,
   parseMediaFile,
   isSlideOverOrRowList = false,
+  fields = [],
+  totalFields,
+  formData = {},
 }: {
   isSlideOverOrRowList?: boolean;
   item?: RowWithDetails | null;
+  fields: string[];
+  formData: Record<string, string>;
+  totalFields: number;
   entity: EntityWithDetails;
   rowValues: RowValueDto[];
   parentEntity?: EntityWithDetails;
@@ -899,10 +990,13 @@ function RowGroups({
   const { t } = useTranslation();
   const rowValueInput = useRef<RefRowValueInput>(null);
   const [statesArr, setStatesArr] = useState<string[]>([]);
-  const [groups, setGroups] = useState<{ group?: string; headers: RowValueDto[] }[]>([]);
 
-  useEffect(() => {
+  const  addDynamicRow = () => {};
+  const childrenEntities = { visible: [], hidden: [] }
+  
+  const { groups, hasCountry } = useMemo(() => {
     const groups: { group?: string; headers: RowValueDto[] }[] = [];
+
     rowValues.forEach((header) => {
       const groupName = PropertyAttributeHelper.getPropertyAttributeValue_String(header.property, PropertyAttributeName.Group);
       let found = groups.find((f) => f.group === groupName);
@@ -918,15 +1012,28 @@ function RowGroups({
         });
       }
     });
+    
     if (groups.length === 0) {
       groups.push({ headers: rowValues });
     }
-    setGroups(groups);
-  }, [groups.length, rowValues]);
 
-  const hasCountry = useMemo(() => {
-    return groups.some((group) => group.headers.some((header) => header.property.subtype === "country"));
-  }, [groups]);
+    const hasCountry = groups.some((group) => group.headers.some((header) => header.property.subtype === "country"))
+
+    if(hasCountry) {
+      groups.forEach(group => {
+        group.headers.forEach((header) => {
+          if (header.property.subtype === "state") {
+            header.property.hasCountry = hasCountry;
+          }
+        });
+      })
+    }
+  
+    return {
+      groups,
+      hasCountry
+    };
+  }, [rowValues]);
 
   useEffect(() => {
     if (!hasCountry) return;
@@ -941,52 +1048,27 @@ function RowGroups({
 
     const addHasCountryToState = () => {
       if (!groups.length || !groups[0].headers.length) return;
-
-      setGroups((prevGroups) =>
-        prevGroups.map((group) => {
-          let countryName;
-          const hasCountry = group.headers.some((header) => {
-            if (header.property.subtype === "country") {
-              countryName = header.textValue;
-              return true;
-            }
-            return false;
-          });
-
-          if (hasCountry && countryName) {
-            populateInitialStates(countryName);
-          }
-
-          group.headers.forEach((header) => {
-            if (header.property.subtype === "state") {
-              header.property.hasCountry = hasCountry;
-            }
-          });
-
-          return group;
-        })
-      );
+  
+      groups.forEach((group) => {
+        const countryHeader = group.headers.find((header) => header.property.subtype === "country" && header.textValue);
+        if (countryHeader) {
+          populateInitialStates(countryHeader.textValue);
+        }
+      });
     };
-
+  
     addHasCountryToState();
-  }, [hasCountry]);
+  }, [hasCountry, groups]);
+  
 
   function isVisible(rowValue: RowValueDto) {
     if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument") {
-      const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.booleanValue;
-      if (!firstNameValue) {
+      const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.textValue;
+      if (firstNameValue !== "Supplier") {
         return false;
       }
     }
     return true;
-  }
-
-  function getPropertyColumnSpan(property: PropertyWithDetails) {
-    const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
-    if (columns === undefined || isNaN(columns) || columns < 1 || columns > 12) {
-      return "col-span-12";
-    }
-    return `col-span-${columns}`;
   }
 
   function onChange(rowValue: RowValueDto) {
@@ -999,151 +1081,190 @@ function RowGroups({
       });
     });
   }
-  const distributeGroups = (groups: { group?: string; headers: RowValueDto[] }[]): Array<{ group?: string; headers: RowValueDto[] }[]> => {
-    const [left, right] = [[], []] as Array<typeof groups>;
-    let leftHeight = 0;
-    let rightHeight = 0;
 
-    const estimateHeight = (group: { headers: RowValueDto[] }): number => group.headers.length * 100; // Adjust height estimation based on inputs
 
-    groups.forEach((group) => {
-      const height = estimateHeight(group);
-      if (leftHeight <= rightHeight) {
-        left.push(group);
-        leftHeight += height;
-      } else {
-        right.push(group);
-        rightHeight += height;
-      }
+  const [filledFieldsCounts, setFilledFieldsCounts] = useState<Record<string, number>>({}); // Track count per group
+
+  useEffect(() => {
+    const filledCounts: Record<string, number> = {};
+    groups.forEach(({ group, headers }) => {
+      let groupFilledCount = 0;
+      headers.forEach((header) => {
+        const isFilled = (
+          (header.textValue?.trim() !== "" && header.textValue !== undefined) || // Standard text field
+          (header.numberValue !== undefined && !isNaN(header.numberValue)) || // Number field
+          (header.booleanValue !== undefined) || // Boolean field
+          (header.dateValue !== undefined) || // Date field
+          (header.range !== undefined) || // Range field
+          (header.multiple && header.multiple.length > 0) || // Array (multi-select) field
+          (header.media && header.media.length > 0) || // Media (file upload) field
+          // Handle multi-text (split by newline)
+          (typeof header.textValue === "string" && header.textValue.split('\n').filter(line => line.trim() !== "").length > 0) // Multi-line text (split by Enter key)
+        );
+
+        if (isFilled) {
+          groupFilledCount++;
+        }
+      });
+
+      // Store the count for the group
+      filledCounts[group || "default"] = groupFilledCount;
     });
 
-    return [left, right];
-  };
-  const columns = isSlideOverOrRowList ? 0 : groups.length > 1 ? 2 : 1;
+    setFilledFieldsCounts(filledCounts);
+  }, [groups]);
 
   return (
-    <div className={`grid ${columns === 2 ? "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2" : "sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1"} gap-4 w-full`}>
-      {distributeGroups(groups).map((column, colIndex) => (
-        <div key={colIndex} className={clsx("space-y-4", colIndex === 0 && "pb-8")}>
-          {column.map(({ group, headers }, originalIndex) => {
-            const isMediaGroup = headers.some((h) => h.property.type === PropertyType.MEDIA);
-
-            return (
-              <div key={originalIndex} className={clsx("space-y-2", isMediaGroup && "col-span-2")}>
-                <InputGroup title={group ? t(group).trim() : t("shared.details")}>
-                  <div className="grid grid-cols-12 gap-3">
-                    {headers.map((detailValue, idxDetailValue) => {
-                      if (!isVisible(detailValue)) {
-                        return null;
-                      }
-                      return (
-                        <div key={detailValue.propertyId} className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}>
-                          <RowValueInput
-                            ref={rowValueInput}
-                            entity={entity}
-                            statesArr={statesArr}
-                            setStatesArr={setStatesArr}
-                            textValue={detailValue.textValue}
-                            numberValue={detailValue.numberValue}
-                            dateValue={detailValue.dateValue}
-                            booleanValue={detailValue.booleanValue}
-                            multiple={detailValue.multiple}
-                            range={detailValue.range}
-                            initialOption={detailValue.selectedOption}
-                            selected={detailValue.property}
-                            initialMedia={detailValue.media}
-                            onChange={(e) => {
-                              onChange({
-                                ...detailValue,
-                                ...RowHelper.updateFieldValueTypeArray(detailValue, e),
-                              });
-                            }}
-                            onChangeOption={(e) => {
-                              onChange({
-                                ...detailValue,
-                                selectedOption: e,
-                                textValue: e,
-                              });
-                            }}
-                            onChangeMedia={async (media) => {
-                              onChange({
-                                ...detailValue,
-                                media: media as any,
-                              });
-                              if (media.filter((f) => f.type).length > 0) {
-                                onSaveIfAllSet();
-                              }
-                              parseMediaFile(headers, onChange, media, item, entity, routes);
-                            }}
-                            onChangeMultiple={(e) => {
-                              onChange({
-                                ...detailValue,
-                                multiple: e as any[],
-                              });
-                            }}
-                            onChangeRange={(e) => {
-                              onChange({
-                                ...detailValue,
-                                range: e as any,
-                              });
-                            }}
-                            readOnly={
-                              (editing && !detailValue.property.canUpdate) ||
-                              (item?.id !== undefined && (!editing || !canUpdate)) ||
-                              detailValue.property?.isReadOnly
-                            }
-                            autoFocus={colIndex === 0 && originalIndex === 0 && idxDetailValue === 0 && canSubmit}
-                            promptFlows={promptFlows ? { prompts: promptFlows, rowId: item?.id } : undefined}
-                          />
-                        </div>
-                      );
-                    })}
-                    {/* Show parent entities in Default Properties Group */}
-                    {!group && (
-                      <>
-                        {parentEntities.visible.map((relationship) => (
-                          <div key={relationship.id} className="col-span-12">
-                            <label htmlFor={relationship.id} className="flex justify-between space-x-2 text-xs font-medium text-gray-600 ">
-                              <div className=" flex items-center space-x-1">
-                                <div className="truncate">
-                                  {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
-                                  {relationship.required && <span className="ml-1 text-red-500">*</span>}
-                                </div>
-                              </div>
-                            </label>
-                            <RelationshipSelector
-                              fromEntity={entity}
-                              className="mt-1"
-                              type="parent"
-                              relationship={relationship}
-                              relatedRows={relatedRows}
-                              onFindEntityRows={onFindEntityRows}
-                              allEntities={allEntities}
-                              onRemoveRelatedRow={onRemoveRelatedRow}
-                              readOnly={item?.id !== undefined && (!editing || !canUpdate)}
-                              routes={routes}
-                              isSlideOverOrRowList={true}
-                              relationshipRows={relationshipRows}
-                              addRelationshipRow={addRelationshipRow}
-                              setRelationshipRows={setRelationshipRows}
-                            />
+    <div className={`grid w-full-[50px] gap-4 sm:grid-cols-1 md:grid-cols-1 relative px-6`}>
+      {groups.map(({ group, headers }, originalIndex) => {
+        const isMediaGroup = headers.some((h) => h.property.type === PropertyType.MEDIA);
+        const isLast = (originalIndex === groups.length-1);
+        return (
+          <div
+            key={originalIndex}
+            className={clsx(
+              {
+                "flex flex-col items-start pl-4 flex-none order-0 flex-grow-0":
+                  !isSlideOverOrRowList,
+              },
+              isMediaGroup && "col-span-1"
+            )}
+          >
+            <InputGroup
+              className=""
+              title={group ? t(group).trim() : t("shared.details")}
+              totalFields={headers.length}
+              defaultOpen={true}
+              isLast={isLast}
+              filled={filledFieldsCounts[group || "default"]}
+              isDrawer={isSlideOverOrRowList}
+              lineStyle={!isLast?{height:"calc(100% + 6rem)"}:{display:'none'}}
+            >
+              <div className="flex flex-col md:flex-row flex-wrap items-start gap-y-[20px] gap-[24px] self-stretch">
+                {headers.map((detailValue, idxDetailValue) => {
+                  if (!isVisible(detailValue)) {
+                    return null;
+                  }
+                  const isFieldTextEditor = detailValue?.property?.attributes?.some((attribute) => ["EditorSize", "editor", "EditorLanguage"].includes(attribute.name)) || false;
+                  
+                  return (
+                    <div
+                      key={detailValue.propertyId}
+                      // getPropertyColumnSpan(detailValue.property)
+                      className={clsx(
+                        `w-full  ${
+                          detailValue?.property?.type == PropertyType.MEDIA || detailValue?.property?.subtype == "radioGroupCards" || isFieldTextEditor
+                            ? "w-full"
+                            : "md:w-[calc(50%-20px)]"
+                        }`
+                      )}
+                    >
+                      <RowValueInput
+                        ref={rowValueInput}
+                        entity={entity}
+                        statesArr={statesArr}
+                        setStatesArr={setStatesArr}
+                        textValue={detailValue.textValue}
+                        numberValue={detailValue.numberValue}
+                        dateValue={detailValue.dateValue}
+                        booleanValue={detailValue.booleanValue}
+                        multiple={detailValue.multiple}
+                        range={detailValue.range}
+                        initialOption={detailValue.selectedOption}
+                        selected={detailValue.property}
+                        initialMedia={detailValue.media}
+                        onChange={(e) => {
+                          onChange({
+                            ...detailValue,
+                            ...RowHelper.updateFieldValueTypeArray(detailValue, e),
+                          });
+                        }}
+                        onChangeOption={(e) => {
+                          onChange({
+                            ...detailValue,
+                            selectedOption: e,
+                            textValue: e,
+                          });
+                        }}
+                        onChangeMedia={async (media) => {
+                          onChange({
+                            ...detailValue,
+                            media: media as any,
+                          });
+                          if (media.filter((f) => f.type).length > 0) {
+                            onSaveIfAllSet();
+                          }
+                          parseMediaFile(headers, onChange, media, item, entity, routes);
+                        }}
+                        onChangeMultiple={(e) => {
+                          onChange({
+                            ...detailValue,
+                            multiple: e as any[],
+                          });
+                        }}
+                        onChangeRange={(e) => {
+                          onChange({
+                            ...detailValue,
+                            range: e as any,
+                          });
+                        }}
+                        readOnly={
+                          (editing && !detailValue.property.canUpdate) ||
+                          (item?.id !== undefined && (!editing || !canUpdate)) ||
+                          detailValue.property?.isReadOnly
+                        }
+                        autoFocus={originalIndex === 0 && idxDetailValue === 0 && canSubmit}
+                        promptFlows={promptFlows ? { prompts: promptFlows, rowId: item?.id } : undefined}
+                      />
+                    </div>
+                  );
+                })}
+                {/* Show parent entities in Default Properties Group */}
+                {!group && (
+                  <>
+                    {parentEntities.visible.map((relationship) => (
+                      <div key={relationship.id} className="w-full col-span-12 py-1">
+                        <label htmlFor={relationship.id} className="flex justify-between space-x-2 text-xs font-medium text-gray-600 ">
+                          <div className=" flex flex-col sm:flex-row items-center space-x-1 ">
+                            <div className="truncate text-sub-heading-2 leading-5 font-semibold text-[#180505] pb-[20px]">
+                              {t(RelationshipHelper.getTitle({ fromEntityId: entity.id, relationship }))}
+                              {relationship.required && <span className="ml-1 text-red-500">*</span>}
+                            </div>
                           </div>
-                        ))}
+                        </label>
+                        <RelationshipSelector
+                          fromEntity={entity}
+                          className="mt-1"
+                          type="parent"
+                          relationship={relationship}
+                          relatedRows={relatedRows}
+                          onFindEntityRows={onFindEntityRows}
+                          allEntities={allEntities}
+                          onRemoveRelatedRow={onRemoveRelatedRow}
+                          readOnly={item?.id !== undefined && (!editing || !canUpdate)}
+                          routes={routes}
+                          isSlideOverOrRowList={true}
+                          relationshipRows={relationshipRows}
+                          addRelationshipRow={addRelationshipRow}
+                          setRelationshipRows={setRelationshipRows}
+                        />
+                      </div>
+                    ))}
 
-                        {isAddingOrEditing && (
-                          <AddHiddenRelationshipEntities items={parentEntities.hidden} onClick={parentEntities.onAddParentEntity} type="parent" />
-                        )}
-                      </>
+                    {isAddingOrEditing && (
+                      <AddHiddenRelationshipEntities items={parentEntities.hidden} onClick={parentEntities.onAddParentEntity} type="parent" />
                     )}
-                    {/* Show custom properties in Default Properties Group */}
-                    {!group && <>{children}</>}
-                  </div>
-                </InputGroup>
+                  </>
+                )}
+                {/* Show custom properties in Default Properties Group */}
+                {!group && <>{children}</>}
               </div>
-            );
-          })}
-        </div>
-      ))}
+            </InputGroup>
+
+          </div>
+
+        );
+      })}
     </div>
   );
 }

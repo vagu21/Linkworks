@@ -5,6 +5,8 @@ import CheckIcon from "../../icons/CheckIcon";
 import ExclamationTriangleIcon from "../../icons/ExclamationTriangleIcon";
 import { Input } from "../../input";
 
+import { PhoneInput } from "~/custom/modules/dashboard/components/phoneInput";
+import { isValidPhoneNumber } from "react-phone-number-input";
 export interface RefInputPhone {
   input: RefObject<HTMLInputElement> | RefObject<HTMLTextAreaElement>;
 }
@@ -68,43 +70,63 @@ export default function InputPhone({
 
   const [isValid, setIsValid] = useState<boolean>(false);
 
+
   useEffect(() => {
     // simple phone number validation, no letters or special characters except for +, -, (, and )
     const regex = /^[0-9-+()]*$/;
-    if (regex.test(value ?? "")) {
-      setIsValid(true);
-    } else {
-      setIsValid(false);
-    }
+    if(value)
+    setIsValid(isValidPhoneNumber(value))
+    // if (regex.test(value ?? "")) {
+    //   setIsValid(true);
+    // } else {
+    //   setIsValid(false);
+    // }
   }, [value]);
 
   function onChange(value: string) {
-    if (setValue) {
-      if (lowercase) {
-        setValue(value.toLowerCase());
-      } else if (uppercase) {
-        setValue(value.toUpperCase());
-      } else {
-        setValue(value);
+    if(setValue)
+      {setValue(value);
+         console.log("setValue",value)
       }
-    }
+    // if (setValue) {
+    //   if (lowercase) {
+    //     setValue(value.toLowerCase());
+    //   } else if (uppercase) {
+    //     setValue(value.toUpperCase());
+    //   } else {
+    //     setValue(value);
+    //   }
+    // }
   }
 
+  const handlePhone=(value:string)=>{
+    console.log("value in handlePhone",value, typeof value);
+    if(setValue)setValue(value);
+  }
   return (
-    <div className={clsx(className, !darkMode && "")}>
-      {withLabel && (
-        <label htmlFor={name} className="mb-1 flex justify-between space-x-2 truncate text-xs font-medium">
-          <div className="flex items-center space-x-1 truncate">
-            <div className="flex space-x-1 truncate">
-              <div className="truncate">{title}</div>
-              {required && title && <div className="ml-1 text-red-500">*</div>}
+    <>
+      <div className={clsx(className, !darkMode && "flex flex-col gap-[2px]")}>
+        {withLabel && (
+          <label htmlFor={name} className="mb-1 flex justify-between space-x-2 truncate text-xs font-medium">
+            <div className="flex items-center space-x-1 truncate">
+              <div className="flex space-x-1 truncate">
+                <div className="truncate text-body font-normal text-label">{title}</div>
+                {required && title && <div className="ml-1 text-red-500">*</div>}
+              </div>
+              <div className="">{help && <HintTooltip text={help} />}</div>
             </div>
-            <div className="">{help && <HintTooltip text={help} />}</div>
-          </div>
-          {hint}
-        </label>
-      )}
-      <div className={clsx("relative flex w-full rounded-md")}>
+            {hint}
+          </label>
+        )}
+        {/* <div className={clsx("relative flex w-full rounded-md")}>
+        <PhoneInput
+    className="flex w-full rounded-lg "
+    
+      defaultCountry="ua"
+      value={phone}
+      onChange={(phone) => setPhone(phone)}
+    /> */}
+        {/* <div className={clsx("relative flex w-full rounded-md")}>
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg className="text-muted-foreground h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -156,7 +178,28 @@ export default function InputPhone({
           </div>
         )}
         {button}
+      </div> */}
+        <PhoneInput
+          ref={input}
+          type={type}
+          id={name}
+          name={name}
+          autoComplete={"off"}
+          required={required}
+          minLength={10}
+          maxLength={maxLength}
+          defaultValue={defaultValue}
+          value={value}
+          onChange={(value) => onChange(value)}
+          onBlur={onBlur}
+          disabled={disabled}
+          readOnly={readOnly}
+          placeholder={placeholder ?? "+1 (555) 555-5555"}
+          // pattern={pattern !== "" && pattern !== undefined ? pattern : undefined}
+          autoFocus={autoFocus}
+          className=""
+        />
       </div>
-    </div>
+    </>
   );
 }

@@ -42,7 +42,7 @@ export default function PromptTemplateEditors(props: Props) {
   return (
     <Fragment>
       <Wrapper {...props} isExpanded={false} onToggleExpanded={onToggleModal} />
-      <Modal position={1} size="full" open={isModalOpen} setOpen={setIsModalOpen}>
+      <Modal position={5} size="7xl" className="z-50" open={isModalOpen} setOpen={setIsModalOpen}>
         <Wrapper {...props} isExpanded={true} onToggleExpanded={onToggleModal} />
       </Modal>
     </Fragment>
@@ -162,7 +162,7 @@ function Wrapper({
 
       <SlideOverWideEmpty
         className="sm:max-w-2xl"
-        position={2}
+        position={5}
         title={"What do you want to generate"}
         open={showHelp}
         onClose={() => {

@@ -71,11 +71,11 @@ export default function InputRadioGroupCards({
     }
   }, [display, options]);
   return (
-    <RadioGroup value={actualValue} defaultValue={defaultValue} onChange={(e) => setActualValue(e)} className={className}>
+    <RadioGroup value={actualValue} defaultValue={defaultValue} onChange={(e) => setActualValue(e)} className={clsx(className, "flex flex-col gap-[2px]")}>
       {title && (
         <RadioGroup.Label htmlFor={name} className="mb-1 flex justify-between space-x-2 text-xs font-medium">
           <div className=" flex items-center space-x-1">
-            <div className="truncate">
+            <div className="truncate  text-body font-normal text-label">
               {title}
               {required && <span className="ml-1 text-red-500">*</span>}
             </div>
@@ -89,7 +89,7 @@ export default function InputRadioGroupCards({
       <div
         className={clsx(
           "grid w-full grid-cols-1 gap-3",
-          columns === undefined && "md:grid-cols-3",
+          columns === undefined && "md:grid-cols-6",
           columns === 1 && "md:grid-cols-1",
           columns === 2 && "md:grid-cols-2",
           columns === 3 && "md:grid-cols-3",
@@ -111,10 +111,13 @@ export default function InputRadioGroupCards({
             disabled={disabled || item.disabled}
             className={({ checked, active }) =>
               clsx(
-                checked ? "ring-ring border-transparent" : "",
+
+                "rounded-lg border",
+                checked ? "ring-ring border-transparent bg-tertiary" : "",
                 active ? "" : "",
                 "relative flex rounded-lg border p-3 shadow-sm focus:outline-none",
-                disabled || item.disabled ? "text-muted-foreground cursor-not-allowed opacity-60" : "cursor-pointer"
+                disabled || item.disabled ? "text-muted-foreground cursor-not-allowed opacity-60" : "cursor-pointer",
+                "text-label text-body leading-6 flex items-center py-4 pl-4 pr-2"
               )
             }
           >
@@ -130,7 +133,7 @@ export default function InputRadioGroupCards({
                           {["name", "nameAndValue"].includes(displayType) ? <span>{item.renderName ? item.renderName : item.name}</span> : item.value}
                         </RadioGroup.Label>
                         {["nameAndValue", "value"].includes(displayType) && (
-                          <RadioGroup.Description as="span" className="mt-1 flex items-center truncate text-sm">
+                          <RadioGroup.Description as="span" className="mt-1 flex items-center truncate text-body font-medium leading-6">
                             {item.value}
                           </RadioGroup.Description>
                         )}
@@ -138,10 +141,19 @@ export default function InputRadioGroupCards({
                     )}
                   </span>
                 </span>
-                <CheckFilledCircleIcon className={clsx("flex-shrink-0", !checked ? "invisible hidden" : "flex", " text-primary h-5 w-5")} aria-hidden="true" />
+                {checked ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20Z" fill="#FF7800" />
+                  <path d="M12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17Z" fill="#FF7800" />
+                </svg> : <><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.58 18 2 14.42 2 10C2 5.58 5.58 2 10 2C14.42 2 18 5.58 18 10C18 14.42 14.42 18 10 18Z" fill="#D9D9D9" />
+                </svg>
+                </>
+
+                }
+                {/* <CheckFilledCircleIcon className={clsx("flex-shrink-0", !checked ? "invisible hidden" : "flex", " text-primary h-5 w-5")} aria-hidden="true" /> */}
                 <span
                   className={clsx(
-                    checked || active ? " ring-ring border-transparent ring-2" : "",
+                    checked || active ? " ring-tertiary-foreground border-tertiary-foreground ring-1 " : "",
                     // checked ? "border-gray-300" : "border-transparent",
                     "pointer-events-none absolute -inset-px rounded-lg"
                   )}

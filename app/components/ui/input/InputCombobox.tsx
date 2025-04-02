@@ -120,7 +120,8 @@ const InputCombobox = (
 
   return (
     // @ts-ignore
-    <Combobox multiple value={selected} onChange={setSelected} disabled={disabled || readOnly}>
+    <Combobox multiple value={selected} onChange={setSelected} disabled={disabled || readOnly} className="flex flex-col gap-[2px]">
+      
       {({ open }) => (
         <div>
           {/* {renderHiddenInputValue && <>
@@ -132,7 +133,7 @@ const InputCombobox = (
           {withLabel && title && (
             <Label htmlFor={name} className="mb-1 flex justify-between space-x-2 text-xs font-medium">
               <div className=" flex items-center space-x-1">
-                <div className="truncate">
+                <div className="truncate text-body font-normal text-label">
                   {title}
                   {required && <span className="ml-1 text-red-500">*</span>}
                 </div>
@@ -179,8 +180,8 @@ const InputCombobox = (
                       {prefix ?? ""}
                       {getSelectedOptions().length < minDisplayCount
                         ? getSelectedOptions()
-                            .map((f) => f.name ?? f.value)
-                            .join(", ")
+                          .map((f) => f.name ?? f.value)
+                          .join(", ")
                         : getSelectedOptions().length + " selected"}
                     </span>
                   ) : (
@@ -188,7 +189,18 @@ const InputCombobox = (
                   )}
                 </div>
               </div>
-              <CaretSortIcon className="h-4 w-4 opacity-50" />
+              {/* <CaretSortIcon className="h-4 w-4 opacity-50" /> */}
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_418_2328)">
+                  <path d="M15.88 9.29L12 13.17L8.11998 9.29C7.72998 8.9 7.09998 8.9 6.70998 9.29C6.31998 9.68 6.31998 10.31 6.70998 10.7L11.3 15.29C11.69 15.68 12.32 15.68 12.71 15.29L17.3 10.7C17.69 10.31 17.69 9.68 17.3 9.29C16.91 8.91 16.27 8.9 15.88 9.29Z" fill="#151B21" />
+                </g>
+                <defs>
+                  <clipPath id="clip0_418_2328">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+
             </ComboboxButton>
 
             <Transition show={open} as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
@@ -196,11 +208,11 @@ const InputCombobox = (
                 // onFocus={() => inputSearch.current?.focus()}
                 // onBlur={() => setSearchInput("")}
                 className={clsx(
-                  "bg-background text-foreground border-border absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-md border py-1 text-base shadow-lg focus:outline-none sm:text-sm"
+                  "bg-background  text-foreground border-border absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-md border py-1 text-base shadow-lg focus:outline-none sm:text-sm"
                 )}
               >
                 {(withSearch || onNew || onNewRoute) && (
-                  <div className="flex rounded-md p-2">
+                  <div className="flex rounded-md p-2 ">
                     <div className="relative flex flex-grow items-stretch focus-within:z-10">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -249,7 +261,7 @@ const InputCombobox = (
                     disabled={item.disabled}
                     className={({ focus, selected }) =>
                       clsx(
-                        "text-foreground hover:bg-secondary hover:text-secondary-foreground relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none",
+                        "text-foreground hover:bg-tertiary hover:text-secondary-foreground relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none",
                         !item.disabled && focus && " bg-background text-foreground ",
                         !item.disabled && !focus && " ",
                         item.disabled && "cursor-not-allowed bg-gray-100 text-gray-400",
@@ -264,22 +276,36 @@ const InputCombobox = (
                     {({ selected, active }) => (
                       <div className="flex items-center justify-between space-x-2">
                         <div className="flex items-center space-x-2">
-                          {withColors && item.color !== undefined && <ColorBadge color={item.color} />}
-                          <div className={clsx(selected ? "font-normal" : "font-normal", "truncate")}>{item.name || item.value}</div>
-                        </div>
+                          {selected ? (
+                            <div className={clsx(active ? "" : "", " inset-y-0 right-0 flex items-center ")}>
+                              {/* <CheckIcon className="h-4 w-4" /> */}<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_418_2337)">
+                                  <path d="M15.8333 3H4.16667C3.25 3 2.5 3.75 2.5 4.66667V16.3333C2.5 17.25 3.25 18 4.16667 18H15.8333C16.75 18 17.5 17.25 17.5 16.3333V4.66667C17.5 3.75 16.75 3 15.8333 3ZM8.925 14.075C8.6 14.4 8.075 14.4 7.75 14.075L4.75833 11.0833C4.43333 10.7583 4.43333 10.2333 4.75833 9.90833C5.08333 9.58333 5.60833 9.58333 5.93333 9.90833L8.33333 12.3083L14.0667 6.575C14.3917 6.25 14.9167 6.25 15.2417 6.575C15.5667 6.9 15.5667 7.425 15.2417 7.75L8.925 14.075Z" fill="#FF7800" />
+                                </g>
+                                <defs>
+                                  <clipPath id="clip0_418_2337">
+                                    <rect width="20" height="20" fill="white" transform="translate(0 0.5)" />
+                                  </clipPath>
+                                </defs>
+                              </svg>
 
-                        {selected ? (
-                          <div className={clsx(active ? "" : "", "absolute inset-y-0 right-0 flex items-center pr-4")}>
-                            <CheckIcon className="h-4 w-4" />
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" className="text-foreground h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              {/* <svg xmlns="http://www.w3.org/2000/svg" className="text-foreground h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                               <path
                                 fillRule="evenodd"
                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                 clipRule="evenodd"
                               />
                             </svg> */}
-                          </div>
-                        ) : null}
+                            </div>
+                          ) : <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15.8333 4.66667V16.3333H4.16667V4.66667H15.8333ZM15.8333 3H4.16667C3.25 3 2.5 3.75 2.5 4.66667V16.3333C2.5 17.25 3.25 18 4.16667 18H15.8333C16.75 18 17.5 17.25 17.5 16.3333V4.66667C17.5 3.75 16.75 3 15.8333 3Z" fill="#D9D9D9"/>
+                          </svg>
+                          }
+                          {withColors && item.color !== undefined && <ColorBadge color={item.color} />}
+                          <div className={clsx(selected ? "font-normal" : "font-normal", "truncate")}>{item.name || item.value}</div>
+                        </div>
+
+
                       </div>
                     )}
                   </ComboboxOption>

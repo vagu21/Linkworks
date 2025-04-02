@@ -71,11 +71,9 @@ async function seed() {
   console.log("🌱 Creating tenants", tenants.length);
   await Promise.all(tenants.map((tenant) => createTenant(tenant.id, tenant.name, tenant.users)));
 
-  await RecruitmentCRMTemplate.seedEntities(admin);
-
   // Permissions
   await seedRolesAndPermissions(ADMIN_EMAIL);
-
+  await RecruitmentCRMTemplate.seedEntities(admin);
   await RecruitmentCRMTemplate.seedRolePermissions(admin);
 }
 

@@ -1,6 +1,6 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet, useLocation, useNavigation, useSearchParams, useSubmit } from "@remix-run/react";
+import { Link, Outlet, useLocation, useNavigation, useParams, useSearchParams, useSubmit } from "@remix-run/react";
 import RowsList from "~/components/entities/rows/RowsList";
 import ButtonPrimary from "~/components/ui/buttons/ButtonPrimary";
 import InputFilters, { FilterDto } from "~/components/ui/input/InputFilters";
@@ -21,8 +21,16 @@ import RunPromptFlowButtons from "~/modules/promptBuilder/components/run/RunProm
 import ConfirmModal, { RefConfirmModal } from "~/components/ui/modals/ConfirmModal";
 import TrashIcon from "~/components/ui/icons/TrashIcon";
 import clsx from "clsx";
+import TableSearch from "~/custom/components/tables/TableSearch";
+import { ViewButton } from "~/custom/components/button/ViewButton";
+import AddButton from "~/custom/components/button/AddButton";
+import DownloadCSVButton from "~/custom/components/button/DownloadCSVButton";
+import BreadcrumbCustom from "~/custom/components/breadcrumbs/Breadcrumb";
+import EntityIcon from "~/components/layouts/icons/EntityIcon";
+import MasterGraphComponent from "~/custom/modules/graphs/components/masterGraphComponent";
 
 interface Props {
+  data?:any
   title?: ReactNode;
   rowsData: RowsApi.GetRowsData;
   items: RowWithDetails[];
@@ -38,7 +46,7 @@ interface Props {
     isSuperAdmin: boolean;
   } | null;
 }
-export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow, onEditRow, saveCustomViews, permissions, currentSession }: Props) {
+export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow, onEditRow, saveCustomViews, permissions, currentSession,data }: Props) {
   const { t } = useTranslation();
   const actionData = useTypedActionData<Rows_List.ActionData>();
   const appData = useAppData();
@@ -57,6 +65,33 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   const [editingView, setEditingView] = useState<EntityViewWithDetails | null>(null);
 
   const [selectedRows, setSelectedRows] = useState<RowWithDetails[]>([]);
+  const [searchInput, setSearchInput] = useState<string>("");
+
+  const params: any = useParams();
+  const menuItems = [
+    {
+      title: params.group?.charAt(0).toUpperCase() + params.group?.slice(1),
+      routePath: `/app/${params.tenant}/g/${params.group}`,
+      icon: rowsData?.entity?.icon ? (
+        <EntityIcon className="h-4 w-4" icon={rowsData?.entity?.icon} />
+      ) : rowsData?.entity?.icon === null || rowsData?.entity?.icon === undefined ? (
+        <EntityIcon className="h-4 w-4" icon={undefined} />
+      ) : (
+        <svg stroke="currentColor" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
+          {" "}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+          />{" "}
+        </svg>
+      ),
+    },
+    {
+      title: params.entity?.charAt(0).toUpperCase() + params.entity?.slice(1),
+      routePath: `/app/${params.tenant}/g/${params.group}/e/${params.entity}`,
+    },
+  ];
 
   useEffect(() => {
     setFilters(EntityHelper.getFilters({ t, entity: rowsData.entity, pagination: rowsData.pagination }));
@@ -91,6 +126,11 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
     setShowCustomViewModal(false);
     setEditingView(null);
   }, [searchParams]);
+
+  function filteredItems() {
+    if (!searchInput) return items;
+    return items.filter((item) => item?.values?.some((value) => value?.textValue?.toLowerCase().includes(searchInput.toLowerCase().trim())));
+  }
 
   function onCreateView() {
     setShowCustomViewModal(true);
@@ -137,95 +177,134 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-3 px-4 py-2 pb-6 sm:px-6 sm:pt-3 lg:px-8 xl:max-w-full">
-      <div className="flex items-center justify-between space-x-2 md:py-2">
-        {selectedRows.length > 0 ? (
-          <div className="flex space-x-1">{bulkActions.includes("bulk-delete") && <DeleteIconButton onClick={onDeleteSelectedRows} />}</div>
-        ) : (
-          <Fragment>
-            {rowsData.views.length > 1 ? (
-              <TabsWithIcons
-                className="flex-grow xl:flex"
-                tabs={rowsData.views.map((item) => {
-                  // if (views.find((f) => f.name === item.name && f.isDefault)) {
-                  //   searchParams.delete("v");
-                  // } else {
-                  searchParams.set("v", item.name);
-                  // }
-                  searchParams.delete("page");
-                  return {
-                    name: t(item.title),
-                    href: location.pathname + "?" + searchParams.toString(),
-                    current: isCurrenView(item),
-                  };
-                })}
+    <div className="mx-auto max-w-[1920px] gap-5 px-4 py-5 sm:px-6">
+     
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row items-center justify-between gap-5 max-[769px]:flex-col max-[769px]:items-start">
+          <div className="flex flex-col gap-4">
+            <div className="pt-3">
+              <BreadcrumbCustom
+                menu={menuItems}
+                // home={`/app/${params?.tenant}/dashboard`}
+                className="custom-breadcrumb-style"
               />
-            ) : (
-              title ?? <h3 className="flex flex-1 items-center truncate font-bold">{t(rowsData.currentView?.title ?? rowsData.entity.titlePlural)}</h3>
-            )}
-          </Fragment>
-        )}
-        <div className="flex items-center space-x-1">
-          {filters.length > 0 && <InputFilters filters={filters} />}
-          <RunPromptFlowButtons type="list" promptFlows={rowsData.promptFlows} className="p-0.5" />
-          {permissions.create && (
-            <ButtonPrimary disabled={!permissions.create} to={!onNewRow ? "new" : undefined} onClick={onNewRow}>
-              <span className="sm:text-sm">+</span>
-            </ButtonPrimary>
-          )}
-        </div>
-      </div>
-
-      <div>
-        <RowsList
-          view={view as "table" | "board" | "grid" | "card"}
-          entity={rowsData.entity}
-          items={items}
-          routes={routes}
-          pagination={rowsData.pagination}
-          onEditRow={onEditRow}
-          currentView={rowsData.currentView}
-          selectedRows={selectedRows}
-          onSelected={!bulkActions.length ? undefined : (rows) => setSelectedRows(rows)}
-        />
-        <div className="mt-2 flex items-center justify-between space-x-2">
-          <div>
-            <div className="hidden sm:block">
-              {rowsData.pagination && rowsData.pagination.totalItems > 0 && routes && (
-                <Link
-                  className="text-xs font-medium text-gray-500 hover:underline"
-                  to={EntityHelper.getRoutes({ routes, entity: rowsData.entity })?.export + "?" + searchParams}
-                  reloadDocument
-                >
-                  {rowsData.pagination.totalItems === 1 ? (
-                    <div>{t("shared.exportResult")}</div>
-                  ) : (
-                    <div>{t("shared.exportResults", { 0: rowsData.pagination.totalItems })}</div>
-                  )}
-                </Link>
+            </div>
+            <div>
+              {title ?? (
+                <h3 className="text-secondary-foreground flex flex-1 items-center truncate text-lg font-normal">{`List of ${t(
+                  rowsData.entity.titlePlural
+                )}`}</h3>
               )}
             </div>
           </div>
-
-          {saveCustomViews && rowsData.entity.hasViews && (
-            <Fragment>
-              {canUpdateCurrentView() ? (
-                <div className="flex items-center space-x-2 text-gray-500">
-                  <button type="button" className="text-xs font-medium hover:underline" disabled={!canUpdateCurrentView()} onClick={onUpdateView}>
-                    {t("models.view.actions.update")}
-                  </button>
-                  <div>•</div>
-                  <button type="button" className="text-xs font-medium hover:underline" onClick={onCreateView}>
-                    {t("models.view.actions.create")}
-                  </button>
-                </div>
-              ) : (
-                <button type="button" className="text-xs font-medium text-gray-500 hover:underline" onClick={onCreateView}>
-                  {t("models.view.actions.create")}
-                </button>
+          <div className="flex flex-row gap-3 max-[769px]:flex-col">
+            <div className="">
+              {saveCustomViews && rowsData.entity.hasViews && (
+                <Fragment>
+                  {canUpdateCurrentView() ? (
+                    <div className="flex flex-row gap-3">
+                      <ViewButton
+                        className="text-button-secondary-text-text text-sm font-normal"
+                        disabled={!canUpdateCurrentView()}
+                        onClick={onUpdateView}
+                        label={t("models.view.actions.update")}
+                      />
+                      {/* <ViewButton
+                        className="text-sm font-normal text-[#000000] text-opacity-80"
+                        onClick={onCreateView}
+                        label={t("models.view.actions.create")}
+                      /> */}
+                    </div>
+                  ) : (
+                    <ViewButton
+                      className="text-button-secondary-text-text text-sm font-normal"
+                      onClick={onCreateView}
+                      label={t("models.view.actions.create")}
+                    />
+                  )}
+                </Fragment>
               )}
-            </Fragment>
-          )}
+            </div>
+            <div>
+              {permissions.create && (
+                <AddButton
+                  label={<span className="sm:text-sm">{`+ Add New ${rowsData.entity?.title}`}</span>}
+                  className="custom-class-for-add-button bg-brown-500"
+                  onClick={onNewRow}
+                  disabled={!permissions.create}
+                  to={!onNewRow ? "new" : undefined}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+    
+        {data?.chartConfig?.chartConfig && <MasterGraphComponent chartConfig={data?.chartConfig?.chartConfig} />}
+
+        {/* <div className="border  rounded-[5px]  shadow-[0px_12px_24px_-4px_rgba(145,158,171,0.12)]"> */}
+        <div className="w-full rounded-[6px] bg-white shadow-[0px_12px_24px_-4px_rgba(145,158,171,0.12)]">
+          <div className="flex flex-col gap-4">
+            <div className={`flex w-full items-center justify-between px-3 max-md:px-0 ${rowsData.views.length > 1 ? "space-x-2 border-b md:pt-0" : ""}`}>
+              {selectedRows.length > 0 ? (
+                <div className="flex space-x-1">{bulkActions.includes("bulk-delete") && <DeleteIconButton onClick={onDeleteSelectedRows} />}</div>
+              ) : (
+                <Fragment>
+                  {rowsData.views.length > 1 ? (
+                    <TabsWithIcons
+                      className="flex-grow xl:flex"
+                      tabs={rowsData.views.map((item) => {
+                        // if (views.find((f) => f.name === item.name && f.isDefault)) {
+                        //   searchParams.delete("v");
+                        // } else {
+                        searchParams.set("v", item.name);
+                        // }
+                        searchParams.delete("page");
+                        return {
+                          name: t(item.title),
+                          href: location.pathname + "?" + searchParams.toString(),
+                          current: isCurrenView(item),
+                        };
+                      })}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Fragment>
+              )}
+            </div>
+            <div className="flex flex-shrink-0 flex-grow-0 items-center justify-between self-stretch px-3 max-sm:gap-3">
+              <div className="w-full max-w-[342px]">
+                <TableSearch value={searchInput} setValue={setSearchInput} placeholder={`Search ${rowsData.entity.title}`} />
+              </div>
+
+              <div className="-mr-3 flex flex-row gap-3 max-sm:mr-0">
+                <DownloadCSVButton rowsData={rowsData} routes={routes} searchParams={searchParams.toString()} />
+                {filters.length > 0 && <InputFilters filters={filters} />}
+                <RunPromptFlowButtons type="list" promptFlows={rowsData.promptFlows} className="p-0.5" />
+              </div>
+            </div>
+
+            <div>
+              <RowsList
+                view={view as "table" | "board" | "grid" | "card"}
+                entity={rowsData.entity}
+                items={filteredItems()}
+                routes={routes}
+                pagination={rowsData.pagination}
+                onEditRow={onEditRow}
+                currentView={rowsData.currentView}
+                selectedRows={selectedRows}
+                onSelected={!bulkActions.length ? undefined : (rows) => setSelectedRows(rows)}
+                searchInput={searchInput}
+                entityTitle={rowsData.entity?.title}
+                onNewRow={onNewRow}
+                permissionCreate={permissions.create}
+              />
+              <div className="mt-2 flex items-center justify-between space-x-2">
+                <div></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <Outlet />

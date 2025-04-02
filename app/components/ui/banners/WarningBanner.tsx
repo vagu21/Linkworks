@@ -12,7 +12,7 @@ interface Props {
 export default function WarningBanner({ title = "Warning", text = "", redirect, children }: Props) {
   const { t } = useTranslation();
   return (
-    <div className="not-prose rounded-md border border-yellow-300 bg-yellow-50  ">
+    <div className="not-prose rounded-md border border-yellow-300 bg-yellow-50 mt-[20px] ">
       <div className="rounded-md p-4">
         <div className="flex">
           <div className="flex-shrink-0">

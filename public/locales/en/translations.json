@@ -17,12 +17,14 @@
     "invalidForm": "Form not submitted correctly",
     "invalidRequest": "Invalid request",
     "new": "New",
+    "addnew": "Add New",
     "name": "Name",
     "description": "Description",
     "current": "Current",
     "save": "Save",
     "saving": "Saving",
     "saveAndAdd": "Save and add new",
+    "saveDetails": "Save Details",
     "confirmSave": "Save?",
     "saved": "Successfully saved",
     "change": "Change",
@@ -164,6 +166,9 @@
     "sync": "Sync",
     "invalid": "Invalid",
     "noRecords": "There are no records",
+    "noDataRecords": "Looks like there's nothing here yet!",
+    "noFilters": "Hmm... your filters are a bit too picky. Try different filter settings!",
+    "noSearch": "Zero results for {{searchInput}} — try another search?",
     "select": "Select",
     "selectAll": "Select all",
     "selecting": "Selecting",
@@ -210,10 +215,13 @@
     "column": "Column",
     "columns": "Columns",
     "hide": "Hide",
+    "knowLess": "Know less",
+    "knowMore": "Know more",
     "show": "Show",
     "showMore": "Show more",
     "showLess": "Show less",
     "readMore": "Read more",
+    "readLess": "Read less",
     "loadMore": "Load more",
     "private": "Private",
     "public": "Public",
@@ -635,7 +643,7 @@
     "shared": {
       "buttons": {
         "openOptions": "Open options",
-        "uploadDocument": "Upload"
+        "uploadDocument": "Click to upload"
       },
       "tabs": {
         "select": "Select a tab"
@@ -777,7 +785,7 @@
       "billing": "Billing",
       "profile": "Profile",
       "settings": "Settings",
-      "signOut": "Sign out",
+      "logOut": "Logout",
       "members": "Members"
     },
     "sidebar": {
@@ -1031,7 +1039,7 @@
       "youBelongToOne": "You belong to one account",
       "youBelongToMany": "You belong to {{0}} accounts",
       "create": {
-        "title": "Create account",
+        "title": "Create Account",
         "headline": "You will be the owner"
       },
       "members": {

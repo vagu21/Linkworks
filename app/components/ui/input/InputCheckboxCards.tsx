@@ -84,7 +84,7 @@ export default function InputCheckboxCards({
           {title && (
             <label htmlFor={name} className="mb-1 flex justify-between space-x-2 text-xs font-medium">
               <div className=" flex items-center space-x-1">
-                <div className="truncate">
+                <div className="truncate text-body font-normal text-label">
                   {title}
                   {required && <span className="ml-1 text-red-500">*</span>}
                 </div>
@@ -151,7 +151,7 @@ export default function InputCheckboxCards({
                 htmlFor={`${item.name}-${item.value}`}
                 className={clsx(
                   clsx(
-                    isChecked(item.value) ? "ring-ring border-transparent ring-2" : "",
+                    isChecked(item.value) ? "ring-ring-secondary border-transparent ring-1 bg-tertiary" : "",
                     "relative flex select-none rounded-lg p-3 shadow-sm focus:outline-none",
                     disabled || item.disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
                   )
@@ -160,7 +160,7 @@ export default function InputCheckboxCards({
                 <input
                   type="checkbox"
                   id={`${item.name}-${item.value}`}
-                  className="peer hidden"
+                  className="peer hidden rounded-lg"
                   value={item.value}
                   checked={selected.includes(item.value)}
                   disabled={disabled || item.disabled}
@@ -190,6 +190,13 @@ export default function InputCheckboxCards({
                       className={clsx("flex-shrink-0", !isChecked(item.value) && "invisible", "text-primary h-5 w-5")}
                       aria-hidden="true"
                     />
+                    {
+                      !isChecked(item.value) && <svg className="flex-shrink-0 " width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 2V16H2V2H16ZM16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0Z" fill="#D9D9D9"/>
+                      </svg>
+                      
+
+                    }
                     <span
                       className={clsx(isChecked(item.value) ? "ring-ring border-transparent " : "border", "pointer-events-none absolute -inset-px rounded-lg")}
                       aria-hidden="true"

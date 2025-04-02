@@ -416,15 +416,15 @@
     },
     "roadmap": {
       "title": "Roadmap",
-      "headline": "Entérate del estatus actual de SaasRock."
+      "headline": "Entérate del estatus actual de LFIApps."
     },
     "faq": {
       "title": "Preguntas más frecuentes",
       "headline": "Agrega tus propias preguntas y respuestas para ayudar a tus usuarios a entender tu SaaS.",
-      "subheadline": "Preguntas frecuentes acerca de SaasRock.",
+      "subheadline": "Preguntas frecuentes acerca de LFIApps.",
       "questions": {
         "q1": "¿Cómo obtengo el código después de la compra?",
-        "a1": "Serás invitado al repositorio saasrock en GitHub. Si compraste SaasRock Enterprise también serás invitado al repositorio saasrock-enterprise.",
+        "a1": "Serás invitado al repositorio lfi-apps en GitHub. Si compraste LFIApps Enterprise también serás invitado al repositorio lfi-apps-enterprise.",
         "q2": "¿Puedo obtener un reembolso?",
         "a2": "Debido a la naturaleza del desarrollo de software como un servicio personalizado, no ofrecemos reembolsos."
       }

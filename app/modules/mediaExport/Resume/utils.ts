@@ -6,37 +6,12 @@ function getTopSkills(skills: { skillName: string; proficiency: number }[]) {
 
 export async function generateResume(id: any) {
   const data = await rowFetcher(id, "Candidate");
-  let skillBarMapping: any = {
-    0: ` <div class="h-[2px] rounded-[2.5px] bg-[#EE3434]" style="width: 40%"></div>`,
-    1: `<div class="h-[2px] rounded-[2.5px] bg-[#F2A73E]" style="width: 70%"></div>`,
-    2: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
-    3: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
-    4: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 90%"></div>`,
-    5: `<div class="h-[2px] rounded-[2.5px] bg-[#b528d8]" style="width: 95%"></div>`,
-    9: `<div class="h-[2px] rounded-[2.5px] bg-[#28952E]" style="width: 100%"></div>`,
-    8: `<div class="h-[2px] rounded-[2.5px] bg-[#f92d6a]" style="width: 80%"></div>`,
-    7: `<div class="h-[2px] rounded-[2.5px] bg-[#3E6AF2]" style="width: 75%"></div>`,
-  };
+  
 
-  let proficiencyMapping: any = {
-    0: "Beginner",
-    1: "Intermediate",
-    2: "Proficient",
-    3: "Advanced",
-    4: " Expert",
-    5: "Master",
-    9: "Master",
-    8: "Advanced",
-    7: "Proficient",
-  };
-
-  let skillRatingMapping: any = {};
-  const skillMapping = data?.["Skills"]?.map((skill: any) => {
-    skillRatingMapping[skill.name] = skill.proficiency;
-
+  const skillMapping = data?.skills?.map((skill: any) => {
+  
     return {
-      skillName: skill.name,
-      proficiency: skill.proficiency,
+      skillName: skill,
     };
   });
 
@@ -69,6 +44,9 @@ export async function generateResume(id: any) {
               ${experienceSection()}
                 <!-- Certifications -->
                ${certificationsSection()}
+
+                <!-- Project -->
+                ${projectSection()}
       
                 <!-- Education -->
                 ${educationSection()}
@@ -100,9 +78,7 @@ export async function generateResume(id: any) {
 </div>
 
                 <div class="flex flex-col gap-[6px]">
-                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${
-                    data["firstName"]
-                  } ${data["lastName"]}</h2>
+                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${data["firstName"]} ${data["lastName"]}</h2>
                   <div class="text-[12px] font-normal leading-[14.52px] text-[#3C3C3C] flex gap-3 ml-1"><span>${
                     data?.currentDesignation || '<span style="color: #A0A0A0;">N/A</span>'
                   }</span> 
@@ -160,18 +136,7 @@ export async function generateResume(id: any) {
                 <path d="M6.25 8.74995V5.41661C6.25 5.30611 6.2061 5.20012 6.12796 5.12198C6.04982 5.04384 5.94384 4.99995 5.83333 4.99995H4.16667C4.05616 4.99995 3.95018 5.04384 3.87204 5.12198C3.7939 5.20012 3.75 5.30611 3.75 5.41661V8.74995M1.25 4.16661C1.24997 4.04539 1.27639 3.92562 1.32741 3.81566C1.37843 3.7057 1.45283 3.60819 1.54542 3.52995L4.46208 1.03036C4.61249 0.903241 4.80307 0.833496 5 0.833496C5.19693 0.833496 5.38751 0.903241 5.53792 1.03036L8.45458 3.52995C8.54717 3.60819 8.62157 3.7057 8.67259 3.81566C8.72361 3.92562 8.75003 4.04539 8.75 4.16661V7.91661C8.75 8.13763 8.6622 8.34959 8.50592 8.50587C8.34964 8.66215 8.13768 8.74995 7.91667 8.74995H2.08333C1.86232 8.74995 1.65036 8.66215 1.49408 8.50587C1.3378 8.34959 1.25 8.13763 1.25 7.91661V4.16661Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               <span>
-  ${
-    data?.Address?.flatHouseNoBuildingCompanyApartment || data?.Address?.landmark || data?.Address?.townCity || data?.Address?.state || data?.Address?.country
-      ? `${data?.Address?.flatHouseNoBuildingCompanyApartment || ""}, 
-         ${data?.Address?.landmark || ""}, 
-         ${data?.Address?.townCity || ""}, 
-         ${data?.Address?.state || ""}, 
-         ${data?.Address?.country || ""}`
-          .replace(/(, )+/g, ", ")
-          .trim()
-          .replace(/^,|,$/g, "")
-      : '<span style="color: #A0A0A0;">N/A</span>'
-  }
+              ${data?.currentLocation ? data?.currentLocation : '<span style="color: #A0A0A0;">N/A</span>'}
 </span>
 </li>
                   </ul>
@@ -179,35 +144,27 @@ export async function generateResume(id: any) {
   }
 
   function skillsSection() {
-    return ` <div class="mb-[30px]">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Skills</h3>
-                   <ul>
-        ${
-          topSkills?.length > 0
-            ? topSkills
-                .map(
-                  (skill) => `
-                    <li class="mb-[12px]">
-                      <div class="flex justify-between">
-                        <span class="text-[12px] font-medium leading-[16px] text-[#000000]">
-                          ${skill?.skillName || '<span style="color: #A0A0A0;">N/A</span>'}
-                        </span>
-                        <span class="text-[10px] font-normal leading-[11.52px] text-[#000000]">
-                          ${proficiencyMapping[skillRatingMapping[skill?.skillName]] || '<span style="color: #A0A0A0;">N/A</span>'}
-                        </span>
-                      </div>
-                      <div class="mt-[6px] w-full rounded bg-gray-300">
-                        ${skillBarMapping[skillRatingMapping[skill?.skillName]] || '<span style="color: #A0A0A0;">N/A</span>'}
-                      </div>
-                    </li>
-                  `
-                )
-                .join("")
-            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No skills available.</li>'
-        }
-      </ul>
-                </div>
-              </div>`;
+    return `
+      <div class="mb-[30px]">
+        <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Skills</h3>
+        <div class="flex flex-wrap gap-2">
+          ${
+            topSkills?.length > 0
+              ? topSkills
+                  .map(
+                    (skill) => `
+                      <span class="bg-[#3E6AF2] text-white text-[12px] font-medium px-3 py-1 rounded-full">
+                        ${skill?.skillName || '<span style="color: #A0A0A0;">N/A</span>'}
+                      </span>
+                    `
+                  )
+                  .join("")
+              : '<span style="color: #A0A0A0;">No skills available.</span>'
+          }
+        </div>
+        </div>
+      </div>
+    `;
   }
 
   function experienceSection() {
@@ -281,6 +238,40 @@ export async function generateResume(id: any) {
         }
       </ul>
                 </div>`;
+  }
+
+  function projectSection() {
+    return `<div class="mb-[30px]">
+              <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">
+                Projects
+              </h3>
+              <ul class="space-y-4">
+                ${
+                  data?.["Project"]?.length > 0
+                    ? data["Project"]
+                        .map(
+                          (proj) => `
+                             <li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+                      <div class="flex items-center gap-[10px]">
+                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
+                                  ${proj?.projectName || '<span style="color: #A0A0A0;">N/A</span>'}
+                                </strong>
+                               <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
+  · ${proj?.from ? new Date(proj.from).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - 
+  ${proj?.to ? new Date(proj.to).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'}
+</p>
+
+                               </div>
+                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
+                        ${proj?.summary ||'<span style="color: #A0A0A0;">N/A</span>'}
+                      </p>
+                            </li>`
+                        )
+                        .join("")
+                    : '<li class="text-[12px] font-normal text-[#A0A0A0]">No projects available.</li>'
+                }
+              </ul>
+            </div>`;
   }
   function educationSection() {
     return `<div class="mb-[30px]">

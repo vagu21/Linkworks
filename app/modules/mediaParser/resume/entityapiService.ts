@@ -53,6 +53,7 @@ export const saveTenantEntity = async (
       startDate: education.startDate || "",
       endDate: education.endDate || "",
       description: education.description || "",
+      totalYears: education.totalYears || "",
     }));
   
     return await saveTenantEntity("Education History", formattedEducationHistories, allEducationTent, tenantSlug);
@@ -70,22 +71,24 @@ export const saveTenantEntity = async (
       startDate: workExperience.startDate || "",
       endDate: workExperience.endDate || "",
       description: workExperience.description || "",
+      totalYearsExp: workExperience.totalYearsExp || "",
     }));
   
     return await saveTenantEntity("Work Experience", formattedWorkExperienceHistories, allWorkExperienceTent, tenantSlug);
   };
 
-
-  export const saveTenantTechnicalSkills = async (technicalSkills: any[], allTechnicalSkillsTent: any,  tenantSlug: string|undefined|null) => {
-    const formattedTechnicalSkills = technicalSkills.map((Skill) => ({
-      name: Skill.name || "",
-      proficiency: typeof Skill.proficiency === "number" ? Skill.proficiency : 0,
-      
-    }));
+  export const saveTenantProjects = async (project: any[], allProjectsTent: any, tenantSlug: string | undefined | null) => {
+    const formattedProjects = project.map((projects) => ({
+      projectName: projects.projectName || "",
+      technologiesUsed: Array.isArray(projects.technologiesUsed) ? projects.technologiesUsed : [],
+      from: projects.from || "",
+      to: projects.to || "",
+      summary: projects.summary || "",
+  }));
   
-    return await saveTenantEntity("Skills", formattedTechnicalSkills, allTechnicalSkillsTent, tenantSlug);
+    return await saveTenantEntity("Project", formattedProjects, allProjectsTent, tenantSlug);
   };
-  
+
   export const entityListData = async (entityUrl: string) => {
     try {
       const response = await fetch(`${serverUrl}` + entityUrl);

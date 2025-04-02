@@ -261,373 +261,384 @@ export default function EntityViewForm({
       <input type="hidden" name="isSystem" value={isSystem ? "true" : "false"} hidden readOnly />
       <input type="hidden" name="tenantId" value={tenantId ?? undefined} hidden readOnly />
       <input type="hidden" name="userId" value={userId ?? undefined} hidden readOnly />
+      <div className="pl-[39px]">
+        {showViewType && <InfoBanner title={getTypeTitle()} text={getTypeDescription()} />}
 
-      {showViewType && <InfoBanner title={getTypeTitle()} text={getTypeDescription()} />}
-
-      <InputGroup title="View">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
-          <InputRadioGroupCards
-            display="name"
-            columns={EntityViewLayoutTypes.length}
-            className="sm:col-span-12"
-            name="layout"
-            title="Layout"
-            value={layout}
-            onChange={(e) => setLayout((e?.toString() ?? "table") as "table" | "board" | "grid" | "card")}
-            options={EntityViewLayoutTypes.map((f) => {
-              return {
-                name: f.name,
-                value: f.value,
-                renderName: (
-                  <div className="flex items-center space-x-2">
-                    <EntityViewLayoutBadge layout={f.value} className="h-3 w-3 text-gray-400" />
-                    <div>{f.name}</div>
-                  </div>
-                ),
-              };
-            })}
-          />
-
-          <InputText
-            autoFocus
-            className={clsx(isSystem ? "sm:col-span-6" : "sm:col-span-3")}
-            name="name"
-            title={t("models.entity.name")}
-            value={name}
-            setValue={(e) => setName(e.toString().toLowerCase())}
-            autoComplete="off"
-            required
-            // lowercase
-            onBlur={() => {
-              if (!item) {
-                let title = StringUtils.capitalize(name.toLowerCase());
-                // replace - occurrences with spaces
-                title = title.replace(/-/g, " ");
-                setTitle(title);
-              }
-            }}
-          />
-          <InputText
-            className={clsx(isSystem ? "sm:col-span-6" : "sm:col-span-3")}
-            name="title"
-            title={t("models.entity.title")}
-            value={title}
-            setValue={setTitle}
-            autoComplete="off"
-            required
-            withTranslation={true}
-          />
-          {!isSystem && (
-            <Fragment>
-              <InputNumber className="sm:col-span-3" name="pageSize" title={"Page size"} value={pageSize} setValue={setPageSize} min={1} max={500} required />
-              <InputNumber
-                className="sm:col-span-3"
-                name="order"
-                title={t("models.entity.order")}
-                value={order}
-                setValue={setOrder}
-                disabled={!item}
-                min={1}
-                max={99}
-                required
-              />
-              <InputCheckboxInline className="sm:col-span-12" name="isDefault" title="Is default" value={isDefault} setValue={setIsDefault} />
-            </Fragment>
-          )}
-        </div>
-      </InputGroup>
-
-      {layout === "board" && (
-        <InputGroup title="Board">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
-            <>
-              <InputSelect className="sm:col-span-6" name="groupBy" title="Group by" value={groupBy} setValue={setGroupBy} options={groupByOptions} />
-              <InputSelect
-                className="sm:col-span-6"
-                name="groupByPropertyId"
-                title="Property"
-                value={groupByPropertyId}
-                setValue={setGroupByPropertyId}
-                options={selectProperties.map((item) => {
+        <InputGroup title="View">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
+              <InputRadioGroupCards
+                display="name"
+                columns={EntityViewLayoutTypes.length}
+                className="sm:col-span-12"
+                name="layout"
+                title="Layout"
+                value={layout}
+                onChange={(e) => setLayout((e?.toString() ?? "table") as "table" | "board" | "grid" | "card")}
+                options={EntityViewLayoutTypes.map((f) => {
                   return {
-                    name: t(item.title),
-                    value: item.id,
+                    name: f.name,
+                    value: f.value,
+                    renderName: (
+                      <div className="flex items-center space-x-2">
+                        <EntityViewLayoutBadge layout={f.value} className="h-3 w-3 text-gray-400" />
+                        <div>{f.name}</div>
+                      </div>
+                    ),
                   };
                 })}
               />
-            </>
-          </div>
-        </InputGroup>
-      )}
 
-      {layout === "grid" && (
-        <InputGroup title="Grid">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-7">
-            <InputNumber name="gridColumns" title="Columns" value={gridColumns} setValue={setGridColumns} min={0} max={12} required />
-            <InputNumber name="gridColumnsSm" title="sm" value={gridColumnsSm} setValue={setGridColumnsSm} min={0} max={12} required />
-            <InputNumber name="gridColumnsMd" title="md" value={gridColumnsMd} setValue={setGridColumnsMd} min={0} max={12} required />
-            <InputNumber name="gridColumnsLg" title="lg" value={gridColumnsLg} setValue={setGridColumnsLg} min={0} max={12} required />
-            <InputNumber name="gridColumnsXl" title="xl" value={gridColumnsXl} setValue={setGridColumnsXl} min={0} max={12} required />
-            <InputNumber name="gridColumns2xl" title="2xl" value={gridColumns2xl} setValue={setGridColumns2xl} min={0} max={12} required />
-
-            <InputSelect
-              name="gridGap"
-              title="Gap"
-              value={gridGap}
-              setValue={(e) => setGridGap(e?.toString() ?? "sm")}
-              options={[
-                { name: "xs", value: "xs" },
-                { name: "sm", value: "sm" },
-                { name: "md", value: "md" },
-                { name: "lg", value: "lg" },
-                { name: "xl", value: "xl" },
-              ]}
-            />
-          </div>
-        </InputGroup>
-      )}
-
-      <InputGroup title="Properties">
-        <div className="divide-y divide-gray-200">
-          {properties.map((item, idx) => (
-            <input key={idx} type="text" name="properties[]" readOnly hidden value={JSON.stringify(item)} />
-          ))}
-          <div className="grid gap-2 sm:grid-cols-2">
-            <div className="space-y-1">
-              <div className="flex items-baseline space-x-1">
-                <div className="text-sm font-medium">All</div>
-                <div className="flex items-center space-x-1">
-                  <button
-                    type="button"
-                    className="text-xs text-gray-600"
-                    onClick={() => setProperties(possibleProperties)}
-                    disabled={properties.length === possibleProperties.length}
-                  >
-                    ({t("shared.selectAll")})
-                  </button>
-                </div>
-              </div>
-              <div className="h-64 space-y-1 overflow-y-scroll rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-2">
-                {possibleProperties.map((item, idx) => (
-                  <div key={item.name}>
-                    <InputCheckboxInline
-                      name={"properties[" + idx + "].propertyId"}
-                      title={
-                        <div className="flex items-baseline space-x-1 truncate text-sm">
-                          <div className={clsx("truncate", item.name?.includes(".") ? "text-gray-400" : "font-medium text-gray-800")}>
-                            {item.title ? t(item.title) : item.name}
-                          </div>
-                          <div className={clsx("truncate text-xs font-normal", item.name?.includes(".") ? "italic text-gray-400" : "font-bold text-gray-800")}>
-                            ({item?.name})
-                          </div>
-                        </div>
-                      }
-                      value={properties.find((f) => f.name === item.name) !== undefined}
-                      setValue={(e) => {
-                        if (e) {
-                          setProperties([
-                            ...properties,
-                            { propertyId: item.propertyId, name: item.name, title: item.title, order: OrderHelper.getNextOrder(properties) },
-                          ]);
-                        } else {
-                          setProperties(properties.filter((f) => f.name !== item.name));
-                        }
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
+              <InputText
+                autoFocus
+                className={clsx(isSystem ? "sm:col-span-6" : "sm:col-span-3")}
+                name="name"
+                title={t("models.entity.name")}
+                value={name}
+                setValue={(e) => setName(e.toString().toLowerCase())}
+                autoComplete="off"
+                required
+                // lowercase
+                onBlur={() => {
+                  if (!item) {
+                    let title = StringUtils.capitalize(name.toLowerCase());
+                    // replace - occurrences with spaces
+                    title = title.replace(/-/g, " ");
+                    setTitle(title);
+                  }
+                }}
+              />
+              <InputText
+                className={clsx(isSystem ? "sm:col-span-6" : "sm:col-span-3")}
+                name="title"
+                title={t("models.entity.title")}
+                value={title}
+                setValue={setTitle}
+                autoComplete="off"
+                required
+                withTranslation={true}
+              />
+              {!isSystem && (
+                <Fragment>
+                  <InputNumber
+                    className="sm:col-span-3"
+                    name="pageSize"
+                    title={"Page size"}
+                    value={pageSize}
+                    setValue={setPageSize}
+                    min={1}
+                    max={500}
+                    required
+                  />
+                  <InputNumber
+                    className="sm:col-span-3"
+                    name="order"
+                    title={t("models.entity.order")}
+                    value={order}
+                    setValue={setOrder}
+                    disabled={!item}
+                    min={1}
+                    max={99}
+                    required
+                  />
+                  <InputCheckboxInline className="sm:col-span-12" name="isDefault" title="Is default" value={isDefault} setValue={setIsDefault} />
+                </Fragment>
+              )}
             </div>
+          </InputGroup>
 
-            <div className="space-y-1">
-              <div className="flex items-baseline space-x-1">
-                <div className="text-sm font-medium">Displayed</div>
-                <button type="button" className="text-xs text-gray-600" onClick={() => setProperties([])} disabled={properties.length === 0}>
-                  ({t("shared.clear")})
-                </button>
+        {layout === "board" && (
+          <InputGroup title="Board">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
+                <>
+                  <InputSelect className="sm:col-span-6" name="groupBy" title="Group by" value={groupBy} setValue={setGroupBy} options={groupByOptions} />
+                  <InputSelect
+                    className="sm:col-span-6"
+                    name="groupByPropertyId"
+                    title="Property"
+                    value={groupByPropertyId}
+                    setValue={setGroupByPropertyId}
+                    options={selectProperties.map((item) => {
+                      return {
+                        name: t(item.title),
+                        value: item.id,
+                      };
+                    })}
+                  />
+                </>
               </div>
-              <div className="h-64 space-y-1 overflow-y-scroll rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-2">
-                {properties
-                  .sort((a, b) => a.order - b.order)
-                  .map((item, idx) => (
-                    <div key={idx} className="flex items-baseline space-x-1 text-sm">
-                      <div className="flex-shrink-0">
-                        <OrderIndexButtons
-                          idx={idx}
-                          items={properties.map((item, itemIdx) => {
-                            return {
-                              order: item.order,
-                              idx: itemIdx,
-                            };
-                          })}
-                          onChange={(newOrders) => {
-                            setProperties(
-                              properties.map((item, itemIdx) => {
-                                const newOrder = newOrders.find((f) => f.idx === itemIdx);
-                                if (newOrder) {
-                                  return {
-                                    ...item,
-                                    order: newOrder.order,
-                                  };
-                                } else {
-                                  return item;
-                                }
-                              })
-                            );
+            </InputGroup>
+        )}
+
+        {layout === "grid" && (
+          <InputGroup title="Grid">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-7">
+                <InputNumber name="gridColumns" title="Columns" value={gridColumns} setValue={setGridColumns} min={0} max={12} required />
+                <InputNumber name="gridColumnsSm" title="sm" value={gridColumnsSm} setValue={setGridColumnsSm} min={0} max={12} required />
+                <InputNumber name="gridColumnsMd" title="md" value={gridColumnsMd} setValue={setGridColumnsMd} min={0} max={12} required />
+                <InputNumber name="gridColumnsLg" title="lg" value={gridColumnsLg} setValue={setGridColumnsLg} min={0} max={12} required />
+                <InputNumber name="gridColumnsXl" title="xl" value={gridColumnsXl} setValue={setGridColumnsXl} min={0} max={12} required />
+                <InputNumber name="gridColumns2xl" title="2xl" value={gridColumns2xl} setValue={setGridColumns2xl} min={0} max={12} required />
+
+                <InputSelect
+                  name="gridGap"
+                  title="Gap"
+                  value={gridGap}
+                  setValue={(e) => setGridGap(e?.toString() ?? "sm")}
+                  options={[
+                    { name: "xs", value: "xs" },
+                    { name: "sm", value: "sm" },
+                    { name: "md", value: "md" },
+                    { name: "lg", value: "lg" },
+                    { name: "xl", value: "xl" },
+                  ]}
+                />
+              </div>
+            </InputGroup>
+        )}
+
+        <InputGroup title="Properties">
+            <div className="divide-y divide-gray-200">
+              {properties.map((item, idx) => (
+                <input key={idx} type="text" name="properties[]" readOnly hidden value={JSON.stringify(item)} />
+              ))}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <div className="flex items-baseline space-x-1">
+                    <div className="text-sm font-medium">All</div>
+                    <div className="flex items-center space-x-1">
+                      <button
+                        type="button"
+                        className="text-xs text-gray-600"
+                        onClick={() => setProperties(possibleProperties)}
+                        disabled={properties.length === possibleProperties.length}
+                      >
+                        ({t("shared.selectAll")})
+                      </button>
+                    </div>
+                  </div>
+                  <div className="h-64 space-y-1 overflow-y-scroll rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-2">
+                    {possibleProperties.map((item, idx) => (
+                      <div key={item.name}>
+                        <InputCheckboxInline
+                          name={"properties[" + idx + "].propertyId"}
+                          title={
+                            <div className="flex items-baseline space-x-1 truncate text-sm">
+                              <div className={clsx("truncate", item.name?.includes(".") ? "text-gray-400" : "font-medium text-gray-800")}>
+                                {item.title ? t(item.title) : item.name}
+                              </div>
+                              <div
+                                className={clsx("truncate text-xs font-normal", item.name?.includes(".") ? "italic text-gray-400" : "font-bold text-gray-800")}
+                              >
+                                ({item?.name})
+                              </div>
+                            </div>
+                          }
+                          value={properties.find((f) => f.name === item.name) !== undefined}
+                          setValue={(e) => {
+                            if (e) {
+                              setProperties([
+                                ...properties,
+                                { propertyId: item.propertyId, name: item.name, title: item.title, order: OrderHelper.getNextOrder(properties) },
+                              ]);
+                            } else {
+                              setProperties(properties.filter((f) => f.name !== item.name));
+                            }
                           }}
                         />
                       </div>
-                      <div className={clsx("truncate", item.name?.includes(".") ? "text-gray-400" : "font-medium text-gray-800")}>
-                        {item.title ? t(item.title) : t(getPropertyTitle(item.name ?? ""))}{" "}
-                        <span className={clsx("text-xs font-normal", item.name?.includes(".") ? "italic text-gray-400" : "font-bold text-gray-800")}>
-                          ({item?.name})
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex items-baseline space-x-1">
+                    <div className="text-sm font-medium">Displayed</div>
+                    <button type="button" className="text-xs text-gray-600" onClick={() => setProperties([])} disabled={properties.length === 0}>
+                      ({t("shared.clear")})
+                    </button>
+                  </div>
+                  <div className="h-64 space-y-1 overflow-y-scroll rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-2">
+                    {properties
+                      .sort((a, b) => a.order - b.order)
+                      .map((item, idx) => (
+                        <div key={idx} className="flex items-baseline space-x-1 text-sm">
+                          <div className="flex-shrink-0">
+                            <OrderIndexButtons
+                              idx={idx}
+                              items={properties.map((item, itemIdx) => {
+                                return {
+                                  order: item.order,
+                                  idx: itemIdx,
+                                };
+                              })}
+                              onChange={(newOrders) => {
+                                setProperties(
+                                  properties.map((item, itemIdx) => {
+                                    const newOrder = newOrders.find((f) => f.idx === itemIdx);
+                                    if (newOrder) {
+                                      return {
+                                        ...item,
+                                        order: newOrder.order,
+                                      };
+                                    } else {
+                                      return item;
+                                    }
+                                  })
+                                );
+                              }}
+                            />
+                          </div>
+                          <div className={clsx("truncate", item.name?.includes(".") ? "text-gray-400" : "font-medium text-gray-800")}>
+                            {item.title ? t(item.title) : t(getPropertyTitle(item.name ?? ""))}{" "}
+                            <span className={clsx("text-xs font-normal", item.name?.includes(".") ? "italic text-gray-400" : "font-bold text-gray-800")}>
+                              ({item?.name})
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </InputGroup>
+          </InputGroup>
 
-      {!isSystem && (
-        <Fragment>
-          <InputGroup title="Filters">
-            {filters.map((item, idx) => (
-              <input key={idx} type="text" name="filters[]" readOnly hidden value={JSON.stringify(item)} />
-            ))}
-            <div className="mb-2 space-y-2">
-              {filters.map((item, idx) => (
-                <CollapsibleRow
-                  className="bg-gray-50"
-                  initial={true}
-                  key={idx}
-                  title={`${item.name} (${item.condition}) ${item.value}`}
-                  value={
-                    <div className="flex items-center space-x-1 text-sm">
-                      <div className="font-medium">{item.name}</div>
-                      <div className="font-light text-gray-500">{item.condition}</div>
-                      <div className="">{item.value}</div>
-                    </div>
-                  }
-                  onRemove={() => setFilters(filters.filter((_, i) => i !== idx))}
-                >
-                  <div className="grid grid-cols-12 gap-3">
-                    <div className="sm:col-span-2">
-                      <InputSelector
-                        withSearch={false}
-                        name={"filters[" + idx + "].match"}
-                        title="Match"
-                        value={item.match}
-                        setValue={(e) =>
-                          updateItemByIdx(filters, setFilters, idx, {
-                            match: e,
-                          })
-                        }
-                        options={[
-                          { name: "AND", value: "and" },
-                          { name: "OR", value: "or" },
-                        ]}
-                      />
-                    </div>
-                    <div className="sm:col-span-4">
-                      <InputSelector
-                        withSearch={false}
-                        name={"filters[" + idx + "].propertyId"}
-                        title="Property"
-                        value={item.name}
-                        setValue={(e) =>
-                          updateItemByIdx(filters, setFilters, idx, {
-                            name: e,
-                          })
-                        }
-                        options={filterByProperties}
-                      />
-                    </div>
-                    <div className="sm:col-span-3">
-                      <InputSelector
-                        withSearch={false}
-                        name={"filters[" + idx + "].condition"}
-                        title="Condition"
-                        value={item.condition}
-                        setValue={(e) =>
-                          updateItemByIdx(filters, setFilters, idx, {
-                            condition: e,
-                          })
-                        }
-                        options={getPropertyConditionsByName(item.name)}
-                      />
-                    </div>
-                    <Fragment>
-                      {getPropertyByName(item.name)?.type === PropertyType.BOOLEAN ? (
-                        <div className="sm:col-span-3">
+        {!isSystem && (
+          <Fragment>
+            <InputGroup title="Filters">
+                {filters.map((item, idx) => (
+                  <input key={idx} type="text" name="filters[]" readOnly hidden value={JSON.stringify(item)} />
+                ))}
+                <div className="mb-2 space-y-2">
+                  {filters.map((item, idx) => (
+                    <CollapsibleRow
+                      className="bg-gray-50"
+                      initial={true}
+                      key={idx}
+                      title={`${item.name} (${item.condition}) ${item.value}`}
+                      value={
+                        <div className="flex items-center space-x-1 text-sm">
+                          <div className="font-medium">{item.name}</div>
+                          <div className="font-light text-gray-500">{item.condition}</div>
+                          <div className="">{item.value}</div>
+                        </div>
+                      }
+                      onRemove={() => setFilters(filters.filter((_, i) => i !== idx))}
+                    >
+                      <div className="grid grid-cols-12 gap-3">
+                        <div className="sm:col-span-2">
                           <InputSelector
                             withSearch={false}
-                            name={"filters[" + idx + "].value"}
-                            title="Value"
-                            value={item.value}
-                            setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
+                            name={"filters[" + idx + "].match"}
+                            title="Match"
+                            value={item.match}
+                            setValue={(e) =>
+                              updateItemByIdx(filters, setFilters, idx, {
+                                match: e,
+                              })
+                            }
                             options={[
-                              { name: "True", value: "true" },
-                              { name: "False", value: "false" },
+                              { name: "AND", value: "and" },
+                              { name: "OR", value: "or" },
                             ]}
                           />
                         </div>
-                      ) : getPropertyByName(item.name)?.type === PropertyType.SELECT ? (
+                        <div className="sm:col-span-4">
+                          <InputSelector
+                            withSearch={false}
+                            name={"filters[" + idx + "].propertyId"}
+                            title="Property"
+                            value={item.name}
+                            setValue={(e) =>
+                              updateItemByIdx(filters, setFilters, idx, {
+                                name: e,
+                              })
+                            }
+                            options={filterByProperties}
+                          />
+                        </div>
                         <div className="sm:col-span-3">
                           <InputSelector
                             withSearch={false}
-                            name={"filters[" + idx + "].value"}
-                            title="Value"
-                            value={item.value}
-                            setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
-                            options={
-                              getPropertyByName(item.name)?.options.map((i) => {
-                                return {
-                                  name: i.name ? i.value + " - " + t(i.name) : i.value,
-                                  value: i.value,
-                                };
-                              }) ?? []
+                            name={"filters[" + idx + "].condition"}
+                            title="Condition"
+                            value={item.condition}
+                            setValue={(e) =>
+                              updateItemByIdx(filters, setFilters, idx, {
+                                condition: e,
+                              })
                             }
+                            options={getPropertyConditionsByName(item.name)}
                           />
                         </div>
-                      ) : (
-                        <div className="sm:col-span-3">
-                          <InputText
-                            name={"filters[" + idx + "].value"}
-                            title="Value"
-                            value={item.value}
-                            setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
-                          />
-                        </div>
-                      )}
-                    </Fragment>
-                  </div>
-                </CollapsibleRow>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                const firstProperty = filterByProperties.length > 0 ? filterByProperties[0].value : "";
-                setFilters([
-                  ...filters,
-                  {
-                    name: firstProperty,
-                    condition: "equals",
-                    value: "",
-                    match: "and",
-                  },
-                ]);
-              }}
-              className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              <span className="block text-xs font-normal text-gray-500">{filters.length === 0 ? "No filters" : "Add filter"}</span>
-            </button>
-          </InputGroup>
+                        <Fragment>
+                          {getPropertyByName(item.name)?.type === PropertyType.BOOLEAN ? (
+                            <div className="sm:col-span-3">
+                              <InputSelector
+                                withSearch={false}
+                                name={"filters[" + idx + "].value"}
+                                title="Value"
+                                value={item.value}
+                                setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
+                                options={[
+                                  { name: "True", value: "true" },
+                                  { name: "False", value: "false" },
+                                ]}
+                              />
+                            </div>
+                          ) : getPropertyByName(item.name)?.type === PropertyType.SELECT ? (
+                            <div className="sm:col-span-3">
+                              <InputSelector
+                                withSearch={false}
+                                name={"filters[" + idx + "].value"}
+                                title="Value"
+                                value={item.value}
+                                setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
+                                options={
+                                  getPropertyByName(item.name)?.options.map((i) => {
+                                    return {
+                                      name: i.name ? i.value + " - " + t(i.name) : i.value,
+                                      value: i.value,
+                                    };
+                                  }) ?? []
+                                }
+                              />
+                            </div>
+                          ) : (
+                            <div className="sm:col-span-3">
+                              <InputText
+                                name={"filters[" + idx + "].value"}
+                                title="Value"
+                                value={item.value}
+                                setValue={(e) => updateItemByIdx(filters, setFilters, idx, { value: e })}
+                              />
+                            </div>
+                          )}
+                        </Fragment>
+                      </div>
+                    </CollapsibleRow>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const firstProperty = filterByProperties.length > 0 ? filterByProperties[0].value : "";
+                    setFilters([
+                      ...filters,
+                      {
+                        name: firstProperty,
+                        condition: "equals",
+                        value: "",
+                        match: "and",
+                      },
+                    ]);
+                  }}
+                  className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                  <span className="block text-xs font-normal text-gray-500">{filters.length === 0 ? "No filters" : "Add filter"}</span>
+                </button>
+              </InputGroup>
 
-          {/* <InputGroup title="Sort">
+            {/* <InputGroup title="Sort">
         {sort.map((item, idx) => (
           <input key={idx} type="text" name="sort[]" readOnly hidden value={JSON.stringify(item)} />
         ))}
@@ -692,23 +703,23 @@ export default function EntityViewForm({
           <span className="block text-xs font-normal text-gray-500">{filters.length === 0 ? "No sort fields" : "Add sort"}</span>
         </button>
       </InputGroup> */}
-        </Fragment>
-      )}
-
-      <InputGroup title="Preview">
-        <div className="space-y-2">
-          <RowsList
-            view={layout}
-            entity={entity}
-            items={fakeItems}
-            columns={properties.map((p) => ({
-              name: p.name ?? "",
-              title: p.title ?? "",
-              visible: true,
-            }))}
-          />
-        </div>
-      </InputGroup>
+          </Fragment>
+        )}      
+          <InputGroup title="Preview" isLast={true} lineStyle={{display:'none'}}>
+            <div className="space-y-2">
+              <RowsList
+                view={layout}
+                entity={entity}
+                items={fakeItems}
+                columns={properties.map((p) => ({
+                  name: p.name ?? "",
+                  title: p.title ?? "",
+                  visible: true,
+                }))}
+              />
+            </div>
+          </InputGroup>
+      </div>
     </FormGroup>
   );
 }

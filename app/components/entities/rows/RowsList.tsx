@@ -3,12 +3,12 @@ import { RowWithDetails } from "~/utils/db/entities/rows.db.server";
 import { EntityWithDetails, PropertyWithDetails } from "~/utils/db/entities/entities.db.server";
 import { PaginationDto } from "~/application/dtos/data/PaginationDto";
 import { ColumnDto } from "~/application/dtos/data/ColumnDto";
-import KanbanSimple, { KanbanColumn } from "~/components/ui/lists/KanbanSimple";
+import { KanbanColumn } from "~/components/ui/lists/KanbanSimple";
 import RowHelper from "~/utils/helpers/RowHelper";
 import { useTranslation } from "react-i18next";
 import { Colors } from "~/application/enums/shared/Colors";
-import { Fragment, useEffect, useState } from "react";
-import { Link, useParams } from "@remix-run/react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "@remix-run/react";
 import { EntitiesApi } from "~/utils/api/.server/EntitiesApi";
 import GridContainer from "~/components/ui/lists/GridContainer";
 import { EntityViewWithDetails } from "~/utils/db/entities/entityViews.db.server";
@@ -22,6 +22,12 @@ import { RowHeaderDisplayDto } from "~/application/dtos/data/RowHeaderDisplayDto
 import EmptyState from "~/components/ui/emptyState/EmptyState";
 import RenderCard from "./RenderCard";
 import RowsLoadMoreCard from "~/components/ui/tables/RowsLoadMoreCard";
+import KanbanSimple from "~/custom/components/lists/KanbanSimple";
+import { createPortal } from "react-dom";
+// import { DeleteConfirmationPopup } from "~/custom/components/relationDeletePopup/DeleteConfirmationPopup";
+import RowDisplayHeaderHelper from "~/utils/helpers/RowDisplayHeaderHelper";
+import { DeleteConfirmationPopup } from "~/custom/components/relationDeletePopup/DeleteConfirmationPopup";
+import RelationCardMenu from "~/custom/components/RelationCardMenu/RelationCardMenu";
 
 interface Props {
   view: "table" | "board" | "grid" | "card";
@@ -46,6 +52,10 @@ interface Props {
   }[];
   leftHeaders?: RowHeaderDisplayDto<RowWithDetails>[];
   rightHeaders?: RowHeaderDisplayDto<RowWithDetails>[];
+  searchInput?: string;
+  entityTitle?: string;
+  onNewRow?: () => void;
+  permissionCreate?: boolean;
 }
 export default function RowsList(props: Props & { entity: EntityWithDetails | string }) {
   const appOrAdminData = useAppOrAdminData();
@@ -146,6 +156,10 @@ function RowsListWrapped({
   actions,
   leftHeaders,
   rightHeaders,
+  searchInput,
+  entityTitle,
+  onNewRow,
+  permissionCreate,
 }: Props & {
   entity: EntityWithDetails;
   columns: ColumnDto[];
@@ -164,8 +178,13 @@ function RowsListWrapped({
             name: option.value,
             color: option.color,
             title: (
-              <div className="flex items-center space-x-1">
-                {option.name ? <div className="font-bold">{option.name}</div> : <div className="font-bold">{option.value}</div>}
+              // <div className="flex items-center space-x-1">
+              <div>
+                {option.name ? (
+                  <div className="text-[#152C5B] text-base font-semibold">{option.name}</div>
+                ) : (
+                  <div className="text-[#152C5B] text-base font-semibold">{option.value}</div>
+                )}
               </div>
             ),
             value: (item: RowWithDetails) => (
@@ -186,6 +205,8 @@ function RowsListWrapped({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupBy]);
 
+  const slicedColumns = useMemo(() => columns?.length ? [...columns].slice(0, 2) : [], [columns]);
+
   return (
     <Fragment>
       {view == "table" && (
@@ -205,11 +226,14 @@ function RowsListWrapped({
           onRemove={onRemove}
           leftHeaders={leftHeaders}
           rightHeaders={rightHeaders}
+          searchInput={searchInput}
+          entityTitle={entityTitle}
+          onNewRow={onNewRow}
+          permissionCreate={permissionCreate}
         />
       )}
       {view === "board" && groupBy && (
         <KanbanSimple
-          className="pt-2"
           items={items}
           classNameWidth={clsx("")}
           filterValue={(item, column) => {
@@ -227,13 +251,13 @@ function RowsListWrapped({
             name: t("shared.undefined"),
             color: Colors.UNDEFINED,
             title: (
-              <div className="flex items-center space-x-1">
-                <div className="font-bold">{t("shared.undefined")}</div>
+              <div>
+                <div className="text-[#152C5B] text-base font-semibold">{t("shared.undefined")}</div>
               </div>
             ),
             value: (item: RowWithDetails) => {
               return (
-                <div className="rounded-md bg-white">
+                <div className="mt-4 rounded-md bg-white">
                   <RenderCard
                     layout={view}
                     item={item}
@@ -249,9 +273,10 @@ function RowsListWrapped({
             onClickRoute: (i: RowWithDetails) => EntityHelper.getRoutes({ routes, entity, item: i })?.edit ?? "",
           }}
           column={groupBy.property?.name ?? ""}
-          renderEmpty={<EmptyCard className="w-full" />}
+          // renderEmpty={<EmptyCard className="w-full" />}
         />
       )}
+      {/* <SavedJobsCard jobCount={3} /> */}
       {view === "grid" && (
         <Fragment>
           {items.length === 0 ? (
@@ -288,13 +313,23 @@ function RowsListWrapped({
                           allEntities={appOrAdminData.entities}
                           routes={routes}
                           actions={actions}
+                          onRemove={onRemove}
                         />
                       </ButtonSelectWrapper>
                     );
                   }
                   const card = (
                     <div className={clsx("group relative rounded-md bg-white text-left", href && "hover:bg-gray-50")}>
-                      <RemoveButton item={item} readOnly={readOnly} onRemove={onRemove} />
+                      <RemoveButton
+                        item={item}
+                        readOnly={readOnly}
+                        onRemove={onRemove}
+                        entity={entity}
+                        columns={slicedColumns}
+                        allEntities={appOrAdminData.entities}
+                        routes={routes}
+                        layout={view}
+                      />
                       <RenderCard
                         layout={view}
                         item={item}
@@ -349,15 +384,23 @@ function RowsListWrapped({
             />
           ) : (
             // <div className="flex space-x-2 overflow-x-scroll">
-            <div className="grid grid-cols-1 gap-2">
-
+            <div className="grid grid-cols-1 gap-3">
               {items.map((item) => {
                 let className = clsx("w-full");
                 if (onSelected && selectedRows !== undefined) {
                   return (
                     <ButtonSelectWrapper className={clsx("group relative")} key={item.id} item={item} onSelected={onSelected} selectedRows={selectedRows}>
                       <div className={className}>
-                        <RemoveButton item={item} readOnly={readOnly} onRemove={onRemove} />
+                        <RemoveButton
+                          item={item}
+                          readOnly={readOnly}
+                          onRemove={onRemove}
+                          entity={entity}
+                          columns={slicedColumns}
+                          allEntities={appOrAdminData.entities}
+                          routes={routes}
+                          layout={view}
+                        />
                         <RenderCard
                           layout={view}
                           item={item}
@@ -375,7 +418,16 @@ function RowsListWrapped({
                 const card = (
                   <div className={clsx(className, "group relative rounded-md text-left", href && "hover:bg-gray-50")}>
                     <div className={className}>
-                      <RemoveButton item={item} readOnly={readOnly} onRemove={onRemove} />
+                      <RemoveButton
+                        item={item}
+                        readOnly={readOnly}
+                        onRemove={onRemove}
+                        entity={entity}
+                        columns={slicedColumns}
+                        allEntities={appOrAdminData.entities}
+                        routes={routes}
+                        layout={view}
+                      />
                       <RenderCard
                         layout={view}
                         item={item}
@@ -389,14 +441,7 @@ function RowsListWrapped({
                     </div>
                   </div>
                 );
-                return href ? (
-                  <Link to={`${EntityHelper.getEntityRoute({ entity, params, appOrAdminData })}/${item.id}`} key={item.id} className="group relative">
-                    {/* <RowLinkButton entityName={entity.name} id={item.id} /> */}
-                    {card}
-                  </Link>
-                ) : (
-                  card
-                );
+                return href ? <>{card}</> : card;
               })}
               {items.length === 0 ? (
                 <Fragment>{readOnly ? <EmptyCard className="w-full" /> : <AddMoreCard className="w-64" entity={entity} routes={routes} />}</Fragment>
@@ -414,7 +459,17 @@ function RowsListWrapped({
   );
 }
 
-export function AddMoreCard({ entity, routes, className, title }: { entity: EntityWithDetails; routes?: EntitiesApi.Routes; className?: string; title?: string }) {
+export function AddMoreCard({
+  entity,
+  routes,
+  className,
+  title,
+}: {
+  entity: EntityWithDetails;
+  routes?: EntitiesApi.Routes;
+  className?: string;
+  title?: string;
+}) {
   const { t } = useTranslation();
   return (
     <Fragment>
@@ -431,9 +486,7 @@ export function AddMoreCard({ entity, routes, className, title }: { entity: Enti
             {/* <div className="mx-auto flex justify-center text-center align-middle text-sm font-medium text-gray-700">{t("shared.add")}</div> */}
             <div className="flex items-center">
               <div className="">{t("shared.add")}</div>
-              {title && (
-                <div className="lowercase ml-1">{title}</div>
-              )}
+              {title && <div className="ml-1 lowercase">{title}</div>}
             </div>
           </Link>
         )}
@@ -515,28 +568,149 @@ function ButtonSelectWrapper({
   );
 }
 
-function RemoveButton({ item, readOnly, onRemove }: { item: RowWithDetails; readOnly?: boolean; onRemove?: (item: RowWithDetails) => void }) {
+function RemoveButton({
+  item,
+  readOnly,
+  onRemove,
+  columns,
+  allEntities,
+  entity,
+  routes,
+  layout,
+}: {
+  item: RowWithDetails;
+  layout: "table" | "grid" | "board" | "card";
+  readOnly?: boolean;
+  onRemove?: (item: RowWithDetails) => void;
+  entity: EntityWithDetails;
+  columns: ColumnDto[];
+  allEntities: EntityWithDetails[];
+  routes: EntitiesApi.Routes | undefined;
+}) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { t } = useTranslation();
+  const [headers, setHeaders] = useState<RowHeaderDisplayDto<RowWithDetails>[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
+  
+
+  const toggleMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setShowMenu((prevShowMenu) => !prevShowMenu);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!showMenu) return;
+      setShowMenu(false);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showMenu]);
+
+
+  useEffect(() => {
+    setHeaders(RowDisplayHeaderHelper.getDisplayedHeaders({ entity, columns, layout, allEntities: allEntities, t, routes }));
+  }, [entity, columns, layout, allEntities, t, routes]);
+
+  const title = headers[0]?.value(item,0) ?? "";
+  const subtitle = headers[1]?.value(item,1) ?? "";
+  const details: string[] = [];
+
+  const heading: string = entity?.name ?? "";
+
+  item?.values.forEach((currItem, index) => {
+    const currentValue = currItem.textValue
+    if (currentValue && currentValue !== title && currentValue !== subtitle) {
+      details.push(currentValue);
+    }
+  });
+
+
+  function handleRemoveClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    setShowDeleteModal(true);
+  }
+
+  function handleDeleteConfirm() {
+    if (onRemove) {
+      onRemove(item);
+    }
+    setShowDeleteModal(false);
+  }
+
+  const deleteLabel = `${t("shared.delete")} ${entity?.parentEntities?.[0]?.child?.title || ""}`;
+
+  const EditIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+      <path d="M9.37333 6.14615L9.98667 6.75948L3.94667 12.7995H3.33333V12.1861L9.37333 6.14615ZM11.7733 2.13281C11.6067 2.13281 11.4333 2.19948 11.3067 2.32615L10.0867 3.54615L12.5867 6.04615L13.8067 4.82615C14.0667 4.56615 14.0667 4.14615 13.8067 3.88615L12.2467 2.32615C12.1133 2.19281 11.9467 2.13281 11.7733 2.13281ZM9.37333 4.25948L2 11.6328V14.1328H4.5L11.8733 6.75948L9.37333 4.25948Z" fill="#121212" />
+    </svg>
+  );
+
+  const editRoute = EntityHelper.getRoutes({ routes, entity, item })?.edit;
+
+  const menuItems = [
+    ...(editRoute
+      ? [{ label: t("shared.edit"), icon: <EditIcon />, onClick: () => navigate(editRoute), className: "text-[#262626] hover:bg-[#FFEFC9]" }]
+      : []),
+    { label: deleteLabel, onClick: handleRemoveClick, className: "text-[#FE7070] hover:bg-[#FEF1F0]" },
+  ];
+
   return (
     <Fragment>
-      {onRemove && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            onRemove(item);
-          }}
-          type="button"
-          disabled={readOnly}
-          className={clsx(
-            "absolute right-0 top-0 mr-2 mt-2 hidden origin-top-right justify-center rounded-full bg-white text-gray-600",
-            readOnly ? "cursor-not-allowed" : "hover:text-red-500 group-hover:flex"
+      <div className="relative">
+        {onRemove && (
+          <div>
+
+            <button
+              onClick={toggleMenu}
+              className={clsx(
+                "absolute right-2 top-[12px] mr-2 mt-2 flex flex-col gap-2 justify-center items-center h-6 rounded border border-solid shadow-sm bg-white hover:bg-zinc-100 border-zinc-300 max-md:h-6 max-sm:h-6 cursor-pointer",
+              )}
+            >
+              <span className="flex shrink-0 gap-2 justify-center items-center px-1 py-0 w-6 h-6 max-md:w-6 max-md:h-6 max-sm:w-6 max-sm:h-6">
+                <svg width="3" height="11" viewBox="0 0 3 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1.38542 10.2396C1.06458 10.2396 0.789931 10.1253 0.561458 9.89688C0.332986 9.6684 0.21875 9.39375 0.21875 9.07292C0.21875 8.75208 0.332986 8.47743 0.561458 8.24896C0.789931 8.02049 1.06458 7.90625 1.38542 7.90625C1.70625 7.90625 1.9809 8.02049 2.20938 8.24896C2.43785 8.47743 2.55208 8.75208 2.55208 9.07292C2.55208 9.39375 2.43785 9.6684 2.20938 9.89688C1.9809 10.1253 1.70625 10.2396 1.38542 10.2396ZM1.38542 6.73958C1.06458 6.73958 0.789931 6.62535 0.561458 6.39688C0.332986 6.1684 0.21875 5.89375 0.21875 5.57292C0.21875 5.25208 0.332986 4.97743 0.561458 4.74896C0.789931 4.52049 1.06458 4.40625 1.38542 4.40625C1.70625 4.40625 1.9809 4.52049 2.20938 4.74896C2.43785 4.97743 2.55208 5.25208 2.55208 5.57292C2.55208 5.89375 2.43785 6.1684 2.20938 6.39688C1.9809 6.62535 1.70625 6.73958 1.38542 6.73958ZM1.38542 3.23958C1.06458 3.23958 0.789931 3.12535 0.561458 2.89688C0.332986 2.6684 0.21875 2.39375 0.21875 2.07292C0.21875 1.75208 0.332986 1.47743 0.561458 1.24896C0.789931 1.02049 1.06458 0.90625 1.38542 0.90625C1.70625 0.90625 1.9809 1.02049 2.20938 1.24896C2.43785 1.47743 2.55208 1.75208 2.55208 2.07292C2.55208 2.39375 2.43785 2.6684 2.20938 2.89688C1.9809 3.12535 1.70625 3.23958 1.38542 3.23958Z" fill="#121212" />
+                </svg>
+
+              </span>
+            </button>
+          </div>
+        )}
+
+        <div className="absolute right-[50px] top-[-12px] z-50">
+          {showMenu && (
+            <div>
+              <RelationCardMenu menuItems={menuItems} />
+            </div>
           )}
-        >
-          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
-      )}
+        </div>
+      </div>
+
+
+
+
+      {showDeleteModal &&
+        createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            {item && (
+              <DeleteConfirmationPopup
+                onCancel={() => setShowDeleteModal(false)}
+                onDelete={handleDeleteConfirm}
+                title={title}
+                subtitle={subtitle}
+                heading ={heading}
+                details={details}
+              />
+            )}
+          </div>,
+          document.body
+        )}
     </Fragment>
   );
 }

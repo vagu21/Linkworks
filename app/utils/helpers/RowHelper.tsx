@@ -334,7 +334,7 @@ const getTextDescription = ({
     if (includeFolio) {
       descriptions.push(getRowFolio(entity, item));
     }
-    return descriptions.join(" • ");
+    return descriptions.join(" | ");
   }
   return defaultsToFolio || includeFolio ? getRowFolio(entity, item) : "";
 };

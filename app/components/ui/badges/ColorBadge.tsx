@@ -13,11 +13,12 @@ export default function ColorBadge({ color, size = "md" }: Props) {
       className={clsx(
         " inline-flex flex-shrink-0 items-center rounded-full text-xs font-medium",
         getBadgeColor(color),
-        size === "md" && "p-1",
-        size === "sm" && "p-0.5"
+        // size === "md" && "p-1",
+        // size === "sm" && "p-0.5",
+        "border-none"
       )}
     >
-      <svg className={clsx(size === "md" && "h-2 w-2", size === "sm" && "h-1.5 w-1.5")} fill="currentColor" viewBox="0 0 8 8">
+      <svg className={clsx(size === "md" && "h-3 w-3", size === "sm" && "h-1.5 w-1.5")} fill="currentColor" viewBox="0 0 8 8">
         <circle cx={4} cy={4} r={3} />
       </svg>
     </span>

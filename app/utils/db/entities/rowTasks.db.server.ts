@@ -66,6 +66,7 @@ export async function createRowTask(data: {
   completedByUserId?: string | null;
   assignedToUserId?: string | null;
   deadline?: Date | null;
+  priority?: String |null;
 }) {
   return await db.rowTask.create({
     data: {
@@ -78,6 +79,7 @@ export async function createRowTask(data: {
       completedByUserId: data.completedByUserId ?? null,
       assignedToUserId: data.assignedToUserId ?? null,
       deadline: data.deadline ?? null,
+      priority: data.priority ?? null
     },
   });
 }
@@ -94,6 +96,7 @@ export async function updateRowTask(
     completedByUserId?: string | null;
     assignedToUserId?: string | null;
     deadline?: Date | null;
+    priority?:String
   }
 ) {
   return await db.rowTask.update({

@@ -43,6 +43,9 @@ export default function RowCard({ entity, item, columns, layout, allEntities, ro
           </div>
         );
       })}
+
+   
+
       {actions && (
         <div className="flex flex-col space-y-2">
           {actions(item).map((action, idx) => {

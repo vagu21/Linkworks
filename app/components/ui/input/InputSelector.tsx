@@ -278,11 +278,11 @@ const InputSelector = (
           </div>
         )}
       </Listbox> */}
-      <div>
+      <div className="flex flex-col gap-[2px]">
         {withLabel && title && (
           <label htmlFor={name} className="mb-1 flex justify-between space-x-2 text-xs font-medium">
             <div className=" flex items-center space-x-1">
-              <div className="truncate">
+              <div className="text-body text-label truncate font-normal">
                 {title}
                 {required && <span className="ml-1 text-red-500">*</span>}
               </div>
@@ -294,7 +294,7 @@ const InputSelector = (
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="relative w-full" autoFocus={autoFocus} disabled={disabled || readOnly}>
+            <Button variant="outline" className="relative w-full rounded-lg" autoFocus={autoFocus} disabled={disabled || readOnly}>
               <input type="hidden" name={name} value={selected?.value ?? ""} hidden readOnly />
 
               {icon && (
@@ -303,11 +303,11 @@ const InputSelector = (
                 </div>
               )}
 
-              <span className="inline-flex w-full items-center space-x-2 truncate pr-4">
+              <span className="inline-flex w-full items-center space-x-2 truncate pr-4 !border-none">
                 {withColors && selected && <ColorBadge color={selected?.color ?? Colors.UNDEFINED} />}
                 <div className="truncate">
                   {selected ? (
-                    <span>{selected?.name}</span>
+                    <span className="">{selected?.name}</span>
                   ) : (
                     <span className="text-muted-foreground text-sm">
                       {isLoading ? <Fragment>{t("shared.loading")}...</Fragment> : <Fragment>{selectPlaceholder ?? t("shared.select")}...</Fragment>}
@@ -316,12 +316,18 @@ const InputSelector = (
                 </div>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_514_15263)">
+                    <path
+                      d="M10.5876 6.19329L8.00096 8.77996L5.4143 6.19329C5.1543 5.93329 4.7343 5.93329 4.4743 6.19329C4.2143 6.45329 4.2143 6.87329 4.4743 7.13329L7.5343 10.1933C7.7943 10.4533 8.2143 10.4533 8.4743 10.1933L11.5343 7.13329C11.7943 6.87329 11.7943 6.45329 11.5343 6.19329C11.2743 5.93996 10.8476 5.93329 10.5876 6.19329Z"
+                      fill="#151B21"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_514_15263">
+                      <rect width="16" height="16" fill="white" />
+                    </clipPath>
+                  </defs>
                 </svg>
               </span>
             </Button>

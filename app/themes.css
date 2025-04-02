@@ -724,6 +724,7 @@
   --ring: 271 91% 65.1%;
   --radius: 0.6rem;
 }
+
 .dark .theme-violet {
   --background: 271 50% 10%;
   --foreground: 271 5% 90%;
@@ -763,7 +764,8 @@
   --border: 240 6% 90%;
   --input: 240 6% 90%;
 
-  --primary: 240 8% 25%; /* Adjusted to resemble Material UI's primary blue tones */
+  --primary: 240 8% 25%;
+  /* Adjusted to resemble Material UI's primary blue tones */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 240 6% 95%;
@@ -775,16 +777,19 @@
   --destructive: 0 80% 50%;
   --destructive-foreground: 0 0% 100%;
 
-  --ring: 240 8% 25%; /* Matches primary for a cohesive appearance */
+  --ring: 240 8% 25%;
+  /* Matches primary for a cohesive appearance */
 
-  --radius: 0; /* Removed rounded corners */
+  --radius: 0;
+  /* Removed rounded corners */
   --shadow-small: 0px 1px 3px rgba(0, 0, 0, 0.2);
   --shadow-medium: 0px 4px 6px rgba(0, 0, 0, 0.2);
   --shadow-large: 0px 10px 15px rgba(0, 0, 0, 0.2);
 }
 
 .dark .theme-material {
-  --background: 240 10% 6%; /* Material UI's dark background is slightly softer */
+  --background: 240 10% 6%;
+  /* Material UI's dark background is slightly softer */
   --foreground: 0 0% 98%;
 
   --muted: 240 4% 18%;
@@ -818,3 +823,133 @@
   --shadow-large: 0px 10px 15px rgba(0, 0, 0, 0.3);
 }
 
+
+.theme-default {
+  --background: 180 0% 100;
+  --background-subtle: 0 0% 100%;
+  --background-subtle-opacity: 1;
+  --background-disabled: 0 0% 85%;
+  --background-disabled-opacity: 1;
+  --background-disabledLight: 0 0% 85%;
+  --background-disabledLight-opacity: 0.2;
+  
+  --foreground: 240, 10%, 3.9%;
+
+
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 5% 45%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240, 10%, 3.9%;
+
+  --border: 0 0% 85%;
+  --border-opacity: 1;
+  --border-subtle: 0, 0%, 80%;
+  --border-subtle-opacity: 1;
+  --border-dark: 0 0% 60%;
+  --border-dark-opacity: 1;
+  --border-lighter: 41 100% 63%;
+  --border-lighter-opacity: 1;
+  --input: 240 6% 90%;
+
+  --primary: 29 100% 8%;
+  --primary-opacity: 1;
+  /* Adjusted to resemble Material UI's primary blue tones */
+  --primary-foreground: 0 0% 100%;
+  --primary-foreground-opacity: 1;
+  --primary-border: 29 100% 8%;
+  --primary-border-opacity: 1;
+
+  --secondary: 0 0% 100%;
+  --secondary-opacity: 1;
+  --secondary-foreground: 30 10% 4%;
+  --secondary-foreground-opacity: 1;
+  --secondary-border: 0 0% 90%;
+  --secondary-border-opacity: 1;
+
+  --tertiary: 25 100% 95%;
+  --tertiary-opacity: 1;
+  --tertiary-lighter: 49 100% 97%;
+  --tertiary-lighter-opacity: 1;
+  --tertiary-foreground: 28 100% 50%;
+  --tertiary-foreground-opacity: 1;
+  --tertiary-border: 28 100% 95%;
+  --tertiary-border-opacity: 1;
+
+
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 8% 25%;
+
+  --destructive: 4 88% 97%;
+  --destructive-opacity: 1;
+  --destructive-foreground: 0 98% 72%;
+  --destructive-foreground-opacity: 1;
+  --destructive-border: 0 98% 72%;
+  --destructive-border-opacity: 1;
+
+  --disabled: 0 0% 85%;
+  --disabled-opacity: 1;
+  --disabled-border: 0 0% 75%;
+  --disabled-border-opacity: 1;
+  --disabled-foreground: 0 0% 45%;
+  --disabled-foreground-opacity: 1;
+  --ring: 240 8% 25%;
+  /* Matches primary for a cohesive appearance */
+
+  --radius: 8px;
+  /* Removed rounded corners */
+  --shadow-small: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-large: 0px 10px 15px rgba(0, 0, 0, 0.2);
+
+  --text: 29 100% 8%;
+  --text-opacity: 1;
+  --text-body: 27 13% 43%;
+  --text-body-opacity: 1;
+  --text-subtitle: 26 15% 9%;
+  --text-subtitle-opacity: 1;
+  --text-caption: 33 12% 54%;
+  --text-caption-opacity: 1;
+  --text-negative: 0 98% 72%;
+  --text-negative-opacity: 1;
+  --text-disabled: 0 0% 60%;
+  --text-disabled-opacity: 1;
+
+  --chip: 144 71% 69%;
+  --chip-opacity: 1;
+  --chip-selected: 50 100% 80%;
+  --chip-selected-opacity: 1;
+  --chip-border: 0 98% 83%;
+  --chip-border-opacity: 1;
+  --chip--text: 0 0% 85%;
+  --chip-text-opacity: 1;
+  --chip-icon: 28 100% 80%;
+  --chip-icon-opacity: 1;
+  --chip-placeholder: 27 82% 2%;
+  --chip-placeholder-opacity: 1;
+
+
+  --label: 210 22% 11%;
+  --label-opacity: 1;
+
+  --ring-secondary: 28 100% 50%;
+  --ring-secondary-opacity: 1;
+
+  --error: 0 100% 67%;
+  --error-opacity: 1;
+
+  --warning: 40 96% 53%;
+  --warning-opacity: 1;
+
+  --upload-label: 0 66% 6%;
+  --upload-label-opacity: 1;
+  
+  --relation: 17 100% 90%;
+  --relation-opacity: 1;  
+
+
+
+}

@@ -79,21 +79,22 @@ export default () => {
       });
     });
     setItems(items);
+    // toDo:second nav issue
+    // it is because textIconSelected and texxtIcon are having same svg so we are not getting the effect.
+    // items.forEach((item, index) => {
+    //   console.log(`Item ${index}==== ${item.icon[0]}`);
+    // });
+    // console.log(items[1].textIconSelected)
+    // console.log(items[1].textIcon);
   }, [appOrAdminData, params.group, params.tenant, t]);
+  
 
   return (
     <Fragment>
-      {!params.id ? (
-        <SidebarIconsLayout label={{ align: "right" }} items={items}>
-          <Outlet />
-        </SidebarIconsLayout>
-      ) : (
-        <div className="sm:h-[calc(100vh-56px)]">
-          <div ref={mainElement} className="w-full overflow-x-hidden">
-            <Outlet />
-          </div>
-        </div>
-      )}
+
+      <SidebarIconsLayout label={{ align: "right" }} items={items}>
+        <Outlet />
+      </SidebarIconsLayout>
     </Fragment>
   );
 };

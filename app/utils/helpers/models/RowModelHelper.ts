@@ -1,11 +1,13 @@
 import UserModelHelper from "./UserModelHelper";
 
+const INCLUDE_MEDIA_FILE = true;
+
 const includeParentRows = {
   parent: {
     include: {
       createdByUser: { select: UserModelHelper.selectSimpleUserProperties },
       createdByApiKey: true,
-      values: { include: { media: true, multiple: true, range: true } },
+      values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
     },
   },
 };
@@ -14,12 +16,12 @@ const includeChildRowsNested = {
     include: {
       createdByUser: { select: UserModelHelper.selectSimpleUserProperties },
       createdByApiKey: true,
-      values: { include: { media: true, multiple: true, range: true } },
+      values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
       parentRows: {
         include: {
           parent: {
             include: {
-              values: { include: { media: true, multiple: true, range: true } },
+              values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
             },
           },
         },
@@ -28,7 +30,7 @@ const includeChildRowsNested = {
         include: {
           child: {
             include: {
-              values: { include: { media: true, multiple: true, range: true } },
+              values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
             },
           },
         },
@@ -40,7 +42,7 @@ const includeRowDetails = {
   ...UserModelHelper.includeSimpleCreatedByUser,
   createdByApiKey: true,
   tenant: true,
-  values: { include: { media: true, multiple: true, range: true } },
+  values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
   tags: { include: { tag: true } },
   parentRows: {
     include: includeParentRows,
@@ -57,12 +59,12 @@ const includeParentRowsNested = {
     include: {
       createdByUser: { select: UserModelHelper.selectSimpleUserProperties },
       createdByApiKey: true,
-      values: { include: { media: true, multiple: true, range: true } },
+      values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
       parentRows: {
         include: {
           parent: {
             include: {
-              values: { include: { media: true, multiple: true, range: true } },
+              values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
             },
           },
         },
@@ -71,7 +73,7 @@ const includeParentRowsNested = {
         include: {
           child: {
             include: {
-              values: { include: { media: true, multiple: true, range: true } },
+              values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
             },
           },
         },
@@ -83,7 +85,7 @@ const includeRowDetailsNested = {
   ...UserModelHelper.includeSimpleCreatedByUser,
   createdByApiKey: true,
   tenant: true,
-  values: { include: { media: true, multiple: true, range: true } },
+  values: { include: { media: INCLUDE_MEDIA_FILE, multiple: true, range: true } },
   tags: { include: { tag: true } },
   parentRows: {
     include: includeParentRowsNested,

@@ -108,12 +108,12 @@ const InputMultiText = (
   };
 
   return (
-    <div className={clsx(className, !darkMode && "")}>
+    <div className={clsx(className, !darkMode && "flex flex-col gap-[2px]")}>
       {withLabel && (
         <label htmlFor={name} className="mb-1 flex justify-between space-x-2 truncate text-xs font-medium">
           <div className="flex items-center space-x-1 truncate">
             <div className="flex space-x-1 truncate">
-              <div className="truncate">{title}</div>
+              <div className="text-body text-label truncate font-normal leading-5">{title}</div>
               {required && title && <div className="ml-1 text-red-500">*</div>}
             </div>
             <div className="">{help && <HintTooltip text={help} />}</div>
@@ -143,21 +143,7 @@ const InputMultiText = (
           </div>
         )}
         <div className="flex w-full flex-wrap items-center">
-          {actualValue?.map((tag, index) => (
-            <div key={index} className="border-border bg-secondary m-0.5 flex items-center rounded border px-2 py-2 text-sm">
-              <span>{tag}</span>
-              {!disabled && !readOnly && (
-                <button
-                  type="button"
-                  disabled={disabled}
-                  className="text-muted-foreground focus:text-foreground ml-2 flex-shrink-0"
-                  onClick={() => removeTag(index)}
-                >
-                  &#10005;
-                </button>
-              )}
-            </div>
-          ))}
+
 
           {!disabled && !readOnly && (
             <Input
@@ -196,7 +182,8 @@ const InputMultiText = (
               autoFocus={autoFocus}
               className={clsx(
                 "m-0.5 min-w-0 flex-1",
-                icon && "rounded-md pl-10"
+                icon && "rounded-md pl-10",
+                "rounded-lg"
                 // "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
                 // className,
                 // classNameBg,
@@ -205,6 +192,24 @@ const InputMultiText = (
               )}
             />
           )}
+          {actualValue?.map((tag, index) => (
+            <div
+              key={index}
+              className="mx-1 mt-2 flex  items-center gap-1 rounded-[6px]  border-[1px] border-[#E6E6E6] bg-[#F0F0F0] px-2 py-1 text-[12px] font-medium"
+            >
+              <span>{tag}</span>
+              {!disabled && !readOnly && (
+                <button type="button" disabled={disabled} className="focus:text-foreground ml-2 flex-shrink-0 text-[#0A0501]" onClick={() => removeTag(index)}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M9.66927 1.27594L8.72927 0.335938L5.0026 4.0626L1.27594 0.335938L0.335938 1.27594L4.0626 5.0026L0.335938 8.72927L1.27594 9.66927L5.0026 5.9426L8.72927 9.66927L9.66927 8.72927L5.9426 5.0026L9.66927 1.27594Z"
+                      fill="#1B1714"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          ))}
         </div>
         {button}
       </div>

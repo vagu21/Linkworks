@@ -39,7 +39,7 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
     <Fragment>
       <NewPageLayout
         className={className}
-        title={t("shared.create") + " " + t(data.entityData.entity.title)}
+        title={t("shared.addnew") + " " + t(data.entityData.entity.title)}
         menu={
           showBreadcrumb
             ? EntityHelper.getLayoutBreadcrumbsMenu({

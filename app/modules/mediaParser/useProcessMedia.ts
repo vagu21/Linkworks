@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { entityListData, saveTenantEducationHistory, saveTenantTechnicalSkills, saveTenantWorkExperience } from "./resume/entityapiService";
+import { entityListData, saveTenantEducationHistory, saveTenantProjects, saveTenantTechnicalSkills, saveTenantWorkExperience } from "./resume/entityapiService";
 import { generateJsonFromContent } from "./resume/resumeBot";
 import { generateJsonFromJD } from "./job/jobBot";
 import EntityHelper from "~/utils/helpers/EntityHelper";
@@ -8,12 +8,13 @@ import { RowWithDetails } from "~/utils/db/entities/rows.db.server";
 import { PropertyWithDetails } from "~/utils/db/entities/entities.db.server";
 import { RowValueDto } from "~/application/dtos/entities/RowValueDto";
 import { useParams } from "@remix-run/react";
-
+import toast from "react-hot-toast";
+import { PropertyType } from "~/application/enums/entities/PropertyType";
 type ProcessCandidateArgs = {
   addDynamicRow: (relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) => void;
   childrenEntities: { visible: EntityRelationshipWithDetails[]; hidden: EntityRelationshipWithDetails[] };
+  entityName?: string;
 };
-
 
 const propertyMappings = {
   description: "Description",
@@ -22,15 +23,15 @@ const propertyMappings = {
   numberOfOpenings: "No of openings",
   type: "Job-Type",
   remote: "Remote",
-  experience: "Experience",
+  // experience: "Experience",
   salaryType: "Salary-Type",
   salary: "Salary",
   category: "JobCategory",
   skills: "Skills",
   experienceLevel: "Experience-Level",
-  postedDate: "Posted Date",
-  applicationDeadline: "Job Deadline",
-  targetHiringDate: "Target Hiring Date",
+  applicationDeadline: "Job-Deadline",
+  postedDate: "Posted-Date",
+  targetHiringDate: "Target-Hiring-Date",
   educationalQualification: "Educational-Qualification",
   educationalSpecialization: "Educational-Specialization",
   currency: "Currency-Type",
@@ -59,12 +60,25 @@ const propertyMappingsResume = {
   universalAccountNumberUan: "universalAccountNumberUan",
   willingToRelocate: "willingToRelocate",
   pfNumber: "pfNumber",
+  skills: "CandidateSkills",
+  noticePeriod: "noticePeriod",
+  currentLocation: "currentLocation",
+  portfolio: "portfolioLink",
+  other: "otherProfileUrl",
+  referenceId: "referenceId",
+  referenceEmailId: "referenceEmail",
 };
 
-export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities = { visible: [], hidden: [] } }: ProcessCandidateArgs) => {
+const checkAIAvailability = (entityName: string = "") => {
+  return ["job"].includes(entityName.toLowerCase().trim());
+};
+
+export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities = { visible: [], hidden: [] }, entityName = "" }: ProcessCandidateArgs) => {
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const tenantSlug = params.tenant;
+
+  const isAIAvailable = checkAIAvailability(entityName);
 
   const loadPdfToText = async () => {
     const { default: pdfToText } = await import("react-pdftotext");
@@ -91,29 +105,50 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
     return file;
   };
 
+  const formatDate = (date: any): string | null => {
+    const [day, month, year] = date.split("-");
+    const formattedDate = new Date(`${year}-${month}-${day}`);
+
+    // If the date is invalid, return null
+    if (isNaN(formattedDate.getTime())) {
+      console.error("Invalid date format:", date);
+      return null;
+    }
+
+    return `${year}-${month}-${day}`;
+  };
+
   const processExtractedJson = (openAiJson: any, propertyMappings: any, entityProperties: PropertyWithDetails[], onChange: any) => {
     if (!openAiJson) return;
     Object.entries(openAiJson).forEach(([key, value]) => {
       const mappedKey = Object.keys(propertyMappings).find((k) => propertyMappings[k] === key) || key;
       const property = entityProperties.find((p) => p.name === mappedKey);
       if (!property) return;
-
-      const rowValue = {
+      const rowValue: any = {
         propertyId: property.id,
         property,
-        textValue: property.type === 1 ? value?.toString() : undefined,
-        numberValue: property.type === 0 ? parseFloat(value as any) : undefined,
-        dateValue: property.type === 2 ? validateDate(value as any) : undefined,
-        booleanValue: property.type === 10 ? Boolean(value) : undefined,
-        selectedOption: property.type === 8 ? value?.toString() : undefined,
+        textValue: property.type === PropertyType.TEXT ? value?.toString() : undefined,
+        numberValue: property.type === PropertyType.NUMBER ? parseFloat(value as any) : undefined,
+        dateValue: property.type === PropertyType.DATE ? validateDate(value as any) : undefined,
+        booleanValue: property.type === PropertyType.BOOLEAN ? Boolean(value) : undefined,
+        selectedOption: property.type === PropertyType.SELECT ? value?.toString() : undefined,
         multiple:
-          property.type === 12
+          property.type === PropertyType.MULTI_TEXT
             ? Array.isArray(value)
               ? value.map((v, index) => ({ value: v.toString(), id: "", order: index, rowValueId: "" }))
               : [{ value: [value].toString(), id: "", order: 0, rowValueId: "" }]
             : undefined,
-        media: property.type === 6 ? [value] : undefined,
+        media: property.type === PropertyType.MEDIA ? [value] : undefined,
       };
+
+      if (property.type === PropertyType.DATE && value) {
+        const formattedDate = formatDate(value);
+        if (formattedDate) {
+          rowValue.dateValue = formattedDate;
+        } else {
+          rowValue.dateValue = null;
+        }
+      }
       onChange(rowValue);
     });
   };
@@ -208,39 +243,37 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
         }
       }
 
-            
-
-      const technicalSkills = openAiJson.Skills || [];
-      const technicalSkillsSlugEntityTenant = { slug: "skills", onEdit: null };
-      const allTechnicalSkillsTent = await entityListData(
-        EntityHelper.getRoutes({ routes, entity: technicalSkillsSlugEntityTenant })?.list +
+      const project = openAiJson.Projects || [];
+      const projectSlugEntityTenant = { slug: "project", onEdit: null };
+      const allProjectsTent = await entityListData(
+        EntityHelper.getRoutes({ routes, entity: projectSlugEntityTenant })?.list +
           "?view=null?&_data=routes/app.$tenant/g.$group/$entity.__autogenerated/__$entity"
       );
 
-      if (!allTechnicalSkillsTent || !allTechnicalSkillsTent.rowsData || !allTechnicalSkillsTent.rowsData.views) {
-        console.error("Invalid allWorkExperience data structure:", allTechnicalSkillsTent);
+      if (!allProjectsTent || !allProjectsTent.rowsData || !allProjectsTent.rowsData.views) {
+        console.error("Invalid allWorkExperience data structure:", allProjectsTent);
       } else {
-        const technicalSkillsIds = await saveTenantTechnicalSkills(technicalSkills, allTechnicalSkillsTent, tenantSlug);
+        const projectIds = await saveTenantProjects(project, allProjectsTent, tenantSlug);
 
-        if (technicalSkillsIds.length > 0) {
-          for (const technicalSkillsId of technicalSkillsIds) {
+        if (projectIds.length > 0) {
+          for (const projectId of projectIds) {
             try {
-              const technicalSkillsRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "skills");
+              const projectRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "project");
 
-              if (technicalSkillsRelationEntity.length > 0) {
-                const technicalSkillsSlugEntity = { slug: "skills", onEdit: null };
-                const allTechnicalSkills = await entityListData(
-                  EntityHelper.getRoutes({ routes, entity: technicalSkillsSlugEntity })?.list +
+              if (projectRelationEntity.length > 0) {
+                const projectSlugEntity = { slug: "project", onEdit: null };
+                const allProjects = await entityListData(
+                  EntityHelper.getRoutes({ routes, entity: projectSlugEntity })?.list +
                     "?view=null?&_data=routes/app.$tenant/g.$group/$entity.__autogenerated/__$entity"
                 );
 
-                if (!allTechnicalSkills || !allTechnicalSkills.rowsData || !allTechnicalSkills.rowsData.items) {
+                if (!allProjects || !allProjects.rowsData || !allProjects.rowsData.items) {
                   throw new Error("Invalid employment data format");
                 }
 
-                const selectTechnicalSkills = allTechnicalSkills.rowsData.items.filter((id: any) => id.id === technicalSkillsId);
+                const selectProjects = allProjects.rowsData.items.filter((id: any) => id.id === projectId);
 
-                addDynamicRow(technicalSkillsRelationEntity[0], selectTechnicalSkills);
+                addDynamicRow(projectRelationEntity[0], selectProjects);
               }
             } catch (error) {
               console.error("Error processing work experience:", error);
@@ -250,22 +283,35 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
           }
         }
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const parseJobData = async (onChange: (values: RowValueDto) => void, media: any, item: any, entity: any) => {
+  
+  const parseJobData = async (onChange: (values: RowValueDto) => void, media: any, item: any, entity: any, JDUserInput?: any) => {
     setIsLoading(true);
     try {
-      const validFile = await extractFileFromMedia(media);
-      if (!validFile) return;
-      const pdfToText = await loadPdfToText();
-      const extractedText = await pdfToText(validFile);
-      const openAiJson = await generateJsonFromJD(extractedText);
+      let openAiJson;
+      if (media) {
+        const validFile = await extractFileFromMedia(media);
+        if (!validFile) return;
+        const pdfToText = await loadPdfToText();
+        const extractedText = await pdfToText(validFile);
+        openAiJson = await generateJsonFromJD(extractedText, false);
+      } else {
+        if (!JDUserInput || !JDUserInput.length) {
+          toast.error("Please enter Job Description to proceed");
+          return; // Check if JDUserInput is not undefined or empty
+        }
+
+        openAiJson = await generateJsonFromJD(JDUserInput, true);
+        if (openAiJson?.error) {
+          toast.error(openAiJson.error);
+          return;
+        }
+      }
       processExtractedJson(openAiJson, propertyMappings, entity.properties, onChange);
     } catch (error) {
       console.error("Error parsing job data:", error);
@@ -274,16 +320,16 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
     }
   };
 
-  const parseMediaFile = async (headers: any, onChange: any, media: any, item: any, entity: any, routes: any) => {
+  const parseMediaFile = async (headers: any, onChange: any, media: any, item: any, entity: any, routes: any, JDUserInput?: any) => {
     if (!entity) {
       console.warn("Entity is undefined");
       return;
     }
-  
+
     try {
       switch (entity.name) {
         case "Job":
-          await parseJobData(onChange, media, item, entity);
+          await parseJobData(onChange, media, item, entity, JDUserInput);
           break;
         case "Candidate":
           await parseResumeData(onChange, media, item, entity, routes);
@@ -295,7 +341,6 @@ export const useProcessMediaFile = ({ addDynamicRow = () => {}, childrenEntities
       console.error("Error occurred while parsing media file:", error);
     }
   };
-  
 
-  return { parseMediaFile, isLoading };
+  return { parseMediaFile, isLoading, isAIAvailable };
 };

@@ -8,6 +8,7 @@ import NovelEditor from "~/modules/novel/ui/editor";
 import { PromptFlowWithDetails } from "~/modules/promptBuilder/db/promptFlows.db.server";
 import { Input } from "../input";
 import { Textarea } from "../textarea";
+import { CurrencyInput } from "~/custom/components/currencyInput";
 
 export interface RefInputText {
   input: RefObject<HTMLInputElement> | RefObject<HTMLTextAreaElement>;
@@ -61,6 +62,7 @@ export type InputTextProps = (WithDefaultValue | WithValueAndSetValue) & {
   promptFlows?: { rowId: string | undefined; prompts: PromptFlowWithDetails[] } | undefined;
   hideChars?: boolean;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  isCurrency?: boolean;
 };
 const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
   const {
@@ -84,6 +86,7 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
     hint,
     rows,
     button,
+
     // lowercase,
     // uppercase,
     type = "text",
@@ -105,6 +108,7 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
     promptFlows,
     hideChars,
     onPaste,
+    isCurrency = false
   } = props;
 
   const { t, i18n } = useTranslation();
@@ -154,12 +158,12 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
   }
 
   return (
-    <div className={clsx(className, !darkMode && "")}>
+    <div className={clsx(className, !darkMode && "flex flex-col gap-[2px]")}>
       {withLabel && title && (
         <label htmlFor={name} className="mb-1 flex justify-between space-x-2 truncate text-xs font-medium">
           <div className="flex flex-shrink-0 items-center space-x-1 truncate">
-            <div className="flex space-x-1 truncate">
-              <div className="truncate">{title}</div>
+            <div className="flex space-x-1 truncate ">
+              <div className="truncate text-body font-normal text-label">{title}</div>
               {required && title && <div className="ml-1 text-red-500">*</div>}
             </div>
             <div className="">{help && <HintTooltip text={help} />}</div>
@@ -178,7 +182,7 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
           {/* {editor === "wysiwyg" && <ChangeEditorSize value={actualEditorSize} onChange={(value) => setActualEditorSize(value)} />} */}
         </label>
       )}
-      <div className={clsx("relative flex w-full rounded-md")}>
+       <div className={clsx("relative flex w-full rounded-md")}>
         {editor === "monaco" && editorLanguage ? (
           <>
             <textarea hidden readOnly name={name} value={actualValue} />
@@ -264,7 +268,7 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
               placeholder={placeholder}
               pattern={pattern !== "" && pattern !== undefined ? pattern : undefined}
               autoFocus={autoFocus}
-              className={clsx(className)}
+              className={clsx(className, 'rounded-lg')}
               // className={clsx(
               //   "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
               //   className,
@@ -279,7 +283,8 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
             />
             {button}
           </>
-        ) : (
+        ) : 
+        (
           <Textarea
             rows={rows}
             ref={textArea}
@@ -299,18 +304,19 @@ const InputText = (props: InputTextProps, ref: Ref<RefInputText>) => {
             readOnly={readOnly}
             placeholder={placeholder}
             autoFocus={autoFocus}
-            // className={clsx(
-            //   "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
-            //   className,
-            //   classNameBg,
-            //   disabled || readOnly ? "cursor-not-allowed bg-gray-100" : "hover:bg-gray-50 focus:bg-gray-50",
-            //   borderless && "border-transparent",
-            //   isError && "border-red-300 bg-red-100 text-red-900",
-            //   isSuccess && "bg-real-100 border-real-300 text-real-900"
-            // )}
+          // className={clsx(
+          //   "focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded-md border-gray-300 sm:text-sm",
+          //   className,
+          //   classNameBg,
+          //   disabled || readOnly ? "cursor-not-allowed bg-gray-100" : "hover:bg-gray-50 focus:bg-gray-50",
+          //   borderless && "border-transparent",
+          //   isError && "border-red-300 bg-red-100 text-red-900",
+          //   isSuccess && "bg-real-100 border-real-300 text-real-900"
+          // )}
           />
         )}
-      </div>
+     
+  </div>
     </div>
   );
 };

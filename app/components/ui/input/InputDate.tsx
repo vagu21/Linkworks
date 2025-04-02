@@ -106,10 +106,10 @@ const InputDate = (
   }, [actualValue]);
 
   return (
-    <div className={clsx(className, !darkMode && "")}>
+    <div className={clsx(className, !darkMode && "flex flex-col gap-[2px]")}>
       <label htmlFor={name} className="flex justify-between space-x-2 text-xs font-medium">
         <div className=" flex items-center space-x-1">
-          <div className="truncate">
+          <div className="truncate text-body font-normal text-label">
             {title}
             {required && <span className="ml-1 text-red-500">*</span>}
           </div>

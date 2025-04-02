@@ -1,9 +1,12 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useParams } from "@remix-run/react";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import UrlUtils from "~/utils/app/UrlUtils";
 import Tabs from "../tabs/Tabs";
 import EntityIcon from "~/components/layouts/icons/EntityIcon";
+import SecondaryMenu, { SecondaryNavMenuItem } from "~/custom/components/SideNav/SecondaryMenu";
+import { useTitleData } from "~/utils/data/useTitleData";
+import { useAppOrAdminData } from "~/utils/data/useAppOrAdminData";
 
 export type IconDto = {
   name: string;
@@ -17,6 +20,7 @@ export type IconDto = {
   textIconSelected?: string;
   hidden?: boolean;
 };
+
 export default function SidebarIconsLayout({
   children,
   items,
@@ -32,6 +36,11 @@ export default function SidebarIconsLayout({
 }) {
   const location = useLocation();
   const [currentTab, setCurrentTab] = useState<IconDto>();
+  const title = useTitleData();
+  const appOrAdminData = useAppOrAdminData();
+  const params = useParams();
+  const group = useMemo(() => appOrAdminData.entityGroups.find((f) => f.slug === params.group), [appOrAdminData.entityGroups, params.group]);
+
 
   const mainElement = useRef<HTMLDivElement>(null);
   // useElementScrollRestoration({ apply: scrollRestoration ?? false }, mainElement);
@@ -48,11 +57,114 @@ export default function SidebarIconsLayout({
     setCurrentTab(current);
   }, [items, location.pathname, location.search]);
 
+  const NEW_NAV_THEME = true;
+
+  if (NEW_NAV_THEME) {
+    return (
+      <SecondaryMenu
+        title={title || ''}
+        icon={group?.icon}
+        menuItems={({ isCollapsed }) => (
+          <>
+          <div className="flex flex-col h-full"> 
+            {items
+              .filter((f) => !f.bottom && !f.hidden)
+              .map((item, idx) => {
+                const current = currentTab?.name === item.name;
+                return (
+                  <Link
+                    key={idx}
+                    prefetch={item.prefetch}
+                    to={item.href}
+                    className={clsx(
+                      "py-1 cursor-pointer block w-full",
+                      // current ? " border-border bg-secondary" : "text-muted-foreground border-transparent",
+                      //label ? "w-11" : "lg:w-auto lg:justify-start",
+                      label?.align === "bottom" && "flex-col space-y-1",
+                      label?.align === "right" && "flex-row space-x-2"
+                    )}
+                  >
+                    <SecondaryNavMenuItem
+                      label={(
+                        <>
+                          {<span className={clsx([item.icon, item.iconSelected, item.textIcon, item.textIconSelected].some((f) => f !== undefined) && "block")}>{item.name}</span>}
+                        </>
+                      )}
+                      labelText={item.name}
+                      active={current}
+                      isCollapsed={isCollapsed}
+                      icon={
+                        <>
+                          {item.textIcon !== undefined && item.textIconSelected !== undefined ? (
+                            <div>
+                              {current ? <EntityIcon className="h-5 w-5 " icon={item.textIconSelected} /> : <EntityIcon className="h-5 w-5 " icon={item.textIcon} />}
+                            </div>
+                          ) : (
+                            <div>{current ? item.iconSelected : item.icon}</div>
+                          )}
+                        </>
+                      }
+                    // {...item}
+                    // current={currentTab?.name === item.name}
+                    // label={label}
+                    />
+                    {/* {label !== undefined && (
+                      <div className={clsx([item.icon, item.iconSelected, item.textIcon, item.textIconSelected].some((f) => f !== undefined) && "hidden lg:block")}>{item.name}</div>
+                    )} */}
+                  </Link>
+
+                )
+              })}
+
+            {/* Render bottom items separately */}
+            {items.filter((f) => f.bottom && !f.hidden).length > 0 && (
+              <div className="mt-auto">
+                {items
+                  .filter((f) => f.bottom && !f.hidden)
+                  .map((item, idx) => {
+                    const current = currentTab?.name === item.name;
+                    return (
+                      <Link key={idx} prefetch={item.prefetch} to={item.href} className="py-1 cursor-pointer block w-full">
+                        <SecondaryNavMenuItem
+                          label={<span>{item.name}</span>}
+                          labelText={item.name}
+                          active={current}
+                          isCollapsed={isCollapsed}
+                          icon={<>{current ? item.iconSelected : item.icon}</>}
+                        />
+                      </Link>
+                    );
+                  })}
+              </div>
+            )}
+
+            <div className="border-border bg-background w-full border-b py-2 shadow-sm sm:hidden">
+              <div className="mx-auto flex max-w-5xl items-center justify-between space-x-2 px-4 sm:px-6 lg:px-8 xl:max-w-7xl 2xl:max-w-screen-2xl">
+                <Tabs
+                  tabs={items
+                    .filter((f) => !f.hidden)
+                    .map((i) => {
+                      return { name: i.name, routePath: i.href };
+                    })}
+                  className="flex-grow"
+                />
+              </div>
+            </div>
+            </div>
+          </>
+        )}
+      >
+        {children}
+      </SecondaryMenu>
+      // </div>
+    );
+  }
+
   return (
     <div className="sm:flex sm:h-[calc(100vh-56px)] sm:flex-row">
       <div
         className={clsx(
-          "lg:min-w-[180px] border-border hidden flex-none flex-col items-center justify-between overflow-y-auto border-r shadow-sm sm:flex",
+          "border-border hidden flex-none flex-col items-center justify-between overflow-y-auto border-r shadow-sm sm:flex lg:min-w-[180px]",
           label?.align === "bottom" && "lg:text-center"
         )}
       >
@@ -132,11 +244,7 @@ function IconLink({
       >
         {textIcon !== undefined && textIconSelected !== undefined ? (
           <div>
-            {current ? (
-              <EntityIcon className="h-5 w-5 text-black" icon={textIconSelected} />
-            ) : (
-              <EntityIcon className="h-5 w-5 text-gray-400" icon={textIcon} />
-            )}
+            {current ? <EntityIcon className="h-5 w-5 text-black" icon={textIconSelected} /> : <EntityIcon className="h-5 w-5 text-gray-400" icon={textIcon} />}
           </div>
         ) : (
           <div>{current ? iconSelected : icon}</div>

@@ -8,6 +8,8 @@ import CodingIcon from "~/components/ui/icons/entities/CodingIcon";
 import CodingIconFilled from "~/components/ui/icons/entities/CodingIconFilled";
 import FolderIcon from "~/components/ui/icons/entities/FolderIcon";
 import FolderIconFilled from "~/components/ui/icons/entities/FolderIconFilled";
+import GraphIcon from "~/components/ui/icons/entities/GraphIcon";
+import GraphIconFilled from "~/components/ui/icons/entities/GraphIconFilled";
 import ModulesIcon from "~/components/ui/icons/entities/ModulesIcon";
 import ModulesIconFilled from "~/components/ui/icons/entities/ModulesIconFilled";
 import RestApiIcon from "~/components/ui/icons/entities/RestApiIcon";
@@ -94,6 +96,12 @@ export default () => {
           href: "/admin/entities/api",
           icon: <RestApiIcon className="h-5 w-5" />,
           iconSelected: <RestApiIconFilled className="h-5 w-5" />,
+        },
+        {
+          name: "Graphs",
+          href: "/admin/entities/graphs",
+          icon: <GraphIcon className="h-5 w-5" />,
+          iconSelected: <GraphIconFilled className="h-5 w-5" />,
         },
         {
           name: "Fake Rows",

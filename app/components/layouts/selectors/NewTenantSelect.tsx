@@ -1,13 +1,29 @@
+import { PrimaryNavUserProfile } from "~/custom/components/SideNav/PrimaryNavUserProfile";
 import { useAppData } from "~/utils/data/useAppData";
 
 interface Props {
+  newNavTheme?: boolean;
+  isCollapsed?: boolean;
   onOpenCommandPalette: () => void;
 }
 
-export default function NewTenantSelect({ onOpenCommandPalette }: Props) {
+export default function NewTenantSelect({ newNavTheme = false, isCollapsed = false, onOpenCommandPalette }: Props) {
   const appData = useAppData();
   if (!appData.currentTenant) {
     return null;
+  }
+  if(newNavTheme) {
+    return (
+      <PrimaryNavUserProfile
+        user={appData?.user}
+        tenentIcon={appData?.currentTenant?.icon}
+        tenentName={appData?.currentTenant?.name}
+        accountEmail={appData?.user.email}
+        isCollapsed={isCollapsed}
+        onClick={onOpenCommandPalette}
+        layout="app"
+      />
+    )
   }
   return (
     <>
@@ -18,13 +34,13 @@ export default function NewTenantSelect({ onOpenCommandPalette }: Props) {
               {appData?.currentTenant?.icon ? (
                 <img className="inline-block h-9 w-9 shrink-0 rounded-full shadow-sm" src={appData?.currentTenant?.icon} alt={appData?.currentTenant?.name} />
               ) : (
-                <span className="bg-primary inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
+                <span className="bg-selectRelationBtn inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
                   <span className="text-primary-foreground text-sm font-medium leading-none">{appData?.currentTenant?.name.substring(0, 1)}</span>
                 </span>
               )}
               <div className="ml-3 truncate">
-                <p className="text-sm font-medium">{appData?.currentTenant?.name}</p>
-                <p className="text-white truncate text-xs font-normal">{appData?.user.email}</p>
+                <p className="text-sm- text-black font-medium">{appData?.currentTenant?.name}</p>
+                <p className="text-black truncate text-xs font-normal">{appData?.user.email}</p>
               </div>
             </div>
             {/* <svg

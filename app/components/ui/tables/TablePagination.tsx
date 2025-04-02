@@ -20,7 +20,6 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
   const [state, setState] = useState<{ page: number; pageSize: number | undefined }>({ page, pageSize });
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(0);
-  // const submit = useSubmit();
   const navigation = useNavigation();
   const loading = navigation.state === "loading" || navigation.state === "submitting";
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,12 +58,12 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
 
   return (
     <div
-      className="flex items-center justify-end border-t bg-gray-50 px-4 py-3 text-xs uppercase tracking-wide text-gray-500 sm:justify-between"
+      className="font-xs flex items-center justify-end px-3 py-3  text-xs font-normal tracking-wide text-black text-opacity-60 sm:justify-between"
       aria-label="Pagination"
     >
       <div className="hidden sm:block">
         {totalItems > 0 && (
-          <button type="button" onClick={() => setShowPageSizeModal(true)} className="uppercase hover:underline">
+          <button type="button" onClick={() => setShowPageSizeModal(true)} className="hover:underline">
             {t("shared.showing")} <span className="font-medium">{totalItems === 0 ? 0 : from}</span> {t("shared.to")} <span className="font-medium">{to}</span>{" "}
             {t("shared.of")} <span className="font-medium">{totalItems}</span> {t("shared.results")}
           </button>
@@ -75,13 +74,13 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
           id="pageSize"
           name="pageSize"
           className={clsx(
-            "focus:border-accent-500 focus:ring-accent-500 inline-flex items-center justify-center rounded border border-gray-200 bg-white text-xs",
-            page === 1 || loading ? "cursor-not-allowed opacity-90" : "hover:border-gray-300 hover:bg-gray-50"
+            "inline-flex cursor-pointer items-center justify-center rounded border border-gray-200 bg-white text-xs focus:border-gray-200 focus:outline-none focus:ring-0",
+            page === 1 || loading ? "opacity-90" : "hover:border-gray-300 hover:bg-gray-50"
           )}
           onChange={(e) => setState({ ...state, page: 1, pageSize: Number(e.target.value) })}
           value={state.pageSize}
         >
-          {[undefined, ...Constants.PAGE_SIZE_OPTIONS].map((f, idx) => {
+          {[...Constants.PAGE_SIZE_OPTIONS].map((f, idx) => {
             return (
               <option key={idx} value={Number(f ?? Constants.DEFAULT_PAGE_SIZE)} className="lowercase">
                 {f === undefined ? Constants.DEFAULT_PAGE_SIZE : f} {t("shared.perPage")?.toLowerCase()}
@@ -95,8 +94,8 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
             disabled={page === 1 || loading}
             onClick={() => setState({ ...state, page: page - 1 })}
             className={clsx(
-              "inline-flex h-8 w-8 items-center justify-center rounded border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-500",
-              page === 1 || loading ? "cursor-not-allowed opacity-90" : "hover:border-gray-300 hover:bg-gray-50"
+              "inline-flex h-8 w-8  cursor-pointer items-center justify-center rounded border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-500",
+              page === 1 || loading ? "opacity-50" : "hover:border-gray-300 hover:bg-gray-50"
             )}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
@@ -117,7 +116,7 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
               value={state.page}
               onChange={(e) => setState({ ...state, page: parseInt(e.target.value) })}
               onBlur={() => setShowPageNumberModal(false)}
-              className="focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded border-gray-200 text-xs"
+              className="focus:ring-0w-full min-w-0 flex-1 rounded border-gray-200 text-xs focus:border-gray-200 focus:outline-none"
             />
           ) : (
             <button type="button" onClick={() => setShowPageSizeModal(true)} className={clsx("uppercase hover:underline")}>
@@ -130,8 +129,8 @@ export default function TablePagination({ page, pageSize, totalItems, totalPages
           <button
             type="button"
             className={clsx(
-              "inline-flex h-8 w-8 items-center justify-center rounded border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-500",
-              page >= totalPages || loading ? "cursor-not-allowed opacity-90" : "hover:border-gray-300 hover:bg-gray-50"
+              "inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded border  border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-500",
+              page >= totalPages || loading ? "opacity-50" : "hover:border-gray-300 hover:bg-gray-50"
             )}
             disabled={page >= totalPages || loading}
             onClick={() => setState({ ...state, page: page + 1 })}
@@ -238,20 +237,3 @@ function PageOptionsForm({
     </form>
   );
 }
-
-// function PageSize({ number, onSelected }: { number?: number; onSelected: () => void }) {
-//   const { t } = useTranslation();
-//   const [searchParams] = useSearchParams();
-//   return (
-//     <button onClick={onSelected} className="w-full bg-white p-2 text-center text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-900">
-//       <div className="flex items-center justify-center space-x-2">
-//         {number === undefined ? <div className="text-gray-400">{t("shared.default")}</div> : <div>{number}</div>}
-//         <div>
-//           {searchParams.get("pageSize") === number?.toString() || (number === undefined && !searchParams.get("pageSize")) ? (
-//             <CheckIcon className="h-3 w-3 text-teal-500" />
-//           ) : null}
-//         </div>
-//       </div>
-//     </button>
-//   );
-// }

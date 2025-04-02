@@ -12,7 +12,7 @@ interface Props {
 export default function InfoBanner({ title = "Note", text = "", redirect, children }: Props) {
   const { t } = useTranslation();
   return (
-    <div className="not-prose rounded-md border border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-900">
+    <div className="not-prose rounded-md border border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-900 mb-[20px]">
       <div className="rounded-md p-4">
         <div className="flex">
           <div className="flex-shrink-0">

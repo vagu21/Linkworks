@@ -14,12 +14,15 @@ import PromptBuilderService from "~/modules/promptBuilder/services/.server/Promp
 import { EntityView } from "@prisma/client";
 import { PromptExecutionResultDto } from "~/modules/promptBuilder/dtos/PromptExecutionResultDto";
 import { getRowsInIds } from "~/utils/db/entities/rows.db.server";
+import { GraphApi } from "~/custom/modules/graphs/routes/api/graphRoutes.Index.Api";
+import { getChartConfigWithChartData } from "~/custom/modules/graphs/utils";
 
 export namespace Rows_List {
   export type LoaderData = {
     meta: MetaTagsDto;
     rowsData: RowsApi.GetRowsData;
     routes: EntitiesApi.Routes;
+    chartConfig: any;
   };
   export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const { time, getServerTimingHeader } = await createMetrics({ request, params }, `[Rows_List] ${params.entity}`);
@@ -46,6 +49,7 @@ export namespace Rows_List {
       meta: [{ title: `${t(entity.titlePlural)} | ${process.env.APP_NAME}` }],
       rowsData,
       routes: EntitiesApi.getNoCodeRoutes({ request, params }),
+      chartConfig: await getChartData(params, tenantId, request),
     };
     return json(data, { headers: getServerTimingHeader() });
   };
@@ -133,4 +137,13 @@ export namespace Rows_List {
       return json({ error: t("shared.invalidForm") }, { status: 400, headers: getServerTimingHeader() });
     }
   };
+}
+
+
+async function getChartData(params: any, tenantId: string | null, request: Request) {
+  const graphapi = new GraphApi();
+  const chartConfigs = await graphapi.getEntityGraphConfig(params.tenant || "", params.entity || "", params.group || "");
+  await getChartConfigWithChartData(chartConfigs, tenantId, request);
+
+  return chartConfigs;
 }

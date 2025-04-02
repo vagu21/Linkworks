@@ -30,6 +30,7 @@ import ScriptInjector from "./modules/shared/scripts/ScriptInjector";
 import ScriptRewardful from "./modules/shared/scripts/ScriptRewardful";
 import ScriptCrisp from "./modules/shared/scripts/ScriptCrisp";
 import ScriptAnalytics from "./modules/shared/scripts/ScriptAnalytics";
+
 export { serverTimingHeaders as headers };
 
 export const handle = { i18n: "translations" };
@@ -96,7 +97,9 @@ function Document({ children, lang = "en", dir = "ltr" }: { children: React.Reac
         )}
         {rootData.appConfiguration?.auth.recaptcha.enabled && <script src="https://www.google.com/recaptcha/api.js" async defer></script>}
         <ScriptRewardful />
-
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={""} />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"></link>
         <Links />
       </head>
 

@@ -19,7 +19,9 @@ export default function AppLayout({ layout, children, type = "new" }: Props) {
     type = "old";
   }
   return (
-    <div>
+    <div >
+      {/* style={{ backgroundImage: `url(${AppBg})`, backgroundSize: 'cover' }} */}
+      {/* <img className="fixed inset-0 object-cover z-[-1] h-screen w-screen" src={AppBg} alt="app background" /> */}
       <CommandPalette key={layout} layout={layout}>
         {type === "new" ? <NewSidebarLayout layout={layout}>{children}</NewSidebarLayout> : <SidebarLayout layout={layout}>{children}</SidebarLayout>}
       </CommandPalette>

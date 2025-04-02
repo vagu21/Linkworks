@@ -38,7 +38,9 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
         <select
           id="tabs"
           name="tabs"
-          className="block w-full rounded-md border-gray-300 focus:border-accent-500 focus:ring-accent-500"
+          // className="block w-full rounded-md border-gray-300 focus:border-accent-500 focus:ring-accent-500"
+          className="block w-full rounded-md border-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300"
+
           value={tabs.find((tab) => tab.current)?.name}
           onChange={(e) => {
             const tab = tabs.find((tab) => tab.name === e.target.value);
@@ -65,10 +67,11 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
           breakpoint === "2xl" && "hidden 2xl:block"
         )}
       >
-        <div className="border-b border-border">
+        {/* <div className="border-b border-border"> */}
+        <div className="w-full  border-[#F0F0F0]">
           <nav
             className={clsx(
-              "-mb-px flex space-x-4",
+              "-mb-px flex space-x-8 w-full",
               justify === "start" && "justify-start",
               justify === "center" && "justify-center",
               justify === "end" && "justify-end",
@@ -83,8 +86,8 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
                     key={tab.name}
                     to={tab.href}
                     className={clsx(
-                      tab.current ? "border-accent-500 text-accent-600" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "group inline-flex items-center space-x-2 border-b-2 px-1 py-2 text-sm font-medium",
+                      tab.current ? "border-b-2 border-[#151B21] text-[#151B21] text-xs font-semibold" : "border-b-2 font-normal border-transparent text-xs text-[rgba(0,0,0,0.60)] text-opacity-5 ",
+                      "group inline-flex  w-full   items-center space-x-2 border-b-2 px-1 py-4 text-xs font-normal transition-colors duration-200",
                       tab.className
                     )}
                     aria-current={tab.current ? "page" : undefined}
@@ -98,8 +101,8 @@ export default function TabsWithIcons({ tabs, className, justify, breakpoint = "
                     type="button"
                     onClick={tab.onClick}
                     className={clsx(
-                      tab.current ? "border-accent-500 text-accent-600" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "group inline-flex w-full items-center space-x-2 border-b-2 px-1 py-2 text-sm font-medium",
+                      tab.current ? "border-b-2 border-[#151B21] text-[#151B21] text-xs  font-semibold " : "border-b-2 border-transparent font-normal text-xs text-[rgba(0,0,0,0.60)] text-opacity-5",
+                      "group inline-flex w-full items-center space-x-2 border-b-2 px-1 py-4 text-xs font-normal transition-colors duration-200",
                       tab.className
                     )}
                     aria-current={tab.current ? "page" : undefined}
