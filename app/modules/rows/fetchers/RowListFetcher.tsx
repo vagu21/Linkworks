@@ -32,10 +32,9 @@ interface Props {
   allEntities: EntityWithDetails[];
   distinct: boolean;
   titleop?: string | ReactNode;
-  onClose?:any;
 }
 
-export default function RowListFetcher({ titleop,onClose, currentView, listUrl, newUrl, parentEntity, onSelected, multipleSelection, allEntities, distinct = false }: Props) {
+export default function RowListFetcher({ titleop, currentView, listUrl, newUrl, parentEntity, onSelected, multipleSelection, allEntities, distinct = false }: Props) {
   const { t } = useTranslation();
   const fetcher = useTypedFetcher<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
   const [data, setData] = useState<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
@@ -101,7 +100,6 @@ export default function RowListFetcher({ titleop,onClose, currentView, listUrl, 
             onSelected([newRow]);
           }}
           allEntities={allEntities}
-          onClose={onClose}
         />
         </>
     );
@@ -118,7 +116,7 @@ export default function RowListFetcher({ titleop,onClose, currentView, listUrl, 
       ) : !data?.rowsData ? (
         <div>No data</div>
       ) : data?.rowsData ? (
-        <div className="space-y-2 px-6">
+        <div className="space-y-2">
           <div className="flex items-center justify-between space-x-2 mb-[24px]">
             <div className="text-lg font-bold text-gray-800">{t(data.rowsData?.entity.titlePlural)}</div>
 
@@ -211,7 +209,7 @@ export default function RowListFetcher({ titleop,onClose, currentView, listUrl, 
         onClose={() => setAdding(false)}
         size="5xl"
       >
-        <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} onClose={() => setAdding(false)} allEntities={allEntities} />
+        <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} allEntities={allEntities} />
       </SlideOverWideEmpty>
     </div>
   );

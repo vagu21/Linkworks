@@ -401,7 +401,7 @@ function Table<T extends any>({
                             className={clsx(
                               "text-text-strong cursor-pointer whitespace-nowrap border-b-2 border-[#eaeaea] text-sm font-normal ",
                               idxHeader == 0 && "sticky left-0 bg-inherit",
-                              idxHeader === headers.length - 1 && "sticky right-0 bg-inherit",
+                              idxHeader === headers.length - 1 && "sticky right-0 z-10 bg-inherit",
                               idxHeader === headers.length - 1 && entityTitle === "Candidate" && "flex !w-20 justify-center",
                               padding,
                               "w-48"

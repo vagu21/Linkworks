@@ -688,7 +688,6 @@ const RowForm = (
             multipleSelection={selectedRelatedEntity.multiple}
             allEntities={allEntities.filter(e => e.id !== entity.id)} // Exclude current entity from the list
             distinct={searchingRelationshipRows.distinct}
-            onClose={() => setSearchingRelationshipRows(undefined)}
           />
         )}
       </SlideOverWideEmpty>
@@ -1115,7 +1114,7 @@ function RowGroups({
   }, [groups]);
 
   return (
-    <div className={`grid w-full-[50px] gap-4 sm:grid-cols-1 md:grid-cols-1 relative px-6`}>
+    <div className={`grid w-full-[50px] gap-4 sm:grid-cols-1 md:grid-cols-1 relative`}>
       {groups.map(({ group, headers }, originalIndex) => {
         const isMediaGroup = headers.some((h) => h.property.type === PropertyType.MEDIA);
         const isLast = (originalIndex === groups.length-1);
