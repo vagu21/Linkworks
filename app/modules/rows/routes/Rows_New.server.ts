@@ -83,11 +83,11 @@ export namespace Rows_New {
         );
         if (params.entity == "account") {
           const enabled = form.get("enabled");
-          if (enabled == "true") {
-            const numberOfUsers = Number(form.get("numberOfUsers"));
-            if (numberOfUsers == 0) {
-              return json({ error: "Add atleast one company Member" });
-            }
+          if (enabled=="true") {
+              const numberOfUsers = Number(form.get("numberOfUsers"));
+              if (numberOfUsers==0) {
+                return json({ error: "Add atleast one company Member" });
+              }
             sendInvitation(form, newRow.id, params, userId, request);
           }
         }

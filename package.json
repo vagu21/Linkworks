@@ -10,7 +10,7 @@
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,css,md,json}": "prettier --write",
     "**/*.{js,jsx,ts,tsx}": "eslint --fix",
-    "**/*.{ts,tsx}": "bash -c \"tsc -p tsconfig.json --pretty\""
+    "**/*.{ts,tsx}": "tsc --noEmit"
   },
   "scripts": {
     "dev": "remix vite:dev",

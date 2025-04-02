@@ -39,14 +39,14 @@ export default function ConditionsGroupsInfo({
       {block.conditionGroups.map((group) => {
         return (
           <div key={group.index} className="space-y-0.5">
-            {type === "switch" && <div className="text-xs font-medium uppercase text-gray-500">Case #{group.index + 1}</div>}
+            {type === "switch" && <div className="font-medium text-xs text-gray-500 uppercase">Case #{group.index + 1}</div>}
             <div
               onClick={() => setSelectedConditionsGroup(group)}
               className={clsx(
-                "group relative cursor-pointer rounded-lg border border-dashed border-gray-500 px-2 py-2 text-sm hover:border-dotted focus:outline-none",
+                "border border-dashed hover:border-dotted rounded-lg px-2 py-2 text-sm focus:outline-none cursor-pointer border-gray-500 relative group",
                 group.conditions.length === 0
-                  ? "border-red-300 bg-red-50 text-red-800 hover:border-red-800 hover:bg-red-100"
-                  : "border-gray-300 bg-white hover:border-gray-800 hover:bg-gray-100"
+                  ? "bg-red-50 hover:bg-red-100 border-red-300 text-red-800 hover:border-red-800"
+                  : "bg-white hover:bg-gray-100 border-gray-300 hover:border-gray-800"
               )}
             >
               {type === "switch" && (
@@ -55,9 +55,9 @@ export default function ConditionsGroupsInfo({
                     e.stopPropagation();
                     onDeleteGroup(group.index);
                   }}
-                  className="absolute right-2 top-2.5 hidden rounded-md text-gray-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 group-hover:block"
+                  className="rounded-md text-gray-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 absolute top-2.5 right-2 hidden group-hover:block"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -72,8 +72,8 @@ export default function ConditionsGroupsInfo({
                     <div className="font-medium">No conditions</div>
                   </div>
                 ) : group.conditions.length === 1 ? (
-                  <div className=" flex flex-col items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-2 text-center">
-                    <div key={group.index} className="flex items-center space-x-2">
+                  <div className=" flex justify-center flex-col text-center items-center p-2 bg-gray-100 border border-gray-300 rounded-md">
+                    <div key={group.index} className="flex space-x-2 items-center">
                       <div className="font-medium">{WorkflowConditionUtils.getConditionString(group.conditions[0])}</div>
                     </div>
                   </div>
@@ -91,7 +91,7 @@ export default function ConditionsGroupsInfo({
         <button
           type="button"
           onClick={() => setAddingNewGroup(true)}
-          className="rounded-md border border-gray-300 bg-gray-50 px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"
+          className="bg-gray-50 hover:bg-gray-100 border border-gray-300 px-2 py-1 rounded-md text-gray-600 text-xs"
         >
           Add case
         </button>

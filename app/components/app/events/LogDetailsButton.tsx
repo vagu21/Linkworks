@@ -33,7 +33,7 @@ export default function LogDetailsButton({ item }: { item: LogWithDetails }) {
               onClick={() => {
                 navigator.clipboard.writeText(item.details ?? "");
               }}
-              className="bg-theme-100 text-theme-700 hover:bg-theme-200 focus:ring-theme-500 inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="inline-flex items-center rounded-md border border-transparent bg-theme-100 px-3 py-2 text-sm font-medium leading-4 text-theme-700 hover:bg-theme-200 focus:outline-none focus:ring-2 focus:ring-theme-500 focus:ring-offset-2"
             >
               {t("shared.copy")}
             </button>

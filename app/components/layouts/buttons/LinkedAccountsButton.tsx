@@ -18,12 +18,12 @@ export default function LinkedAccountsButton() {
             <Link
               to={UrlUtils.currentTenantUrl(params, "settings/linked-accounts")}
               className={clsx(
-                "hover:bg-theme-300 hover:text-theme-800 focus:bg-theme-400 focus:text-theme-900 focus:ring-theme-100 focus:ring-offset-theme-50 relative inline-flex items-center rounded-full border border-gray-100 bg-gray-50 p-2 font-medium text-gray-500 shadow-inner focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                "relative inline-flex items-center rounded-full border border-gray-100 bg-gray-50 p-2 font-medium text-gray-500 shadow-inner hover:bg-theme-300 hover:text-theme-800 focus:z-10 focus:bg-theme-400 focus:text-theme-900 focus:outline-none focus:ring-2 focus:ring-theme-100 focus:ring-offset-2 focus:ring-offset-theme-50",
                 appData.pendingInvitations > 0 &&
-                  "border-theme-300 bg-theme-50 text-theme-900 hover:bg-theme-100 hover:text-theme-800 focus:bg-theme-200 focus:text-theme-900 focus:ring-theme-100 focus:ring-offset-theme-50 flex space-x-2 px-3 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                  "flex space-x-2 border-theme-300 bg-theme-50 px-3 text-theme-900 hover:bg-theme-100 hover:text-theme-800 focus:z-10 focus:bg-theme-200 focus:text-theme-900 focus:outline-none focus:ring-2 focus:ring-theme-100 focus:ring-offset-2 focus:ring-offset-theme-50",
                 !appData.pendingInvitations ||
                   (appData.pendingInvitations === 0 &&
-                    " hover:bg-theme-300 hover:text-theme-800 focus:bg-theme-400 focus:text-theme-900 focus:ring-theme-50 focus:ring-offset-theme-50 border-gray-100 bg-gray-50 text-gray-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2")
+                    " border-gray-100 bg-gray-50 text-gray-800 hover:bg-theme-300 hover:text-theme-800 focus:z-10 focus:bg-theme-400 focus:text-theme-900 focus:outline-none focus:ring-2 focus:ring-theme-50 focus:ring-offset-2 focus:ring-offset-theme-50")
               )}
               aria-haspopup="listbox"
               aria-expanded="true"

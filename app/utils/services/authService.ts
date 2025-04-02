@@ -237,7 +237,7 @@ interface CreateUserAndTenantDto {
   avatarURL?: string;
   locale?: string;
   slug?: string;
-  roles?: string[];
+  roles?:string[];
   isAzureLogin?: boolean;
 }
 export async function createUserAndTenant({
@@ -254,7 +254,7 @@ export async function createUserAndTenant({
   avatarURL,
   locale,
   slug,
-  roles = [],
+  roles,
   isAzureLogin,
 }: CreateUserAndTenantDto) {
   let tenantName = company ?? email.split("@")[0];
@@ -287,9 +287,11 @@ export async function createUserAndTenant({
     throw Error("Could not create user");
   }
   const allRoles = await getAllRoles("app");
-  const matchedRoles = allRoles.filter((appRole) => roles?.includes(appRole.name));
+  const matchedRoles = allRoles.filter((appRole) => roles.includes(appRole.name));
   const rolesToAssign = matchedRoles.length > 0 ? matchedRoles : [];
-  const userType = roles?.some((role: any) => role.name === "owner" || role.name === "OWNER") ? TenantUserType.OWNER : TenantUserType.MEMBER;
+  const userType = roles.some((role: any) => role.name === 'owner' || role.name === 'OWNER') 
+  ? TenantUserType.OWNER 
+  : TenantUserType.MEMBER;
 
   await createTenantUser(
     {

@@ -65,7 +65,7 @@ export type CreateFormulaDto = {
     type: string;
     value: string;
   }[];
-};
+}
 export async function createFormula(data: CreateFormulaDto): Promise<Formula> {
   return await db.formula.create({
     data: {

@@ -60,7 +60,7 @@ export default function FloatingLoader({ loading }: Props) {
           leaveTo="opacity-0"
         >
           <div className="pointer-events-auto w-64 max-w-sm overflow-hidden rounded-lg bg-white p-2 shadow-lg ring-1 ring-black ring-opacity-5">
-            <div className="space-y-2 pb-2 pt-2 text-center">
+            <div className="space-y-2 pt-2 pb-2 text-center">
               <div className="flex h-auto w-full items-center space-x-4 px-3 text-center">
                 <div className=" loader h-10 w-10 flex-shrink-0 rounded-full border-4 border-t-4 border-slate-200 text-left ease-linear"></div>
                 <div className="flex flex-col truncate text-gray-600">

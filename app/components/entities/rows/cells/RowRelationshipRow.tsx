@@ -27,7 +27,9 @@ export default function RowRelationshipRow({
           {RowHelper.getTextDescription({ entity: entity, item, t })}
         </button>
       ) : (
-        <div className="hover truncate text-left text-sm">{RowHelper.getTextDescription({ entity: entity, item, t })}</div>
+        <div className="hover truncate text-left text-sm">
+          {RowHelper.getTextDescription({ entity: entity, item, t })}
+        </div>
       )}
     </Fragment>
   );

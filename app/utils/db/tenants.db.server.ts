@@ -416,7 +416,7 @@ export async function createTenant({
       return existingTenants[0]; // You may want to add logic to join the user to this tenant
     }
   }
-
+  
   slug = await getAvailableTenantSlug({ name, slug });
   const inboundAddress = await getAvailableTenantInboundAddress(name);
   const tenant = await db.tenant.create({

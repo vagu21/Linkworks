@@ -1,3 +1,5 @@
+
+
 export async function generateJsonFromContent(extractedText: string) {
   const prompt = `
 Summarize the candidate details below into a JSON with exactly the following structure{
@@ -70,16 +72,18 @@ Candidate Details:
 ${extractedText}
 `;
 
-  const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-  const data = await fetch(`${serverUrl}/api/open-AI`, {
+const serverUrl=import.meta.env.VITE_PUBLIC_SERVER_URL
+const data = await fetch(`${serverUrl}/api/open-AI`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({ prompt }),
-  });
+    body: JSON.stringify({ prompt })
+  })
 
-  const response = await data.json();
+
+  const response=await data.json();
   return response;
+
 }

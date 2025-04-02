@@ -28,20 +28,23 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
   async function getCompanyRoles() {
     try {
       const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-      const data: any = await fetch(`${serverUrl}/api/getCompanyRoles`, {
-        headers: {
+      const data :any= await fetch(`${serverUrl}/api/getCompanyRoles`,{
+        headers:{
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        credentials: 'include',
       });
-      if (data.ok) {
-        const response = await data.json();
-        console.log("response", response);
-        setCompanyRoles(response);
-      }
+            if(data.ok)
+            {
+      const response=await data.json();
+      console.log("response",response);
+      setCompanyRoles(response);
+            }
     } catch (error) {
       throw error;
     }
+
+  
   }
   useEffect(() => {
     getCompanyRoles();
@@ -103,7 +106,7 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
     form.firstName = firstName;
     form.lastName = lastName;
     form.sendInvitationEmail = sendEmail;
-    form.roles = selectedRoles;
+    form.roles=selectedRoles;
     console.log("form", form);
     setCompanyUserFormValues([...companyUserFormValues, form]);
     setOpen(false);
@@ -202,6 +205,7 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
                 </div>
                 {/*User Last Name: End */}
 
+
                 <div className="col-span-2">
                   <InputCheckboxWithDescription
                     name="send-invitation-email"
@@ -213,23 +217,23 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
                 </div>
               </div>
               <div className="space-y-2 pt-2 ">
-                {companyRoles?.map((role: any) => (
-                  <InputCheckboxWithDescription
-                    key={role.name}
-                    name={role.name}
-                    title={role.name}
-                    description={role.description}
-                    value={selectedRoles.includes(role.id)}
-                    setValue={(e) => {
-                      if (e) {
-                        setSelectedRoles((f) => [...f, role.id]);
-                      } else {
-                        setSelectedRoles((f) => f.filter((f) => f !== role.id));
-                      }
-                    }}
-                  />
-                ))}
-              </div>
+              {companyRoles?.map((role: any) => (
+                <InputCheckboxWithDescription
+                  key={role.name}
+                  name={role.name}
+                  title={role.name}
+                  description={role.description}
+                  value={selectedRoles.includes(role.id)}
+                  setValue={(e) => {
+                    if (e) {
+                      setSelectedRoles((f) => [...f, role.id]);
+                    } else {
+                      setSelectedRoles((f) => f.filter((f) => f !== role.id));
+                    }
+                  }}
+                />
+              ))}
+            </div>
 
               <div className="mt-4 flex items-center justify-between">
                 <div className="text-theme-700 text-sm">{loading && <div>{t("shared.loading")}...</div>}</div>
@@ -250,7 +254,7 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
                     onClick={() => {
                       handleSubmitNewUser();
                     }}
-                    disabled={selectedRoles?.length === 0}
+                    disabled={selectedRoles?.length === 0 }
                     className={clsx(
                       "bg-primary hover:bg-primary/90 focus:ring-primary inline-flex items-center space-x-2 border border-transparent px-3 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:rounded-md sm:text-sm",
                       loading && "cursor-not-allowed opacity-50"
@@ -269,6 +273,7 @@ const CompanyMemberTable = ({ companyUserFormValues, setCompanyUserFormValues }:
                         /> */}
             {/* <button onClick={()=>setShowNewUserForm(true)}>New</button> */}
             {}
+            
           </div>
         </div>
       </SlideOverWideEmpty>

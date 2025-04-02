@@ -27,7 +27,7 @@ export default function ColumnSelector({ items, setItems, onClear, className }: 
     <div ref={clickOutside} className={clsx("relative", className)}>
       <button
         onClick={() => setOpened(!opened)}
-        className="focus:border-accent-500 focus:ring-accent-500 relative z-0 inline-flex rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
+        className="relative z-0 inline-flex rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
       >
         <span className={clsx("relative inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-2 py-3 font-medium text-gray-600")}>
           <div>

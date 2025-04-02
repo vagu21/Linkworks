@@ -16,7 +16,7 @@ export async function getEntityNameById(entityId: any) {
   try {
     const entity = await db.entity.findUnique({
       where: { id: entityId },
-      select: { name: true },
+      select: { name: true }
     });
     return entity ? entity.name : null;
   } catch (error) {

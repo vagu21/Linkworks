@@ -1,8 +1,9 @@
 import { rowFetcher } from "../rowFetcher";
 
+
 export async function generateJD(id: any) {
-  const data: any = await rowFetcher(id, "Job");
-  let bg = data?.status == "Open" ? "#00921D" : data?.status === "Closed" ? "#D92B2B" : "#000000";
+  const data: any = await rowFetcher(id,"Job");
+  let bg=data?.status == "Open" ? "#00921D" : data?.status === "Closed" ? "#D92B2B" : "#000000";
   function headerSection() {
     return `
       <div class="bg-[#F5F7FB]">
@@ -15,11 +16,7 @@ export async function generateJD(id: any) {
         <div class="px-[24px]">
           <p class="mb-[6px] text-[12px] font-medium leading-[16.88px] text-[#3C3C3C]">${data?.Account?.name || '<span style="color: #A0A0A0;">N/A</span>'}</p>
           <div class="flex flex-col items-start gap-[4px] sm:flex-row sm:items-center">
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${
-              data?.Contact?.firstName || '<span style="color: #A0A0A0;">N/A</span>'
-            } ${data?.Contact?.lastName || '<span style="color: #A0A0A0;">N/A</span>'} | ${
-      data?.Contact?.phone || '<span style="color: #A0A0A0;">N/A</span>'
-    }</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C75]">Primary contact: <span class="text-[#3C3C3C]"> ${data?.Contact?.firstName || '<span style="color: #A0A0A0;">N/A</span>'} ${data?.Contact?.lastName || '<span style="color: #A0A0A0;">N/A</span>'} | ${data?.Contact?.phone || '<span style="color: #A0A0A0;">N/A</span>'}</span></p>
 
           </div>
           <hr class="mt-[12px]" />
@@ -27,32 +24,30 @@ export async function generateJD(id: any) {
       </div>
     `;
   }
-
+  
   function jobDetailsSection() {
     return `
       <div class="mb-[24px] flex justify-between px-[24px] bg-[#F5F7FB]">
         <div class="flex items-center gap-[6px]">
           <div>
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Posted:<span class="font-semibold text-[#3C3C3C]"> ${new Date(
-              data?.postedDate
-            ).toLocaleDateString()}</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Posted:<span class="font-semibold text-[#3C3C3C]"> ${new Date(data?.postedDate).toLocaleDateString()}</span></p>
           </div>
           <div class="hidden h-[10px] w-[1px] border border-[#3C3C3C94] sm:block"></div>
           <div>
-            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Openings:<span class="font-semibold text-[#3C3C3C]"> ${
-              data?.numberOfOpenings || '<span style="color: #A0A0A0;">N/A</span>'
-            }</span></p>
+            <p class="text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Openings:<span class="font-semibold text-[#3C3C3C]"> ${data?.numberOfOpenings || '<span style="color: #A0A0A0;">N/A</span>'}</span></p>
           </div>
         </div>
         <div class="mt-[22px]">
           <p class="mb-[24px] text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">Target date:<span class="font-semibold text-[#3C3C3C]"> ${
-            data?.targetHiringDate ? new Date(data.targetHiringDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'
+            data?.targetHiringDate
+              ? new Date(data.targetHiringDate).toLocaleDateString()
+              : '<span style="color: #A0A0A0;">N/A</span>'
           } </span></p>
         </div>
       </div>
     `;
   }
-
+  
   function experienceAndSalarySection() {
     return `
       <div class="px-[24px]">
@@ -67,14 +62,12 @@ export async function generateJD(id: any) {
           </div>
           <div class="flex flex-col gap-[8px]">
             <p class="text-[10px] font-semibold leading-[18px] text-[#3E6AF2]">Salary</p>
-            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency || '<span style="color: #A0A0A0;">N/A</span>'} ${
-      data?.salary || '<span style="color: #A0A0A0;">N/A</span>'
-    } / ${data?.salaryType || '<span style="color: #A0A0A0;">N/A</span>'}</p>
+            <p class="text-[10px] font-medium leading-[14.08px] text-[#3C3C3C]">${data?.currency ||'<span style="color: #A0A0A0;">N/A</span>' } ${data?.salary || '<span style="color: #A0A0A0;">N/A</span>'} / ${data?.salaryType || '<span style="color: #A0A0A0;">N/A</span>'}</p>
           </div>
         </div>
     `;
   }
-
+  
   function jobDescriptionSection() {
     return `
       <div class="mb-[48px]">
@@ -85,7 +78,8 @@ export async function generateJD(id: any) {
       </div>
     `;
   }
-
+  
+  
   function jobDetailsFooterSection() {
     return `
       <div class="mb-6 grid grid-cols-1 gap-[14px]">
@@ -111,7 +105,8 @@ export async function generateJD(id: any) {
       <hr />
     `;
   }
-
+  
+  
   function skillsSection() {
     return `
       <div class="mb-[25px] mt-[24px]">
@@ -121,30 +116,37 @@ export async function generateJD(id: any) {
             data?.skills && data.skills.length > 0
               ? data.skills
                   .map(
-                    (skill: any) =>
+                    (skill:any) =>
                       `<span class="rounded-[5px] bg-[#EFF2F8] px-[8px] py-[2px] text-[10px] font-normal leading-[18px] text-[#3C3C3C]">${skill}</span>`
                   )
-                  .join("")
+                  .join('')
               : '<span class="rounded-[5px] bg-[#EFF2F8] px-[8px] py-[2px] text-[10px] font-normal leading-[18px] text-[#3C3C3C]">N/A</span>'
           }
         </div>
       </div>
     `;
   }
-
+  
+  
+  
   function applicationDeadlineSection() {
     return `
       <div class="">
         <p class="mb-[8px] text-center text-[10px] font-medium leading-[14.06px] text-[#3C3C3C94]">
           Job deadline: 
           <span class="text-[10px] font-semibold leading-[14.06px] text-[#3C3C3C]">
-            ${data?.applicationDeadline ? new Date(data.applicationDeadline).toLocaleDateString() : '<span style="color: #A0A0A0; font-size: 8px;">N/A</span>'}
+            ${
+              data?.applicationDeadline
+                ? new Date(data.applicationDeadline).toLocaleDateString()
+                : '<span style="color: #A0A0A0; font-size: 8px;">N/A</span>'
+            }
           </span>
         </p>
       </div>
     `;
   }
-
+  
+  
   function footerSection() {
     return `
       <div class="flex justify-between bg-[#D6DCE8] px-[24px] py-[16px]">
@@ -186,7 +188,7 @@ export async function generateJD(id: any) {
       </div>
     `;
   }
-
+  
   function generateJobDescriptionHTML() {
     return `
     <!doctype html>
@@ -213,5 +215,6 @@ export async function generateJD(id: any) {
     `;
   }
 
+  
   return generateJobDescriptionHTML();
 }

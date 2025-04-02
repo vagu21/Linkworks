@@ -96,7 +96,7 @@ export default function GridPagination({ page, pageSize, totalItems, totalPages,
             value={state.page}
             onChange={(e) => setState({ ...state, page: parseInt(e.target.value) })}
             onBlur={() => setShowPageNumberModal(false)}
-            className="focus:border-accent-500 focus:ring-accent-500 block w-full min-w-0 flex-1 rounded border-gray-200 text-xs"
+            className="block w-full min-w-0 flex-1 rounded border-gray-200 text-xs focus:border-accent-500 focus:ring-accent-500"
           />
         ) : (
           <button type="button" onClick={() => setShowPageSizeModal(true)} className={clsx("uppercase hover:underline")}>

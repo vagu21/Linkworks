@@ -22,7 +22,7 @@ export default function KbFeaturedArticles({ kb, items }: { kb: KnowledgeBaseDto
             <Link
               to={item.href}
               key={item.id}
-              className="border-border bg-background hover:bg-secondary hover:border-secondary-foreground rounded-md border px-3 py-4 shadow-sm"
+              className="rounded-md border border-border bg-background px-3 py-4 shadow-sm hover:bg-secondary hover:border-secondary-foreground"
             >
               <div className="flex items-center justify-between space-x-2">
                 <div className="flex-grow font-medium">{item.title}</div>

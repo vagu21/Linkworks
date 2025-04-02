@@ -24,7 +24,7 @@ export default function NewTenantSelect({ onOpenCommandPalette }: Props) {
               )}
               <div className="ml-3 truncate">
                 <p className="text-sm font-medium">{appData?.currentTenant?.name}</p>
-                <p className="truncate text-xs font-normal text-white">{appData?.user.email}</p>
+                <p className="text-white truncate text-xs font-normal">{appData?.user.email}</p>
               </div>
             </div>
             {/* <svg

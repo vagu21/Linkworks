@@ -370,12 +370,11 @@ export async function register(data: {
   azureId?: string;
   avatarURL?: string;
   locale?: string;
-  companyId?: string | null;
+  companyId?: string| null;
   defaultTenantId?: string | null;
   request: Request;
-  roles?: string[];
 }) {
-  const { email, password, firstName, lastName, active, githubId, googleId, azureId, avatarURL, locale, defaultTenantId, companyId } = data;
+  const { email, password, firstName, lastName, active, githubId, googleId,azureId, avatarURL, locale, defaultTenantId,companyId } = data;
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
     data: {

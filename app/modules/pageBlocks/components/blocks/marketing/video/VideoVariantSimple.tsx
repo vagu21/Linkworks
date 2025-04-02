@@ -5,7 +5,7 @@ export default function VideoVariantSimple({ item }: { item: VideoBlockDto }) {
   const { t } = useTranslation();
   return (
     <div>
-      <div className="mx-auto max-w-7xl px-4 py-12 text-center sm:px-6 lg:px-8 lg:py-24">
+      <div className="mx-auto max-w-7xl py-12 px-4 text-center sm:px-6 lg:px-8 lg:py-24">
         <div className="space-y-8 sm:space-y-12">
           {(item.headline || item.subheadline) && (
             <div className="space-y-5 sm:mx-auto sm:max-w-xl sm:space-y-4 lg:max-w-5xl">

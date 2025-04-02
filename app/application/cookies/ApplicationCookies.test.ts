@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import {describe, it, expect} from 'vitest'
 import { CookieCategory } from "./CookieCategory";
 import { allApplicationCookies, allCookieCategories } from "./ApplicationCookies";
 
@@ -17,7 +17,12 @@ describe("CookieData", () => {
 
   describe("allCookieCategories", () => {
     it("should contain all categories present in allApplicationCookies", () => {
-      const expectedCategories = [CookieCategory.REQUIRED, CookieCategory.FUNCTIONAL, CookieCategory.ANALYTICS, CookieCategory.ADVERTISEMENT];
+      const expectedCategories = [
+        CookieCategory.REQUIRED,
+        CookieCategory.FUNCTIONAL,
+        CookieCategory.ANALYTICS,
+        CookieCategory.ADVERTISEMENT,
+      ];
       expect(allCookieCategories).toEqual(expectedCategories);
     });
   });

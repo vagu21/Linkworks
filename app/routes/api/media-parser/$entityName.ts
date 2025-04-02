@@ -15,8 +15,9 @@ export const action = async ({ request, params }: any) => {
     if (!tenantSlug) {
       return json({ error: "Tenant slug is missing" }, { status: 400 });
     }
+    
 
-    const tenantId: string | null = (await getTenantByIdOrSlug(tenantSlug)) as string | null;
+    const tenantId : string|null = await getTenantByIdOrSlug(tenantSlug)  as string|null;
     if (!tenantId) {
       return json({ error: `Tenant with slug '${tenantSlug}' not found` }, { status: 404 });
     }

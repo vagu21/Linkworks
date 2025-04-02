@@ -323,8 +323,8 @@ const getTextDescription = ({
 }): string => {
   const descriptions: string[] = [];
   entity.properties
-    .filter((f) => !f.isDefault && f.isDisplay)
-    .forEach((property) => {
+  .filter((f) => !f.isDefault && f.isDisplay)
+      .forEach((property) => {
       const value = getValueAsString({ entity, item, property, t });
       if (value) {
         descriptions.push(value);

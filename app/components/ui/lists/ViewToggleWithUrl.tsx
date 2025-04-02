@@ -34,7 +34,7 @@ export default function ViewToggleWithUrl({ defaultView, className }: Props) {
         onClick={() => onChange("table")}
         type="button"
         className={clsx(
-          "focus:border-accent-500 focus:ring-accent-500 relative inline-flex items-center rounded-l-md border border-gray-300 px-4 py-2.5 font-medium hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-1 sm:text-sm",
+          "relative inline-flex items-center rounded-l-md border border-gray-300 px-4 py-2.5 font-medium hover:bg-gray-100 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 sm:text-sm",
           view === "table" ? "bg-accent-100 text-accent-500" : "bg-white text-gray-700"
         )}
       >
@@ -44,7 +44,7 @@ export default function ViewToggleWithUrl({ defaultView, className }: Props) {
         onClick={() => onChange("board")}
         type="button"
         className={clsx(
-          "focus:border-accent-500 focus:ring-accent-500 relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 px-4 py-2.5 text-sm font-medium hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-1",
+          "relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 px-4 py-2.5 text-sm font-medium hover:bg-gray-100 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500",
           view === "board" ? "bg-accent-100 text-accent-500" : "bg-white text-gray-700"
         )}
       >

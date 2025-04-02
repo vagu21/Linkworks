@@ -130,7 +130,7 @@ export default function InboundEmailRoute() {
                           download={item.name}
                           target="_blank"
                           rel="noreferrer"
-                          className="hover:text-theme-500 truncate underline"
+                          className="truncate underline hover:text-theme-500"
                         >
                           {item.name}
                         </a>

@@ -32,7 +32,7 @@ export async function createUserInvitation(
     firstName: string;
     lastName: string;
     companyId?: string | null;
-    roles?: [];
+    roles?:[];
     type: TenantUserType;
     fromUserId: string | null;
   }

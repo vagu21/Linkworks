@@ -29,7 +29,7 @@ export default function KbRoutesArticleView() {
     });
   }
   return (
-    <div className="bg-background text-foreground min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       <KbHeader kb={data.kb} withTitleAndDescription={false} withSearch={false} />
 
       <div className="mx-auto max-w-5xl px-8 py-8">

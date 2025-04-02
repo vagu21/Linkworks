@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import {describe, test, expect} from 'vitest'
 import { getStatChangePercentage, getStatChangeType } from "./DashboardUtils";
 import { StatChange } from "~/application/dtos/stats/StatChange";
 
@@ -27,7 +27,7 @@ describe("getStatChangeType", () => {
   });
 
   test("returns StatChange.Decrease when change is negative", () => {
-    expect(getStatChangeType(-5, 10)).toBe(StatChange.Decrease);
+    expect(getStatChangeType(-5, 10)).toBe(StatChange.Decrease);    
     expect(getStatChangeType(-2, 2)).toBe(StatChange.Decrease);
   });
 });

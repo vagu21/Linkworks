@@ -27,7 +27,7 @@ export default function CommunityVariantSimple({ item }: { item: CommunityBlockD
                           target="_blank"
                           rel="noreferrer"
                           className={clsx(
-                            "group flex w-full items-center justify-center space-x-2 truncate rounded-md border px-8 py-3 text-base font-medium hover:bg-gray-100 md:px-4 md:py-2 dark:hover:bg-gray-900"
+                            "group flex w-full items-center justify-center space-x-2 truncate rounded-md border px-8 py-3 text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-900 md:px-4 md:py-2"
                           )}
                         >
                           {t(item.text)}
@@ -36,7 +36,7 @@ export default function CommunityVariantSimple({ item }: { item: CommunityBlockD
                         <Link
                           to={item.href}
                           className={clsx(
-                            "group flex w-full items-center justify-center space-x-2 truncate rounded-md border px-8 py-3 text-base font-medium hover:bg-gray-100 md:px-4 md:py-2 dark:hover:bg-gray-900"
+                            "group flex w-full items-center justify-center space-x-2 truncate rounded-md border px-8 py-3 text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-900 md:px-4 md:py-2"
                           )}
                         >
                           {t(item.text)}

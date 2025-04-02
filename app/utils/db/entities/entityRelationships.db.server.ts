@@ -9,7 +9,7 @@ export type EntityRelationshipWithDetails = EntityRelationship & {
   child: { id: string; name: string; title: string; titlePlural: string; slug: string; onEdit: string | null };
   childEntityView: EntityViewWithDetails | null;
   parentEntityView: EntityViewWithDetails | null;
-  distinct: boolean;
+  distinct: EntityRelationship | null;
 };
 
 export type EntityRelationshipWithCount = EntityRelationshipWithDetails & {
@@ -155,7 +155,7 @@ export async function createEntityRelationship({
   required: boolean;
   cascade: boolean;
   readOnly: boolean;
-  distinct: boolean;
+  distinct:boolean;
   hiddenIfEmpty: boolean;
   childEntityViewId: string | null;
   parentEntityViewId: string | null;
@@ -192,7 +192,7 @@ export async function updateEntityRelationship(
     hiddenIfEmpty?: boolean;
     childEntityViewId?: string | null;
     parentEntityViewId?: string | null;
-    distinct?: boolean;
+    distinct?:boolean;
   }
 ) {
   return await db.entityRelationship.update({

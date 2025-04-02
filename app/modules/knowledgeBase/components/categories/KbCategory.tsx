@@ -10,7 +10,7 @@ import ColorGroupHoverUtils from "~/utils/shared/colors/ColorGroupHoverUtils";
 import { useTranslation } from "react-i18next";
 
 export default function KbCategory({ kb, item, allCategories }: { kb: KnowledgeBaseDto; item: KbCategoryDto; allCategories: KbCategoryDto[] }) {
-  const { t } = useTranslation();
+  const {t} = useTranslation()
   const params = useParams();
   return (
     <div className="space-y-6">
@@ -52,7 +52,7 @@ export default function KbCategory({ kb, item, allCategories }: { kb: KnowledgeB
               )}
               <div className="text-xl font-bold md:text-2xl">{item.title}</div>
             </div>
-            <div className="text-muted-foreground mt-2 font-normal">{item.description}</div>
+            <div className="mt-2 font-normal text-muted-foreground">{item.description}</div>
             {/* <div className="mt-6 flex items-center space-x-2 justify-between">
               <div className="flex items-center space-x-2">
                 <div className="text-sm">
@@ -65,7 +65,7 @@ export default function KbCategory({ kb, item, allCategories }: { kb: KnowledgeB
         </div>
       </div>
 
-      <div className="border-border border-b"></div>
+      <div className="border-b border-border"></div>
 
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-3 hidden space-y-3 md:block">

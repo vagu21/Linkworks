@@ -26,7 +26,7 @@ type LoaderData = {
   title: string;
   group: EntityGroupWithDetails;
   stats: Stat[];
-  dashboardStatsData: any;
+  dashboardStatsData: any
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -53,7 +53,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
     group,
     stats,
-    dashboardStatsData: !params.entity && params.group === "recruitment" ? await getDashBoardData({ request, params }) : null,
+    dashboardStatsData: !params.entity && params.group === "recruitment" ? await getDashBoardData({ request, params }) : null, 
   };
   return json(data);
 };
@@ -63,13 +63,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.t
 export default function GroupIndexRoute() {
   const { t } = useTranslation();
   const data = useTypedLoaderData<LoaderData>();
-  const { group, entity } = useParams();
+  const {group,entity}=useParams();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setDashboardData(data);
-  }, [group, entity, searchParams]);
+  }, [group,entity,searchParams]);
 
   return (
     <EditPageLayout>
@@ -100,7 +100,7 @@ export default function GroupIndexRoute() {
               />
             </div>
           </div>
-          {group == "recruitment" ? <></> : <DashboardStats items={data.stats} />}
+          {group=='recruitment'?<></>:<DashboardStats items={data.stats} />}
           {entity == undefined && group == "recruitment" && dashboardData?.dashboardStatsData && (
             <div className="  mx-auto max-w-5xl space-y-3 px-4 pt-3 sm:px-6 lg:px-8 xl:max-w-7xl 2xl:max-w-screen-2xl">
               <Suspense

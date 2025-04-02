@@ -25,6 +25,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const data: LoaderData = {
     title: `${t(group.title)} | ${process.env.APP_NAME}`,
+
   };
   return json(data);
 };
@@ -39,6 +40,8 @@ export default () => {
   const data = useTypedLoaderData<LoaderData>();
   const mainElement = useRef<HTMLDivElement>(null);
   // useElementScrollRestoration({ apply: false }, mainElement);
+
+
 
   useEffect(() => {
     const group = appOrAdminData.entityGroups.find((f) => f.slug === params.group);

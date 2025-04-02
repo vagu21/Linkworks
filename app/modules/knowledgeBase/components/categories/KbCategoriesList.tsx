@@ -15,7 +15,7 @@ export default function KbCategoriesList({ kb, items }: { kb: KnowledgeBaseDto; 
       <div className={clsx("grid grid-cols-1 gap-4")}>
         {items.map((item) => {
           return (
-            <div key={item.title} className="border-border bg-background hover:bg-secondary hover:border-secondary-foreground group rounded-md border">
+            <div key={item.title} className="group rounded-md border border-border bg-background hover:bg-secondary hover:border-secondary-foreground">
               <Link to={item.href} className="w-full">
                 <div className="flex items-center space-x-8 p-6">
                   <div className="flex-shrink-0">
@@ -37,7 +37,7 @@ export default function KbCategoriesList({ kb, items }: { kb: KnowledgeBaseDto; 
                   </div>
                   <div className="flex w-full flex-col">
                     <div className="font-bold">{item.title}</div>
-                    <div className="text-muted-foreground mt-1 text-sm">{item.description}</div>
+                    <div className="mt-1 text-sm text-muted-foreground">{item.description}</div>
                     <div className="mt-6 flex items-center justify-between space-x-2">
                       <div className="flex items-center space-x-2">
                         <div className="text-sm">

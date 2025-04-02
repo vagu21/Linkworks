@@ -33,7 +33,7 @@ export default function PreviewModals() {
   return (
     <div className="border border-dashed border-gray-300 bg-white p-6">
       <div id="modals" className="w-full space-y-2">
-        <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-x-4 sm:space-y-0">
+        <div className="mx-auto flex max-w-3xl flex-col items-center justify-center space-y-4 sm:flex-row sm:items-end sm:justify-center sm:space-y-0 sm:space-x-4">
           <ButtonSecondary onClick={() => showSuccessModal()}>Success Modal</ButtonSecondary>
           <ButtonSecondary onClick={() => showErrorModal()}>Error Modal</ButtonSecondary>
           <ButtonSecondary onClick={() => showConfirmModal()}>Confirm Modal</ButtonSecondary>

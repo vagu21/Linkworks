@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate, useParams } from "@remix-run/react";
 import RowForm from "~/components/entities/rows/RowForm";

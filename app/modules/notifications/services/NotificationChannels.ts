@@ -15,7 +15,7 @@ const NotificationChannelTypes = [
   "roles",
   "my-rows",
 ] as const;
-export type NotificationChannel = (typeof NotificationChannelTypes)[number];
+export type NotificationChannel = typeof NotificationChannelTypes[number];
 
 export interface NotificationChannelDto {
   name: NotificationChannel;

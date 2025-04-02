@@ -59,8 +59,8 @@ export default function LogoCloudsVariantCustom() {
               target="_blank"
               rel="noreferrer"
             >
-              <img className="h-10 object-cover md:h-14 dark:hidden" src={LogoPrisma} alt="Remix" />
-              <img className="hidden h-10 object-cover md:h-14 dark:block" src={LogoPrismaDark} alt="Remix" />
+              <img className="h-10 object-cover dark:hidden md:h-14" src={LogoPrisma} alt="Remix" />
+              <img className="hidden h-10 object-cover dark:block md:h-14" src={LogoPrismaDark} alt="Remix" />
             </ButtonEvent>
           </div>
           <div className="order-first col-span-1 flex justify-center lg:order-none">
@@ -75,8 +75,8 @@ export default function LogoCloudsVariantCustom() {
               target="_blank"
               rel="noreferrer"
             >
-              <img className="h-10 object-cover md:h-14 dark:hidden" src={LogoRemix} alt="Remix" />
-              <img className="hidden h-10 object-cover md:h-14 dark:block" src={LogoRemixDark} alt="Remix" />
+              <img className="h-10 object-cover dark:hidden md:h-14" src={LogoRemix} alt="Remix" />
+              <img className="hidden h-10 object-cover dark:block md:h-14" src={LogoRemixDark} alt="Remix" />
             </ButtonEvent>
           </div>
           <div className="order-none col-span-1 flex justify-center">

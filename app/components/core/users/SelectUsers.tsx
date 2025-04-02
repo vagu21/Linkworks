@@ -79,7 +79,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
     <div>
       {showing && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-screen items-center justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+          <div className="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <Transition
               as={Fragment}
               show={showing}
@@ -108,12 +108,12 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
             >
               <div
                 // v-show="showing"
-                className="my-8 inline-block w-full transform overflow-visible rounded-sm bg-white px-4 pb-4 pt-5 text-left align-bottom shadow-xl transition-all sm:max-w-lg sm:p-6 sm:align-middle"
+                className="my-8 inline-block w-full transform overflow-visible rounded-sm bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:max-w-lg sm:p-6 sm:align-middle"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-headline"
               >
-                <div className="just absolute right-0 top-0 -mt-4 pr-4">
+                <div className="just absolute top-0 right-0 -mt-4 pr-4">
                   <button
                     onClick={close}
                     type="button"
@@ -149,7 +149,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
                             type="text"
                             name="search"
                             id="search"
-                            className="focus:border-theme-500 focus:ring-theme-500 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-theme-500 focus:ring-theme-500 sm:text-sm"
                             placeholder={t("shared.searchDot")}
                           />
                         </form>
@@ -172,7 +172,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
                         } else {
                           return (
                             <div>
-                              <ul className="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
+                              <ul className="mt-4 divide-y divide-gray-200 border-t border-b border-gray-200">
                                 {filteredItems(items).map((item, idx) => {
                                   return (
                                     <li className="flex items-center justify-between space-x-3 py-2" key={idx}>
@@ -189,7 +189,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
                                           onClick={() => toggle(item)}
                                           type="button"
                                           className={clsx(
-                                            "inline-flex items-center rounded-full border border-transparent px-3 py-2 focus:outline-none",
+                                            "inline-flex items-center rounded-full border border-transparent py-2 px-3 focus:outline-none",
                                             !isSelected(item) && "bg-gray-100 text-gray-800 hover:bg-teal-200",
                                             isSelected(item) && "bg-teal-100 text-teal-800 hover:bg-red-200 "
                                           )}
@@ -262,7 +262,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
                                   <button
                                     type="button"
                                     onClick={close}
-                                    className="focus:ring-theme-500 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                                    className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-theme-500 focus:ring-offset-2"
                                   >
                                     {t("shared.cancel")}
                                   </button>
@@ -271,7 +271,7 @@ const SelectUsers = ({ items, allowSearch, onClosed, onSelected }: Props, ref: R
                                     type="submit"
                                     disabled={selected.length === 0}
                                     className={clsx(
-                                      "bg-theme-600 hover:bg-theme-700 focus:ring-theme-500 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                      "inline-flex justify-center rounded-md border border-transparent bg-theme-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-theme-700 focus:outline-none focus:ring-2 focus:ring-theme-500 focus:ring-offset-2",
                                       selected.length === 0 && "cursor-not-allowed opacity-50"
                                     )}
                                   >

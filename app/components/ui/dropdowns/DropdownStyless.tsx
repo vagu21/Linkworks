@@ -26,7 +26,7 @@ export default function DropdownStyless({ title, options, right, onClick, classN
           onClick={onClick}
           className={
             btnClassName ??
-            "focus:ring-theme-500 inline-flex w-full justify-center rounded-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100"
+            "inline-flex w-full justify-center rounded-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-theme-500 focus:ring-offset-2 focus:ring-offset-gray-100"
           }
         >
           {title}

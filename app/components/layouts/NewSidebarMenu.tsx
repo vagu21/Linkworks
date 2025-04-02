@@ -366,10 +366,10 @@ export default function NewSidebarMenu({ layout, children, onOpenCommandPalette,
                                         id={UrlUtils.slugify(getPath(menuItem))}
                                         to={menuItem.redirectTo ?? getPath(menuItem)}
                                         className={clsx(
-                                          "group mt-1 flex items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 text-white transition duration-150 ease-in-out  focus:outline-none",
+                                          "group mt-1 flex text-white items-center justify-between truncate rounded-sm px-4 py-2 text-sm leading-5 transition duration-150 ease-in-out  focus:outline-none",
                                           menuItem.icon !== undefined && "px-4",
                                           isCurrent(menuItem)
-                                            ? "bg-onSelect dark:text-secondary-foreground text-white"
+                                            ? "bg-onSelect text-white dark:text-secondary-foreground"
                                             : "hover:bg-navBarHover hover:text-secondary-foreground text-secondary-foreground/70",
                                           "group flex gap-x-3 rounded-md p-2 text-sm leading-5"
                                         )}

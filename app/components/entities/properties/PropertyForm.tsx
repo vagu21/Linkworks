@@ -162,7 +162,7 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
                   {t("models.property.subtype")}
                 </label>
                 <div className="mt-1">
-                  <PropertySubtypeSelector types={["dropdown", "radioGroupCards", "state", "country"]} selected={subtype} onSelected={(e) => setSubtype(e)} />
+                  <PropertySubtypeSelector types={["dropdown", "radioGroupCards","state","country"]} selected={subtype} onSelected={(e) => setSubtype(e)} />
                 </div>
               </div>
             )}

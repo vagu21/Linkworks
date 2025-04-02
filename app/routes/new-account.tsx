@@ -61,7 +61,7 @@ export default function AppNewAccountRoute() {
   const data = useTypedLoaderData<LoaderData>();
   const navigate = useNavigate();
   const actionData = useActionData<ActionData>();
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   return (
     <div className="h-screen overflow-auto py-20">
       <div className="mx-auto max-w-7xl px-4 pt-2 sm:px-6 lg:px-8">

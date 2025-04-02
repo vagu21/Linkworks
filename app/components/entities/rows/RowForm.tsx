@@ -140,7 +140,7 @@ const RowForm = (
 
   async function getFeatureFlags() {
     const serverUrl = import.meta.env.VITE_PUBLIC_SERVER_URL;
-    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`, { credentials: "include" });
+    const data = await fetch(`${serverUrl}/api/getFeatureFlag?name=Company Members`, { credentials: 'include' });
     const response = await data.json();
     setFeatureFlagValues(response);
   }
@@ -465,6 +465,7 @@ const RowForm = (
     // }
   }
 
+
   const { parseMediaFile, isLoading } = useProcessMediaFile({
     addDynamicRow,
     childrenEntities,
@@ -680,13 +681,13 @@ function RelationshipSelector({
   const [entity] = useState(
     type === "parent"
       ? {
-          entity: getChildEntity(relationship)!,
-          view: relationship.parentEntityView,
-        }
+        entity: getChildEntity(relationship)!,
+        view: relationship.parentEntityView,
+      }
       : {
-          entity: getParentEntity(relationship)!,
-          view: relationship.childEntityView,
-        }
+        entity: getParentEntity(relationship)!,
+        view: relationship.childEntityView,
+      }
   );
 
   function getRows(relationship: EntityRelationshipWithDetails) {
@@ -1021,7 +1022,7 @@ function RowGroups({
   const columns = isSlideOverOrRowList ? 0 : groups.length > 1 ? 2 : 1;
 
   return (
-    <div className={`grid ${columns === 2 ? "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2" : "sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1"} w-full gap-4`}>
+    <div className={`grid ${columns === 2 ? "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2" : "sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1"} gap-4 w-full`}>
       {distributeGroups(groups).map((column, colIndex) => (
         <div key={colIndex} className={clsx("space-y-4", colIndex === 0 && "pb-8")}>
           {column.map(({ group, headers }, originalIndex) => {

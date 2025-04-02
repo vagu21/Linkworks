@@ -13,7 +13,7 @@ export default function KbRoutesIndex() {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       <KbHeader kb={data.kb} withTitleAndDescription={true} />
       <div className="mx-auto max-w-5xl px-2 py-6 sm:px-8">
         <div className="space-y-8">

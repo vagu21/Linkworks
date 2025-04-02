@@ -50,7 +50,7 @@ export type AppConfiguration = {
       azure: {
         enabled: boolean;
         authorizationURL: string;
-      };
+      }
     };
   };
   analytics: {
