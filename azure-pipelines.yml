@@ -11,7 +11,7 @@ jobs:
     parameters:
         awsCredentials: linkworks-prod
         dbInstanceIdentifier: database-1
-        takeRDSBackup: true 
+        takeRDSBackup: true
         snapshotsToKeep: 0
   - job: linkworks_ssh_deployment
     dependsOn: TakeRDSDBInstanceBackup
