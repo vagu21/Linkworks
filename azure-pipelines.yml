@@ -1,8 +1,20 @@
 trigger:
   - none
-
+resources:
+  repositories:
+    - repository: pipelineTemplatesRepo
+      type: git
+      name: Linkfields-DevOps/linkfields.devops.ado-pipeline-templates
+      ref: main
 jobs:
+  - template: backups/rds-postgresql/rds-postgresql-backup.yml@pipelineTemplatesRepo
+    parameters:
+        awsCredentials: linkworks-prod
+        dbInstanceIdentifier: database-1
+        takeRDSBackup: true
+        snapshotsToKeep: 30
   - job: linkworks_ssh_deployment
+    dependsOn: TakeRDSDBInstanceBackup
     workspace:
       clean: all
     pool:
