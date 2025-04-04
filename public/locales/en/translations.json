@@ -1284,6 +1284,7 @@
       "isHidden": "Hidden",
       "isDisplay": "Display",
       "isReadOnly": "Read only",
+      "isUnique":"isUnique",
       "showInCreate": "Show in create form",
       "canUpdate": "Can be updated",
       "options": "Options",

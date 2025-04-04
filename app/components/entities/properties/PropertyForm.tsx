@@ -54,6 +54,7 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
     }) ?? []
   );
   const [isRequired, setIsRequired] = useState<boolean>(item?.isRequired ?? true);
+  const [isUnique, setIsUnique] = useState<boolean>(item?.isUnique ?? true);
   const [showInCreate, setShowInCreate] = useState<boolean>(item?.showInCreate ?? true);
   const [isHidden, setIsHidden] = useState<boolean>(item?.isHidden ?? false);
   const [isDisplay, setIsDisplay] = useState<boolean>(item?.isDisplay ?? properties.filter((f) => !f.isDefault).length === 0);
@@ -120,6 +121,7 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
     if (type === PropertyType.FORMULA) {
       setShowAdvancedOptions(false);
       setIsRequired(false);
+      setIsUnique(false);
       setIsReadOnly(true);
       setShowInCreate(false);
     }
@@ -162,7 +164,7 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
                   {t("models.property.subtype")}
                 </label>
                 <div className="mt-1">
-                  <PropertySubtypeSelector types={["dropdown", "radioGroupCards","state","country"]} selected={subtype} onSelected={(e) => setSubtype(e)} />
+                  <PropertySubtypeSelector types={["dropdown", "radioGroupCards", "state", "country"]} selected={subtype} onSelected={(e) => setSubtype(e)} />
                 </div>
               </div>
             )}
@@ -337,6 +339,17 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
                 setValue={setCanUpdate}
               />
             </div>
+            {(type === PropertyType.NUMBER || type === PropertyType.TEXT || type === PropertyType.DATE) && (
+              <div className="w-full">
+                <InputCheckboxWithDescription
+                  name="is-unique"
+                  title={t("models.property.isUnique")}
+                  description="Make sure no duplicate rows"
+                  value={isUnique}
+                  setValue={setIsUnique}
+                />
+              </div>
+            )}
 
             {/* <div className="font-bold">{t("models.propertyAttribute.plural")}</div> */}
 

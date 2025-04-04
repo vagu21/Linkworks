@@ -2,6 +2,7 @@ import { Copy, ExternalLink } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card } from "~/components/ui/card";
 import { useTranslation } from "react-i18next";
+import RowHelper from "~/utils/helpers/RowHelper";
 
 interface UserCardProps {
   data: any;
@@ -10,7 +11,7 @@ interface UserCardProps {
   onClick: any;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ entity, item, data,onClick}) => {
+const UserCard: React.FC<UserCardProps> = ({ entity, item, data, onClick }) => {
   const [copied, setCopied] = useState("");
   const { t } = useTranslation();
   const [title, setTitle] = useState<string>("");
@@ -42,7 +43,7 @@ const UserCard: React.FC<UserCardProps> = ({ entity, item, data,onClick}) => {
       .filter((s) => !!s)
       .join(" | ");
 
-    setTitle(titleValues);
+    setTitle(titleValues || RowHelper.getRowFolio(entity, item));
   }, [entity, item, t]);
 
   return (
@@ -71,7 +72,6 @@ const UserCard: React.FC<UserCardProps> = ({ entity, item, data,onClick}) => {
               {title && <h3 className="truncate text-lg font-semibold">{title}</h3>}
               {location && <p className="truncate text-sm text-gray-500">{location}</p>}
             </div>
-
             <ExternalLink
               className="h-5 w-5 cursor-pointer text-gray-400"
               onClick={(e) => {
@@ -80,8 +80,8 @@ const UserCard: React.FC<UserCardProps> = ({ entity, item, data,onClick}) => {
               }}
             />
           </div>
-
           <hr className="mt-3 border border-gray-200" />
+
           <div className="mt-4 space-y-2 p-2">
             {Object.entries(data).map(([key, value]) =>
               value ? (

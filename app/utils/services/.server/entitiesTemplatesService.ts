@@ -115,6 +115,7 @@ export async function importEntitiesFromTemplate({ template, createdByUserId }: 
             isHidden: false,
             isDisplay: property.isDisplay ?? false,
             isReadOnly: property.isReadOnly ?? false,
+            isUnique: property.isUnique ?? false,
             canUpdate: property.canUpdate !== undefined ? property.canUpdate : true,
             showInCreate: property.showInCreate ?? true,
             formulaId: null,

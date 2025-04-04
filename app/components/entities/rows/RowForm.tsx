@@ -1193,7 +1193,7 @@ function RowGroups({
                           if (media.filter((f) => f.type).length > 0) {
                             onSaveIfAllSet();
                           }
-                          parseMediaFile(headers, onChange, media, item, entity, routes);
+                          parseMediaFile(headers, onChange, media, item, entity, routes,"",detailValue.property.name);
                         }}
                         onChangeMultiple={(e) => {
                           onChange({

@@ -60,6 +60,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const isDisplay = Boolean(form.get("is-display"));
   const isReadOnly = Boolean(form.get("is-read-only"));
   const canUpdate = Boolean(form.get("can-update"));
+  const isUnique = Boolean(form.get("is-unique"));
   let showInCreate = Boolean(form.get("show-in-create"));
   let formulaId = form.get("formula-id")?.toString() ?? null;
 
@@ -113,6 +114,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         isDisplay,
         isReadOnly,
         canUpdate,
+        isUnique,
         showInCreate,
         formulaId,
       });

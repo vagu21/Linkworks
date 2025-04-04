@@ -18,6 +18,7 @@ import { RowDeletedDto } from "~/modules/events/dtos/RowDeletedDto";
 import ApiHelper from "~/utils/helpers/ApiHelper";
 import { RowUpdatedDto } from "~/modules/events/dtos/RowUpdatedDto";
 import { sendInvitation } from "~/modules/companyMembers/companyMemberInvitation";
+import { db } from "~/utils/db.server";
 export namespace Rows_Edit {
   export type LoaderData = {
     meta: MetaTagsDto;
@@ -64,6 +65,9 @@ export namespace Rows_Edit {
   export const action: ActionFunction = async ({ request, params }) => {
     const { time, getServerTimingHeader } = await createMetrics({ request, params }, `[Rows_Edit] ${params.entity}`);
     const { t, userId, tenantId, entity, form } = await RowsRequestUtils.getAction({ request, params });
+
+    
+
     const user = await getUser(userId);
     const { item } = await time(
       RowsApi.get(params.id!, {
@@ -78,6 +82,50 @@ export namespace Rows_Edit {
     if (action === "edit") {
       try {
         rowValues = RowHelper.getRowPropertiesFromForm({ t, entity, form, existing: item });
+        const entityName = entity?.name;
+        const article = /^[aeiouAEIOU]/.test(entityName) ? "An" : "A";
+
+        const uniqueFields = Object.entries(entity.properties)
+          .filter(([key, value]) => value.isUnique)
+          .map(([key, value]) => ({ ...value }));
+
+        if (uniqueFields.length > 0) {
+          for (const field of uniqueFields) {
+            const { type, id, name: fieldName } = field;
+            const formField = rowValues.dynamicProperties.find((item) => item.propertyId === id);
+
+            let fieldValue;
+            let whereCondition = { propertyId: id };
+
+            if (type === 0) {
+              fieldValue = formField?.numberValue;
+              whereCondition = { ...whereCondition, numberValue: fieldValue };
+            } else if (type === 1) {
+              fieldValue = formField?.textValue;
+              whereCondition = { ...whereCondition, textValue: fieldValue };
+            } else if (type === 2) {
+              fieldValue = formField?.dateValue;
+              whereCondition = { ...whereCondition, dateValue: fieldValue };
+            }
+
+            if (fieldValue !== undefined) {
+              const existingRows = await db.rowValue.findMany({
+                where: {
+                  AND: [whereCondition],
+                },
+              });
+
+              if (existingRows.length > 0) {
+                return json(
+                  {
+                    error: `${article} ${entityName} with the ${fieldName} '${fieldValue}' already exists. Please use a different ${fieldName} or modify the existing entry.`,
+                  },
+                  { status: 400 }
+                );
+              }
+            }
+          }
+        }
         const updatedRow = await time(
           RowsApi.update(params.id!, {
             entity,

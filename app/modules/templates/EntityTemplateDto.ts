@@ -44,6 +44,7 @@ export type TemplateEntityDto = {
     isDisplay?: boolean;
     showInCreate?: boolean;
     isReadOnly?: boolean;
+    isUnique?: boolean;
     canUpdate?: boolean;
     attributes?: { name: string; value: string }[];
     options?: { value: string; name?: string; color?: Colors }[];

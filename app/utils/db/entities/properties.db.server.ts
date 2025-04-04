@@ -49,6 +49,7 @@ export async function createProperty(data: {
   isHidden: boolean;
   isDisplay: boolean;
   isReadOnly: boolean;
+  isUnique: boolean;
   canUpdate: boolean;
   showInCreate: boolean;
   formulaId: string | null;
@@ -75,6 +76,7 @@ export type CreatePropertyDto = {
   isHidden?: boolean;
   isDisplay?: boolean;
   isReadOnly?: boolean;
+  isUnique?: boolean;
   canUpdate?: boolean;
   showInCreate?: boolean;
   formulaId?: string | null;
@@ -100,6 +102,7 @@ export async function createProperties(entityId: string, fields: CreatePropertyD
         isHidden: field.isHidden ?? false,
         isDisplay: field.isDisplay ?? false,
         isReadOnly: field.isReadOnly ?? false,
+        isUnique: field.isUnique ?? false,
         canUpdate: field.canUpdate ?? true,
         showInCreate: field.showInCreate ?? true,
         formulaId: field.formulaId ?? null,
@@ -140,6 +143,7 @@ export async function updateProperty(
     isHidden?: boolean;
     isDisplay?: boolean;
     isReadOnly?: boolean;
+    isUnique?: boolean;
     canUpdate?: boolean;
     showInCreate?: boolean;
     formulaId?: string | null;

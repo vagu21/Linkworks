@@ -24,6 +24,7 @@ import { getTenant } from "~/utils/db/tenants.db.server";
 import { MemberInvitationCreatedDto } from "~/modules/events/dtos/MemberInvitationCreatedDto";
 import { getBaseURL } from "~/utils/url.server";
 import { sendInvitation } from "~/modules/companyMembers/companyMemberInvitation";
+import { db } from "~/utils/db.server";
 
 export namespace Rows_New {
   export type LoaderData = {
@@ -71,6 +72,51 @@ export namespace Rows_New {
       try {
         await time(verifyUserHasPermission(request, getEntityPermission(entity, "create"), tenantId), "verifyUserHasPermission");
         const rowValues = RowHelper.getRowPropertiesFromForm({ t: t, entity, form });
+        const entityName = entity?.name;
+        const article = /^[aeiouAEIOU]/.test(entityName) ? "An" : "A";
+
+        const uniqueFields = Object.entries(entity.properties)
+          .filter(([key, value]) => value.isUnique)
+          .map(([key, value]) => ({ ...value }));
+
+        if (uniqueFields.length > 0) {
+          for (const field of uniqueFields) {
+            const { type, id, name: fieldName } = field;
+            const formField = rowValues.dynamicProperties.find((item) => item.propertyId === id);
+
+            let fieldValue;
+            let whereCondition = { propertyId: id };
+
+            if (type === 0) {
+              fieldValue = formField?.numberValue;
+              whereCondition = { ...whereCondition, numberValue: fieldValue };
+            } else if (type === 1) {
+              fieldValue = formField?.textValue;
+              whereCondition = { ...whereCondition, textValue: fieldValue };
+            } else if (type === 2) {
+              fieldValue = formField?.dateValue;
+              whereCondition = { ...whereCondition, dateValue: fieldValue };
+            }
+
+            if (fieldValue !== undefined) {
+              const existingRows = await db.rowValue.findMany({
+                where: {
+                  AND: [whereCondition],
+                },
+              });
+
+              if (existingRows.length > 0) {
+                return json(
+                  {
+                    error: `${article} ${entityName} with the ${fieldName} '${fieldValue}' already exists. Please use a different ${fieldName} or modify the existing entry.`,
+                  },
+                  { status: 400 }
+                );
+              }
+            }
+          }
+        }
+
         const newRow = await time(
           RowsApi.create({
             entity,
@@ -83,11 +129,11 @@ export namespace Rows_New {
         );
         if (params.entity == "account") {
           const enabled = form.get("enabled");
-          if (enabled=="true") {
-              const numberOfUsers = Number(form.get("numberOfUsers"));
-              if (numberOfUsers==0) {
-                return json({ error: "Add atleast one company Member" });
-              }
+          if (enabled == "true") {
+            const numberOfUsers = Number(form.get("numberOfUsers"));
+            if (numberOfUsers == 0) {
+              return json({ error: "Add atleast one company Member" });
+            }
             sendInvitation(form, newRow.id, params, userId, request);
           }
         }

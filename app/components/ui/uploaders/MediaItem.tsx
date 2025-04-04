@@ -27,7 +27,7 @@ export default function MediaItem({ item, onChangeTitle, onDelete, onDownload, o
           </div>
           <div className="ml-4 flex-shrink-0 space-x-2">
             <div className="flex items-center space-x-3">
-            {onPreview && (
+              {onPreview && (
                 <ButtonTertiary type="button" onClick={onPreview} className=" border-0 font-medium text-gray-500 shadow-none hover:text-gray-500">
                   <EyeIcon className="h-4 w-4 text-gray-600" />
                 </ButtonTertiary>
@@ -122,7 +122,7 @@ export default function MediaItem({ item, onChangeTitle, onDelete, onDownload, o
           <div className="flex flex-row gap-1">
             {showReuploadButton &&
               <div className="">
-                <button onClick={() => onDelete()} className="mr-2 h-[34px] rounded-sm text-body leading-[22px] font-bold border-[0.5px] border-tertiary-foreground text-tertiary-foreground px-4 bg-tertiary">Re-Upload</button>
+                <button onClick={() => { window.location.reload(); onDelete(); }} className="mr-2 h-[34px] rounded-sm text-body leading-[22px] font-bold border-[0.5px] border-tertiary-foreground text-tertiary-foreground px-4 bg-tertiary">Re-Upload</button>
               </div>
             }
             <div>

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Link, Outlet, useParams } from "@remix-run/react";
+import { Link, Outlet, useNavigate, useParams } from "@remix-run/react";
 import CheckPlanFeatureLimit from "~/components/core/settings/subscription/CheckPlanFeatureLimit";
 import RowForm from "~/components/entities/rows/RowForm";
 import NewPageLayout from "~/components/ui/layouts/NewPageLayout";
@@ -26,6 +26,7 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
   const params = useParams();
   const { t } = useTranslation();
   const actionData = useTypedActionData<Rows_New.ActionData>();
+  const navigate = useNavigate();
 
   const [selectedTemplate, setSelectedTemplate] = useState<{ title: string; config: string } | null>(null);
 
@@ -34,6 +35,10 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
       toast.error(actionData.error);
     }
   }, [actionData, t]);
+
+  const onCancel = () => {
+    navigate(-1);
+  }
 
   return (
     <Fragment>
@@ -96,7 +101,8 @@ export default function RowNewRoute({ showBreadcrumb = true, className }: Props)
                 allEntities={data.allEntities}
                 relationshipRows={data.relationshipRows}
                 adding={true}
-                template={selectedTemplate}
+                  template={selectedTemplate}
+                  onCancel={onCancel}
               />
               <Outlet />
             </CheckPlanFeatureLimit>

@@ -56,6 +56,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const order = Number(form.get("order"));
   const isDefault = Boolean(form.get("is-default"));
   let isRequired = Boolean(form.get("is-required"));
+  let isUnique = Boolean(form.get("is-unique"));
   const isHidden = Boolean(form.get("is-hidden"));
   const isDisplay = Boolean(form.get("is-display"));
   const isReadOnly = Boolean(form.get("is-read-only"));
@@ -106,6 +107,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         isDefault,
         isRequired,
         isHidden,
+        isUnique,
         isDisplay,
         isReadOnly,
         canUpdate,

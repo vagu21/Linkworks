@@ -16,6 +16,7 @@ export namespace PropertiesApi {
     isHidden,
     isDisplay,
     isReadOnly,
+    isUnique,
     canUpdate,
     showInCreate,
     formulaId,
@@ -34,6 +35,7 @@ export namespace PropertiesApi {
     isHidden?: boolean;
     isDisplay?: boolean;
     isReadOnly?: boolean;
+    isUnique?: boolean;
     canUpdate?: boolean;
     showInCreate?: boolean;
     formulaId?: string | null;
@@ -56,6 +58,7 @@ export namespace PropertiesApi {
       isHidden: isHidden ?? false,
       isDisplay: isDisplay ?? false,
       isReadOnly: isReadOnly ?? false,
+      isUnique: isUnique ?? false,
       canUpdate: canUpdate ?? true,
       showInCreate: showInCreate ?? true,
       formulaId: formulaId ?? null,
@@ -110,6 +113,7 @@ export namespace PropertiesApi {
       isHidden: existingProperty.isHidden,
       isDisplay: existingProperty.isDisplay,
       isReadOnly: existingProperty.isReadOnly,
+      isUnique: existingProperty.isUnique,
       showInCreate: existingProperty.showInCreate,
       formulaId: existingProperty.formulaId,
       options: existingProperty.options.map((o) => ({

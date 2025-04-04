@@ -77,6 +77,16 @@ export const saveTenantEntity = async (
     return await saveTenantEntity("Work Experience", formattedWorkExperienceHistories, allWorkExperienceTent, tenantSlug);
   };
 
+  export const saveTenantCertifications = async (certifications: any[], allCertificationsTent: any, tenantSlug: string|undefined|null) => {
+    const formattedCertifications = certifications.map((certification) => ({
+      name: certification.name || "",
+      issuingOrganization: certification.issuingOrganization || "",
+      expirationDate: certification.expirationDate || "",
+    }));
+
+    return await saveTenantEntity("Certifications", formattedCertifications, allCertificationsTent, tenantSlug);
+  }
+
   export const saveTenantProjects = async (project: any[], allProjectsTent: any, tenantSlug: string | undefined | null) => {
     const formattedProjects = project.map((projects) => ({
       projectName: projects.projectName || "",

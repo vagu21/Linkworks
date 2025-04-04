@@ -39,6 +39,7 @@ export const defaultProperties: {
   isRequired: boolean;
   isHidden: boolean;
   isDisplay: boolean;
+  isUnique: boolean;
 }[] = [
   {
     name: "id",
@@ -51,6 +52,7 @@ export const defaultProperties: {
     isHidden: true,
     // formula: undefined,
     isDisplay: false,
+    isUnique: false,
   },
   {
     name: "folio",
@@ -63,6 +65,7 @@ export const defaultProperties: {
     isHidden: true,
     // formula: undefined,
     isDisplay: false,
+    isUnique: false,
   },
   {
     name: "createdAt",
@@ -75,6 +78,7 @@ export const defaultProperties: {
     isHidden: true,
     // formula: undefined,
     isDisplay: false,
+    isUnique: false,
   },
   // {
   //   name: "createdByUser",

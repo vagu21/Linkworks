@@ -273,6 +273,7 @@ function exportEntitiesToTemplate(entities: EntityWithDetails[], relationships: 
             isRequired: property.isRequired ?? undefined,
             isDisplay: property.isDisplay ?? undefined,
             isReadOnly: property.isReadOnly ?? undefined,
+            isUnique: property.isUnique ?? undefined,
             showInCreate: property.showInCreate ?? undefined,
             attributes:
               property.attributes.filter((f) => f.value).length === 0
