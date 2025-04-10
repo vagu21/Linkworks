@@ -142,7 +142,12 @@ const EntityDetails = ({
                             valueClassName={clsx(!isRichText ? "overflow-hidden text-ellipsis max-w-[230px] whitespace-nowrap" : "")}
                             label={label}
                             value={
-                              <div className={clsx(!expandedText[value.id] ? "line-clamp-2" : "")}>
+                              <div
+                                className={clsx(
+                                  !expandedText[value.id] && "line-clamp-2",
+                                  !isRichText && "truncate max-w-[160px] min-w-[180px] inline-block"
+                                )}
+                              >
                                 {getValueByType({ type, subType, rowValue: value, attributes })}
                               </div>
                             }

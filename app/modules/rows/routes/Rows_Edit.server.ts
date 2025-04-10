@@ -107,11 +107,15 @@ export namespace Rows_Edit {
               fieldValue = formField?.dateValue;
               whereCondition = { ...whereCondition, dateValue: fieldValue };
             }
-
             if (fieldValue !== undefined) {
               const existingRows = await db.rowValue.findMany({
                 where: {
-                  AND: [whereCondition],
+                  AND: [
+                    whereCondition,
+                    {
+                      rowId: { not: item.values[0].rowId },
+                    },
+                  ],
                 },
               });
 

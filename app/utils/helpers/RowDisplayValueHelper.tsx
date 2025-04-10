@@ -6,13 +6,33 @@ import InputNumber from "~/components/ui/input/InputNumber";
 import InputSelect from "~/components/ui/input/InputSelect";
 import InputText from "~/components/ui/input/InputText";
 
-function getRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: T, idxRow: number) {
-  if(!header.setValue) {
-    return header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow);
-  } else if(((header.type === undefined && (header.type === InputType.TEXT || header.type === InputType.NUMBER)) || header.type === InputType.NUMBER || header.type === InputType.SELECT)) {
-    return header.value(item, idxRow);
+function getChild(value: any): any {
+  if (value && value.props && value.props.children) {
+    return getChild(value.props.children);
   }
-  return '';
+  return value;
+}
+
+function getRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: T, idxRow: number): string {
+  let value: any;
+
+  if (!header.setValue) {
+    value = header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow);
+  } else if (
+    header.type === undefined ||
+    header.type === InputType.TEXT ||
+    header.type === InputType.NUMBER ||
+    header.type === InputType.SELECT
+  ) {
+    value = header.value(item, idxRow);
+  } else {
+    return "";
+  }
+ 
+    value = getChild(value.props.children);
+  
+
+  return typeof value === "string" ? value : "";
 }
 
 function displayRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: T, idxRow: number) {
@@ -31,7 +51,13 @@ function displayRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: 
               <span>{header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow)}</span>
             </Link>
           ) : (
-            <span>{header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow)}</span>
+            <span>
+            {header.name === "endDate" && !header.value(item, idxRow)
+              ? "N/A"
+              : header.formattedValue
+              ? header.formattedValue(item, idxRow)
+              : header.value(item, idxRow)}
+          </span>
           )}
         </>
       ) : (

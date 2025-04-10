@@ -21,26 +21,26 @@ const UserCard: React.FC<UserCardProps> = ({ entity, item, data, onClick }) => {
     e.stopPropagation();
     navigator.clipboard.writeText(text);
     setCopied(text);
-    setTimeout(() => setCopied(""), 1500);
+    setTimeout(() => setCopied(""), 1000);
   };
 
   useEffect(() => {
     const getTitleFieldIds = (searchTerms = ["name"]) => {
       return entity.properties
-        .filter(({ name, title }) => {
+        .filter(({ name, title}:any) => {
           return [name, title]
             .filter((s) => typeof s === "string")
             .map((s) => s.toLowerCase().trim())
             .some((s) => searchTerms.some((term) => s.includes(term)));
         })
-        .map((o) => o.id);
+        .map((o:any) => o.id);
     };
 
     const nameIds = getTitleFieldIds();
     const titleValues = item.values
-      .filter((v) => nameIds.includes(v.propertyId))
-      .map((o) => o.textValue || "")
-      .filter((s) => !!s)
+      .filter((v:any) => nameIds.includes(v?.propertyId))
+      .map((o:any) => o.textValue || "")
+      .filter((s:any) => !!s)
       .join(" | ");
 
     setTitle(titleValues || RowHelper.getRowFolio(entity, item));

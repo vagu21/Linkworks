@@ -27,9 +27,9 @@ export async function generateResume(id: any) {
           <title>Resume</title>
           <script src="https://cdn.tailwindcss.com"></script>
         </head>
-        <body class="bg-gray-100  w-[210mm] !h-[calc(100vh-0px)]">
+        <body class="bg-[#F8F7EF] w-[205mm] !h-[calc(100vh-0px)]">
           <!-- Container -->
-          <div class=" rounded-lg bg-white shadow-md w-[210mm] h-[297mm] ">
+          <div class=" rounded-lg bg-[#F8F7EF] shadow-md w-[205mm] h-[297mm] ">
             <!-- Header Section -->
            ${headerSection()}
       
@@ -37,23 +37,14 @@ export async function generateResume(id: any) {
             ${detailsSection()}
                 <!-- Skills -->
                ${skillsSection()}
-      
-              <!-- Right Section -->
-              <div class="flex-1 py-6 md:pl-6">
-                <!-- Experience -->
-              ${experienceSection()}
-                <!-- Certifications -->
-               ${certificationsSection()}
 
-                <!-- Project -->
-                ${projectSection()}
+               <!-- Address -->
+               ${addressSection()}
       
-                <!-- Education -->
-                ${educationSection()}
+              <!-- Social Links -->
+              ${socialLinksSection()}
       
-                <!-- Reference -->
-                ${referenceSection()}
-              </div>
+             
       
               <!-- background image -->
           ${backgroundImage()}
@@ -65,340 +56,470 @@ export async function generateResume(id: any) {
         </body>
       </html>`;
   }
-  function headerSection() {
-    return `
-        <div class="flex items-center justify-between border-b bg-[#EFF2F8] py-6 pl-6 pr-7">
-              <div class="flex items-center gap-[8px]">
-                <div class="flex h-[45px] w-[45px] items-center justify-center rounded-full bg-[#18213F] text-[16px] font-medium leading-[19.36px] text-white">
-  ${
-    (data?.firstName?.[0] || "") + (data?.lastName?.[0] || "")
-      ? `${data?.firstName?.[0] || ""}${data?.lastName?.[0] || ""}`
-      : '<span style="color: #A0A0A0;">N/A</span>'
-  }
-</div>
 
-                <div class="flex flex-col gap-[6px]">
-                  <h2 class="text-[20px] font-semibold leading-[24px] text-[#18213F] font-sans">${data["firstName"]} ${data["lastName"]}</h2>
-                  <div class="text-[12px] font-normal leading-[14.52px] text-[#3C3C3C] flex gap-3 ml-1"><span>${
-                    data?.currentDesignation || '<span style="color: #A0A0A0;">N/A</span>'
-                  }</span> 
-                  
-                  <div class="flex gap-1 items-center"> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none">
-      <path d="M3.33333 3.33333V2.91667C3.33333 1.99619 4.07953 1.25 5 1.25C5.92047 1.25 6.66667 1.99619 6.66667 2.91667V3.33333M1.25 5L4.66155 6.51624C4.87702 6.61201 5.12298 6.61201 5.33845 6.51625L8.75 5M2.58333 8.75H7.41667C7.88338 8.75 8.11673 8.75 8.29499 8.65917C8.45179 8.57928 8.57928 8.45179 8.65917 8.29499C8.75 8.11673 8.75 7.88338 8.75 7.41667V4.66667C8.75 4.19996 8.75 3.9666 8.65917 3.78834C8.57928 3.63154 8.45179 3.50406 8.29499 3.42416C8.11673 3.33333 7.88338 3.33333 7.41667 3.33333H2.58333C2.11662 3.33333 1.88327 3.33333 1.70501 3.42416C1.54821 3.50406 1.42072 3.63154 1.34083 3.78834C1.25 3.9666 1.25 4.19996 1.25 4.66667V7.41667C1.25 7.88338 1.25 8.11673 1.34083 8.29499C1.42072 8.45179 1.54821 8.57928 1.70501 8.65917C1.88327 8.75 2.11662 8.75 2.58333 8.75Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round"/>
-      </svg> <span> ${data?.totalExperienceInYears || '<span style="color: #A0A0A0;">N/A</span>'}y Exp. </span></div></div>
+  function calculateCareerBreak(data : any) {
+    const workExperiences = data?.["Work Experience"] || [];
+    if (!Array.isArray(workExperiences) || workExperiences.length === 0) return "0";
+  
+    const sorted = workExperiences
+      .filter((exp) => exp?.startDate)
+      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+  
+    let totalGap = 0;
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = sorted[i - 1];
+      const curr = sorted[i];
+  
+      const prevEndDate = prev.currentlyWorkingInThisRole
+        ? new Date()
+        : prev.endDate
+          ? new Date(prev.endDate)
+          : new Date(prev.startDate);
+  
+      const currStartDate = new Date(curr.startDate);
+  
+      if (!isNaN(prevEndDate.getTime()) && !isNaN(currStartDate.getTime())) {
+        const gap = currStartDate.getTime() - prevEndDate.getTime();
+  
+        if (gap > 30 * 24 * 60 * 60 * 1000) {
+          totalGap += gap;
+        }
+      }
+    }
+  
+    const years = totalGap / (365.25 * 24 * 60 * 60 * 1000);
+    return years.toFixed(1);
+  }
+  
+  
+  function headerSection() {
+
+    const careerBreakYears = calculateCareerBreak(data);
+
+    return `
+     
+      <div class="">
+        <header class="mx-auto shadow-md">
+          <section class="px-6 pt-5 pb-3 w-full bg-[#F7E47F] max-md:px-5 max-md:max-w-full">
+            <div class="flex flex-wrap gap-2.5 items-center w-full max-md:max-w-full">
+              <div class="flex items-center justify-center gap-3 self-stretch px-3 my-auto w-11 h-11 text-base font-semibold whitespace-nowrap bg-[#0B0A09] min-h-11 rounded-[1100px] text-[#F8F8F8]">
+                ${data?.firstName?.[0] || "N/A"}${data?.lastName?.[0] || "N/A"}
+              </div>
+              <div class="flex-1 shrink self-stretch my-auto basis-[22px] min-w-60 text-[#1A1A1A]">
+                <h1 class="text-base font-semibold">${data?.firstName || "N/A"} ${data?.lastName || "N/A"}</h1>
+                <p class="text-xs font-normal">${data?.currentDesignation || '<span style="color: #1A1A1A;">N/A</span>'}</p>
+              </div>
+              <div class="flex flex-col justify-center self-stretch px-2 py-1 my-auto bg-[#E8D35B] rounded-[100px]">
+                <div class="flex gap-1 justify-center items-center w-full">
+                  <span class="self-stretch my-auto font-medium text-[10px] text-[#34320E]">Career Break :</span>
+               <span class="self-stretch my-auto font-bold text-[10px] text-[#34320E]">${careerBreakYears || "N/A"} Years</span>
+
+
                 </div>
               </div>
-              <div class="text-center">
-              <div
-        class="relative flex items-center justify-center w-[54px] h-[54px] rounded-full bg-[#EFF2F8]"
-        style="--percentage: 75;">
-        <div
-          class="absolute inset-0 rounded-full"
-         >
-        </div>
-      <!--   <div class="absolute inset-[10%] bg-[#EFF2F8] rounded-full"></div>
-        <span class="text-[#28952E] text-sm font-semibold relative z-20">
-          75%
-        </span> -->
-      </div>
-                <p class="text-[10px] font-medium leading-[12.1px] text-[#3C3C3C] mt-[10px]"></p>
+            </div>
+          </section>
+          <section class="flex flex-col justify-center px-6 py-2 w-full bg-[#E8D35B] max-md:px-5 max-md:max-w-full">
+            <div class="flex flex-wrap gap-10 justify-between items-center w-full max-md:max-w-full">
+              <div class="flex gap-1 items-center self-stretch my-auto">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e6e4078735543791a1c0b0304486f82fb09467d6?placeholderIfAbsent=true&apiKey=f503c6e3cdcd400faefec985da817839" alt="Experience icon" class="object-contain shrink-0 self-stretch my-auto w-3 aspect-square" />
+                <span class="self-stretch my-auto text-[8px] text-[#34320E] font-bold">${data?.totalExperienceInYears || "0"}y Experience</span>
               </div>
-            </div>`;
+              <div class="flex gap-3 items-center self-stretch my-auto">
+                <div class="flex gap-1 items-center self-stretch my-auto">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9fb225e49fc06ea42092935c70a30a181506b73d?placeholderIfAbsent=true&apiKey=f503c6e3cdcd400faefec985da817839" alt="Phone icon" class="object-contain shrink-0 self-stretch my-auto w-3 aspect-square" />
+                  <a href="tel:${data?.phone || "#"}" class="self-stretch my-auto text-[8px] text-[#34320E] font-bold">${
+      data?.phone || '<span style="color: #34320E;">N/A</span>'
+    }</a>
+                </div>
+                <div class="flex gap-1 items-center self-stretch my-auto whitespace-nowrap">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/fc2e443cb356a1272f78bacb54182fa5a942c8a6?placeholderIfAbsent=true&apiKey=f503c6e3cdcd400faefec985da817839" alt="Email icon" class="object-contain shrink-0 self-stretch my-auto w-3 aspect-square" />
+                  <a href="mailto:${data?.email || "#"}" class="self-stretch my-auto text-[8px] text-[#34320E] font-bold">${
+      data?.email || '<span style="color: #34320E;">N/A</span>'
+    }</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </header>
+      </div>
+    `;
   }
 
   function detailsSection() {
-    return `<div class="flex  flex-col px-6 md:flex-row  relative ml-8 !h-[calc(100vh-140px)]">
-              <!-- Left Section -->
-              <div class="py-6 pr-4 md:w-[38.82%] md:pr-8 md:border-r ">
-                <!-- Detailst -->
-                <div class="mb-[30px] relative pt-4">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Details</h3>
-                  <ul class="space-y-2 text-gray-600">
-                    <li class="text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                        <g clip-path="url(#clip0_83_335)">
-                          <path d="M9.1666 7.04996V8.29996C9.16707 8.416 9.1433 8.53086 9.09681 8.63719C9.05032 8.74351 8.98214 8.83895 8.89663 8.9174C8.81112 8.99585 8.71017 9.05558 8.60024 9.09275C8.49032 9.12993 8.37384 9.14374 8.25826 9.13329C6.97611 8.99398 5.74451 8.55585 4.66243 7.85413C3.65569 7.2144 2.80215 6.36086 2.16243 5.35413C1.45826 4.26713 1.02003 3.02954 0.883265 1.74163C0.872852 1.6264 0.886546 1.51028 0.923473 1.40064C0.960401 1.291 1.01975 1.19025 1.09775 1.1048C1.17575 1.01936 1.27068 0.951088 1.37651 0.904343C1.48234 0.857598 1.59674 0.833401 1.71243 0.833292H2.96243C3.16464 0.831302 3.36068 0.902908 3.514 1.03476C3.66732 1.16662 3.76746 1.34973 3.79576 1.54996C3.84852 1.94999 3.94637 2.34276 4.08743 2.72079C4.14349 2.86993 4.15562 3.03201 4.12239 3.18783C4.08916 3.34364 4.01196 3.48667 3.89993 3.59996L3.37076 4.12913C3.96391 5.17227 4.82762 6.03598 5.87076 6.62913L6.39993 6.09996C6.51322 5.98793 6.65625 5.91073 6.81206 5.8775C6.96788 5.84427 7.12996 5.8564 7.2791 5.91246C7.65713 6.05352 8.0499 6.15137 8.44993 6.20413C8.65233 6.23268 8.83718 6.33463 8.96932 6.49058C9.10146 6.64654 9.17167 6.84562 9.1666 7.04996Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_83_335">
-                            <rect width="10" height="10" fill="white" />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                      <span>${data["phone"] || '<span style="color: #A0A0A0;">N/A</span>'}</span>
-                    </li>
-                    <li class="mb-[9px] text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 8" fill="none">
-      <path d="M9.16659 1.91675L5.42909 4.29175C5.30045 4.37234 5.15172 4.41509 4.99992 4.41509C4.84812 4.41509 4.69939 4.37234 4.57075 4.29175L0.833252 1.91675M1.66659 0.666748H8.33325C8.79349 0.666748 9.16659 1.03984 9.16659 1.50008V6.50008C9.16659 6.96032 8.79349 7.33341 8.33325 7.33341H1.66659C1.20635 7.33341 0.833252 6.96032 0.833252 6.50008V1.50008C0.833252 1.03984 1.20635 0.666748 1.66659 0.666748Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg> <span>${data["email"] || '<span style="color: #A0A0A0;">N/A</span>'}<span></li>
+    return `<div class="flex  flex-col px-6 md:flex-row relative !h-[calc(100vh-140px)]">
+            <!-- Left Section -->
+              <div class="py-4 md:w-[60.82%]">
+                <!-- Experience -->
+              ${experienceSection()}
+                <!-- Education -->
+                ${educationSection()}
 
-                    <li class="mb-[9px] text-[12px] font-normal leading-[18px] text-[#1C1C1C] flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" fill="none">
-                <path d="M6.25 8.74995V5.41661C6.25 5.30611 6.2061 5.20012 6.12796 5.12198C6.04982 5.04384 5.94384 4.99995 5.83333 4.99995H4.16667C4.05616 4.99995 3.95018 5.04384 3.87204 5.12198C3.7939 5.20012 3.75 5.30611 3.75 5.41661V8.74995M1.25 4.16661C1.24997 4.04539 1.27639 3.92562 1.32741 3.81566C1.37843 3.7057 1.45283 3.60819 1.54542 3.52995L4.46208 1.03036C4.61249 0.903241 4.80307 0.833496 5 0.833496C5.19693 0.833496 5.38751 0.903241 5.53792 1.03036L8.45458 3.52995C8.54717 3.60819 8.62157 3.7057 8.67259 3.81566C8.72361 3.92562 8.75003 4.04539 8.75 4.16661V7.91661C8.75 8.13763 8.6622 8.34959 8.50592 8.50587C8.34964 8.66215 8.13768 8.74995 7.91667 8.74995H2.08333C1.86232 8.74995 1.65036 8.66215 1.49408 8.50587C1.3378 8.34959 1.25 8.13763 1.25 7.91661V4.16661Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span>
-              ${data?.currentLocation ? data?.currentLocation : '<span style="color: #A0A0A0;">N/A</span>'}
-</span>
-</li>
-                  </ul>
+                <!-- Certifications -->
+               ${certificationsSection()}
+
+             
+              
+      
+                
+              </div>
+              <!--Right Section -->
+              <div class="flex-1 md:pl-[14px] md:border-l my-4">
+
+                <!-- Details -->
+                <div class="relative">
+                 
                 </div>`;
   }
 
   function skillsSection() {
     return `
-      <div class="mb-[30px]">
-        <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Skills</h3>
-        <div class="flex flex-wrap gap-2">
+      <section class="skills-section flex flex-col gap-2 items-start mb-[28px]">
+        <header class="flex flex-col gap-[3px] items-start w-full">
+          <h2 class="gap-6 w-full text-xs font-semibold text-[#190C00]">Skills :</h2>
+          <div class="flex flex-col gap-2.5 items-start w-full">
+            <div class="h-0.5 rounded-[20px] bg-[#190C00] w-[58px]"></div>
+          </div>
+        </header>
+        <ul class="flex flex-wrap gap-1 items-start w-full max-w-[600px]">
           ${
             topSkills?.length > 0
               ? topSkills
                   .map(
-                    (skill) => `
-                      <span class="bg-[#3E6AF2] text-white text-[12px] font-medium px-3 py-1 rounded-full">
-                        ${skill?.skillName || '<span style="color: #A0A0A0;">N/A</span>'}
-                      </span>
+                    (skill: any) => `
+                      <li class="gap-1 px-2 py-1 text-[8px] text-[#FFFFFF] rounded-[6px] bg-[#0B0A09] border-[0.5px] border-[#E6E6E6]">
+                        ${skill?.skillName || '<span style="color:#1A1A1A;">N/A</span>'}
+                      </li>
                     `
                   )
                   .join("")
-              : '<span style="color: #A0A0A0;">No skills available.</span>'
+              : '<li style="color:#1A1A1A;">N/A</li>'
           }
-        </div>
-        </div>
-      </div>
+        </ul>
+      </section>
+    `;
+  }
+
+  function addressSection() {
+    return `
+     <article class="flex flex-col gap-2 items-start mb-[28px]">
+        <header class="flex flex-col gap-[3px] items-start w-full">
+          <h2 class="gap-6 w-full text-xs font-semibold text-[#190C00]">Address:</h2>
+          <div class="flex flex-col gap-2.5 items-start w-full">
+            <div class="h-0.5 rounded-[20px] bg-[#190C00] w-[58px]"></div>
+          </div>
+        </header>
+        <section class="flex flex-col gap-3 items-start w-full">
+          <div class="flex gap-1 items-start w-full">
+           <figure class ="pt-1"
+                
+              >
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 8.41645V5.08312C6 4.97261 5.9561 4.86663 5.87796 4.78849C5.79982 4.71035 5.69384 4.66645 5.58333 4.66645H3.91667C3.80616 4.66645 3.70018 4.71035 3.62204 4.78849C3.5439 4.86663 3.5 4.97261 3.5 5.08312V8.41645M1 3.83312C0.999971 3.71189 1.02639 3.59213 1.07741 3.48216C1.12843 3.3722 1.20283 3.2747 1.29542 3.19645L4.21208 0.696866C4.36249 0.569745 4.55307 0.5 4.75 0.5C4.94693 0.5 5.13751 0.569745 5.28792 0.696866L8.20458 3.19645C8.29717 3.2747 8.37157 3.3722 8.42259 3.48216C8.47361 3.59213 8.50003 3.71189 8.5 3.83312V7.58312C8.5 7.80413 8.4122 8.01609 8.25592 8.17237C8.09964 8.32865 7.88768 8.41645 7.66667 8.41645H1.83333C1.61232 8.41645 1.40036 8.32865 1.24408 8.17237C1.0878 8.01609 1 7.80413 1 7.58312V3.83312Z" stroke="#8E8E8E" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+              </figure>
+            <p class="flex-1 shrink text-[8px] font-normal  basis-0 leading-4 text-[#1C1C1C]">
+              <span>
+              ${data?.currentLocation ? data?.currentLocation : '<span style="color: #1C1C1C;">N/A</span>'}
+</span>
+            </p>
+          </div>
+        </section>
+      </article>
+     
+    `;
+  }
+
+  function socialLinksSection() {
+    return `
+     <section
+        class="social-links-container flex flex-col gap-2 items-start mb-[28px]"
+      >
+        <header class="flex flex-col gap-[3px] items-start w-full">
+          <h2 class="gap-6 w-full text-xs font-semibold text-[#190C00]">Social Links :</h2>
+          <div class="flex flex-col gap-2.5 items-start w-full">
+            <div class="h-0.5 rounded-[20px] bg-[#190C00] w-[58px]"></div>
+          </div>
+        </header>
+        <nav class="social-links-nav flex flex-col gap-2 w-full">
+        ${
+          data?.linkedinProfileUrl
+            ? `<a href="${data.linkedinProfileUrl}" target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">LinkedIn</a>`
+            : ""
+        }
+        ${
+          data?.portfolio
+            ? `<a href="${data.portfolio}"  target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">Portfolio</a>`
+            : ""
+        }
+         
+             ${data?.other ? `<a href="${data.other}"  target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">Others</a>` : ""}
+        </nav>
+      </section>
+
+       </div>
     `;
   }
 
   function experienceSection() {
-    return `  <div class="mb-[30px] pt-4">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Experience</h3>
-                  <ul class="space-y-4 text-gray-600">
+    return `
+      <section class="">
+       <div class="flex flex-col gap-2 items-start w-full">
+        <header class="flex flex-col gap-[3px] items-start w-full">
+           <h2 class="gap-6 w-full text-xs font-semibold text-[#190C00]">Experience :</h2>
+         <div class="flex flex-col gap-2.5 items-start w-full">
+            <div class="h-0.5 rounded-[20px] bg-[#190C00] w-[58px]"></div>
+          </div>
+        </header>
         ${
           data?.["Work Experience"]?.length > 0
             ? data["Work Experience"]
                 .map(
-                  (exp) => `
-                    <li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
-                          ${exp?.title || '<span style="color: #A0A0A0;">N/A</span>'}
-                        </strong>
-                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                          · ${exp?.startDate ? new Date(exp.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
-                    exp?.currentlyWorkingInThisRole
-                      ? "Present"
-                      : exp?.endDate
-                      ? new Date(exp.endDate).toLocaleDateString()
-                      : '<span style="color: #A0A0A0;">N/A</span>'
+                  (exp: any) => `
+                  <div class="pr-4">
+            <article class="max-w-[400px] mb-5">
+              <header class="w-full">
+                <div class="flex gap-2 items-center pb-0.5 w-full text-xs leading-tight">
+                  <h3 class="self-stretch my-auto font-semibold text-[#121212] text-[10px]">${
+                    exp?.companyName || '<span style="color: #121212;">N/A</span>'
+                  }</h3>
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/2271f0fc22781265f0fb836384aea80aee81470d?placeholderIfAbsent=true&apiKey=f503c6e3cdcd400faefec985da817839"
+                    class="object-contain shrink-0 self-stretch my-auto aspect-square w-[3px]"
+                    alt="Separator"
+                  />
+                  <p class="flex-1 shrink self-stretch my-auto basis-0 text-[#121212] text-[10px] font-normal">
+                    ${exp?.title || '<span style="color: #A0A0A0;">N/A</span>'}
+                  </p>
+                </div>
+                <p class="flex-1 shrink gap-2.5 self-stretch w-full text-[8px] text-[#121212] font-semibold leading-loose whitespace-nowrap basis-0">
+                  ${exp?.location || '<span style="color: #A0A0A0;">N/A</span>'}
+                </p>
+              </header>
+  
+              <section class="flex gap-1 mt-1 w-full">
+                <div class="flex flex-col justify-between items-center py-1.5 w-1.5">
+                  <span class="flex w-1.5 h-1.5 bg-[#4A3826] min-h-1.5 rounded-[100px]" aria-hidden="true"></span>
+                  <span class="flex flex-1 w-px bg-[#4A3826] min-h-[60px]" aria-hidden="true"></span>
+                  <span class="flex w-1.5 h-1.5 bg-[#4A3826] min-h-1.5 rounded-[100px]" aria-hidden="true"></span>
+                </div>
+  
+                <div class="flex-1 shrink self-start w-full text-[8px] font-semibold leading-loose basis-0 min-w-60 text-[#121212]">
+                  <time class="flex-1 shrink gap-2.5 self-stretch w-full basis-0">
+                   ${
+                     exp?.startDate
+                       ? exp?.currentlyWorkingInThisRole
+                         ? `${new Date(exp.startDate).toLocaleDateString(undefined, { month: "short", year: "numeric" })} (Currently Working)`
+                         : new Date(exp.startDate).toLocaleDateString(undefined, { month: "short", year: "numeric" })
+                       : "N/A"
+                   }
+                  </time>
+  
+                  ${
+                    exp?.description
+                      ? `<p class="mt-2 pl-2 text-[8px] font-normal text-[#1A1A1A] leading-snug">
+                          ${exp.description}
+                        </p>`
+                      : ""
                   }
-                        </p>
-                      </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
-                        ${exp?.companyName || '<span style="color: #A0A0A0;">N/A</span>'}, ${exp?.location || '<span style="color: #A0A0A0;">N/A</span>'}
-                      </p>
-                    </li>
-                  `
+  
+                  <ul class="pl-2 mt-3 w-full leading-4 text-zinc-900">
+                    ${
+                      Array.isArray(exp?.description) && exp.description.length > 0
+                        ? exp.description
+                            .map(
+                              (point: string) => `
+                      <li class="flex gap-2 items-start mt-2 w-full">
+                        <img
+                          src="https://cdn.builder.io/api/v1/image/assets/TEMP/17e05694792f11c0a76e83684630a52c5a7386c3?placeholderIfAbsent=true&apiKey=f503c6e3cdcd400faefec985da817839"
+                          class="object-contain shrink-0 w-1 aspect-[0.29]"
+                          alt="Bullet point"
+                        />
+                        <p class="flex-1 shrink basis-0">${point}</p>
+                      </li>`
+                            )
+                            .join("")
+                        : `<li class="text-[8px] text-[#1A1A1A]"></li>`
+                    }
+                  </ul>
+  
+                  <time class="block mt-5 w-full">
+                   ${
+                     !exp?.currentlyWorkingInThisRole && exp?.endDate
+                       ? `<time class="block mt-5 w-full">
+         ${new Date(exp.endDate).toLocaleDateString(undefined, { month: "short", year: "numeric" })}
+       </time>`
+                       : ""
+                   }
+                  </time>
+                </div>
+              </section>
+            </article>
+            </div>
+          `
                 )
                 .join("")
-            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No work experience available.</li>'
+            : `<p class="text-[8px] text-[#1A1A1A]">N/A</p>`
         }
-      </ul>
-                </div>
-      `;
+      </div>
+      </section>
+    `;
+  }
+
+  function educationSection() {
+    return `
+      <section class="education-section flex flex-col gap-4 justify-center items-start max-md:w-full max-sm:px-4 max-sm:py-0 max-sm:w-full mb-[20px]">
+      <div class="flex flex-col gap-2 items-start w-full">
+        <header class="flex flex-col gap-[3px] items-start w-full">
+          <h2 class="gap-6 w-full text-xs font-semibold text-[#190C00]">Education :</h2>
+          <div class="flex flex-col gap-2.5 items-start w-full">
+            <div class="h-0.5 rounded-[20px] bg-[#190C00] w-[58px]"></div>
+          </div>
+          
+        </header>
+        <article class="flex flex-col gap-1 items-start w-full">
+          ${
+            data?.["Education History"]?.length > 0
+              ? data["Education History"]
+                  .map(
+                    (education: any) => `
+                      <div class="flex flex-col gap-2 items-start w-full">
+                        <h3 class="w-full text-[10px] font-semibold text-[#121212]">
+                          ${education?.educationQualification || "N/A"}${education?.educationalSpecialization ? " " + education.educationalSpecialization : ""}
+                        </h3>
+                        <p class="w-full text-[8px] text-[#121212] font-normal">
+                          ${education?.startDate ? new Date(education.startDate).toLocaleDateString() : "N/A"} - ${
+                      education?.endDate ? new Date(education.endDate).toLocaleDateString() : "N/A"
+                    } | ${education?.schoolCollegeName || "N/A"}, ${education?.location || "N/A"}
+                        </p>
+                      </div>
+                    `
+                  )
+                  .join("")
+              : `<p class="text-[8px] text-[#121212]">N/A</p>`
+          }
+        </article>
+        </div>
+      </section>
+       
+    `;
   }
 
   function certificationsSection() {
-    return `<div class="mb-[30px]">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Certifications</h3>
-                  <ul class="space-y-4">
-        ${
-          data?.["Certifications"]?.length > 0
-            ? data["Certifications"]
-                .map(
-                  (certification) => `
-                    <li>
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
-                          ${certification?.name || '<span style="color: #A0A0A0;">N/A</span>'}
-                        </strong>
-                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                          · Valid till ${
-                            certification?.expirationDate
-                              ? new Date(certification.expirationDate).toLocaleDateString()
-                              : '<span style="color: #A0A0A0;">N/A</span>'
-                          }
-                        </p>
-                      </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
-                        ${certification?.issuingOrganization || '<span style="color: #A0A0A0;">N/A</span>'}
-                      </p>
-                    </li>
-                  `
-                )
-                .join("")
-            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No certifications available.</li>'
-        }
-      </ul>
-                </div>`;
-  }
-
-  function projectSection() {
-    return `<div class="mb-[30px]">
-              <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">
-                Projects
-              </h3>
-              <ul class="space-y-4">
-                ${
-                  data?.["Project"]?.length > 0
-                    ? data["Project"]
-                        .map(
-                          (proj) => `
-                             <li class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
-                                  ${proj?.projectName || '<span style="color: #A0A0A0;">N/A</span>'}
-                                </strong>
-                               <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-  · ${proj?.from ? new Date(proj.from).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - 
-  ${proj?.to ? new Date(proj.to).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'}
-</p>
-
-                               </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
-                        ${proj?.summary ||'<span style="color: #A0A0A0;">N/A</span>'}
-                      </p>
-                            </li>`
-                        )
-                        .join("")
-                    : '<li class="text-[12px] font-normal text-[#A0A0A0]">No projects available.</li>'
-                }
-              </ul>
-            </div>`;
-  }
-  function educationSection() {
-    return `<div class="mb-[30px]">
-                  <h3 class="mb-[16px] text-[14px] font-semibold leading-[15px] tracking-[-0.3px] text-[#3E6AF2]">Education</h3>
-                  <ul class="space-y-4">
-        ${
-          data?.["Education History"]?.length > 0
-            ? data["Education History"]
-                .map(
-                  (education) => `
-                    <li>
-                      <div class="flex items-center gap-[10px]">
-                        <strong class="text-[12px] font-medium leading-[14.52px] text-[#1C1C1C]">
-                          ${education?.educationQualification || '<span style="color: #A0A0A0;">N/A</span>'}, 
-                          ${education?.educationalSpecialization || '<span style="color: #A0A0A0;">N/A</span>'}
-                        </strong>
-                        <p class="text-[10px] font-normal leading-[11.52px] text-[#A3A5A8]">
-                          · ${education?.startDate ? new Date(education.startDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'} - ${
-                    education?.endDate ? new Date(education.endDate).toLocaleDateString() : '<span style="color: #A0A0A0;">N/A</span>'
-                  }
-                        </p>
-                      </div>
-                      <p class="mt-[8px] text-[10px] font-normal leading-[14.06px] text-[#3C3C3C]">
-                        ${education?.schoolCollegeName || '<span style="color: #A0A0A0;">N/A</span>'}, 
-                        ${education?.location || '<span style="color: #A0A0A0;">N/A</span>'}
-                      </p>
-                    </li>
-                  `
-                )
-                .join("")
-            : '<li class="text-[10px] font-normal leading-[14.06px] text-[#A0A0A0]; font-size: 10px;">No education history available.</li>'
-        }
-      </ul>
-                </div>`;
-  }
-
-  function referenceSection() {
     return `
-      <div class="mb-[30px]">
-        <h3 class="mb-4 text-[14px] font-semibold leading-[18px] text-[#3E6AF2]">Reference</h3>
-        <ul>
-          <li>
-            <div class="mt-[16px] flex gap-[16px] items-center">
-              <h6 class="text-[12px] font-medium leading-[14.06px] text-[#1C1C1C]">
-                ${data?.reference || '<span style="color: #A0A0A0;">N/A</span>'}
-              </h6>
+      <section class="certification-section flex flex-col gap-4 justify-center items-start mb-[20px]">
+        <div class="flex flex-col gap-2 items-start w-full">
+          <header class="flex flex-col gap-1 items-start w-full">
+            <h3 class="gap-6 w-full h-4 text-xs font-bold leading-5 text-stone-950">
+              Certifications :
+            </h3>
+            <div class="flex flex-col gap-2.5 items-start w-full">
+              <div class="h-0.5 rounded-3xl bg-stone-950 w-[58px]"></div>
             </div>
-          </li>
-        </ul>
-      </div>
+          </header>
+  
+          ${
+            data?.["Certifications"]?.length > 0
+              ? data["Certifications"]
+                  .map(
+                    (certification: any) => `
+              <article class="flex flex-col gap-2 items-start w-full">
+                 <h3 class="w-full text-[10px] font-semibold text-[#121212]">
+                  ${certification?.name || '<span class="text-[#A0A0A0]">N/A</span>'}
+                </h4>
+                 <p class="w-full text-[8px] text-[#121212] font-normal">
+                  ${certification?.expirationDate ? new Date(certification.expirationDate).toLocaleDateString() : "Present"} | ${
+                      certification?.issuingOrganization || "N/A"
+                    }
+                </p>
+              </article>
+            `
+                  )
+                  .join("")
+              : `<p class="text-[8px] text-[#121212]">N/A</p>`
+          }
+  
+        </div>
+      </section>
     `;
   }
 
   function backgroundImage() {
     return `<div class="absolute top-[50%] translate-y-[-50%] left-[37%]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="195" height="195" viewBox="0 0 195 195" fill="none">
-      <g opacity="0.05" clip-path="url(#clip0_83_583)">
-      <path d="M0 195H34.4C66.17 195 91.79 170.43 91.79 140.06V0H57.39C25.63 0 0 24.57 0 54.94V195Z" fill="#FFD600"/>
-      <path d="M194.99 0.52002V36.5C194.99 67.04 170.77 91.96 140.93 91.96H103.02V0.52002H194.99Z" fill="#FF7800"/>
-      <path d="M194.99 103.56V139.54C194.99 170.08 170.77 195 140.93 195H103.02V103.56H194.99Z" fill="#2D58C0"/>
-      </g>
-      <defs>
-      <clipPath id="clip0_83_583">
-      <rect width="194.99" height="195" fill="white"/>
-      </clipPath>
-      </defs>
-      </svg>
+            
           </div>
             </div>`;
   }
 
   function footerSection() {
-    return `<div class=" absolute bottom-0 left-0 right-0 flex flex-col items-center justify-between border-t bg-[#D6DCE8] px-6 py-4 text-center md:flex-row">
-              <!-- 
-      
-                 <div class="flex items-center justify-start gap-2">
-                <img src="images/linkfields_logo 1 (1) 1 (1).png" alt="" class="mx-auto mb-2 h-8" /> 
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="28" viewBox="0 0 26 28" fill="none">
-                  <path d="M0 27.8134H4.49765C8.63791 27.8134 11.9952 24.3165 11.9952 20.0035V0.0869141H7.49756C3.35581 0.0869141 0 3.58383 0 7.8968V27.8134Z" fill="#FFD600" />
-                  <path d="M25.3905 0.16626V5.28397C25.3905 9.6325 22.2319 13.1585 18.3348 13.1585H13.3953V0.16626H25.3905Z" fill="#FF7800" />
-                  <path d="M25.3905 14.9402V20.0579C25.3905 24.4064 22.2319 27.9324 18.3348 27.9324H13.3953V14.9402H25.3905Z" fill="#2D58C0" />
-                </svg>
-                <div class="flex flex-col justify-center">
-                  <p class="text-2xl font-bold leading-none">Linkfields</p>
-                  <p class="text-xs font-light leading-tight">exploring Innovation</p>
-                </div>
-              </div>
-                -->
-      
-              <!-- whole image svg section -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="125" height="32" viewBox="0 0 125 32" fill="none">
-                <path d="M35.2438 16.916C35.2438 19.1087 36.5042 20.1237 38.451 20.1237C39.0698 20.1237 39.5052 20.0318 39.8721 19.87V17.3316C39.6512 17.4089 39.4187 17.4478 39.1848 17.4465C38.4054 17.4465 38.2913 16.916 38.2913 16.3386V5.39807H35.2209V16.916H35.2438Z" fill="#141213" />
-                <path d="M41.9573 19.893H45.0277V9.48477H41.9573V19.893ZM43.4478 4.86951C42.5077 4.86951 41.752 5.5618 41.752 6.50783C41.752 7.45387 42.5068 8.16914 43.4478 8.16914C44.3888 8.16914 45.1646 7.45479 45.1646 6.50783C45.1418 5.5618 44.386 4.86951 43.4478 4.86951Z" fill="#141213" />
-                <path d="M47.7988 9.46196V19.8665H50.8683V14.4422C50.8683 13.0806 51.5793 11.9268 52.9073 11.9268C54.0299 11.9268 54.7637 12.6421 54.7637 14.0037V19.8665H57.8331V13.5467C57.8331 10.8465 56.298 9.2312 53.8245 9.2312C52.4263 9.2312 51.4186 9.76168 50.7542 10.8236V9.48495H47.7988V9.46196Z" fill="#141213" />
-                <path d="M60.4241 5.39978V19.8662H63.4935V16.5656L64.4062 15.5046L67.2247 19.8432H70.8673L66.6743 13.7505L70.4776 9.43492H66.8833L63.4698 13.2889V5.39978H60.4241Z" fill="#141213" />
-                <path d="M72.6539 11.9081V19.8929H75.7243V11.9081H77.8089V9.46163H75.727V9.00194C75.727 8.12486 76.3458 7.77917 77.17 7.77917C77.5261 7.77802 77.8782 7.85553 78.2013 8.00626V5.49269C77.7888 5.26192 77.1472 5.16907 76.6205 5.16907C74.1234 5.16907 72.6795 6.6465 72.6795 8.95414V9.48462H71.2593V11.9311H72.6539V11.9081Z" fill="#141213" />
-                <path d="M79.8742 19.893H82.9446V9.48477H79.8742V19.893ZM81.3638 4.86951C80.4246 4.86951 79.668 5.5618 79.668 6.50783C79.668 7.45387 80.4246 8.16914 81.3638 8.16914C82.303 8.16914 83.0815 7.45479 83.0815 6.50783C83.0815 5.56088 82.303 4.86951 81.3638 4.86951Z" fill="#141213" />
-                <path d="M90.2527 9.23108C87.1832 9.23108 84.938 11.6316 84.938 14.7004C84.938 17.7932 87.2061 20.1468 90.6652 20.1468C92.3601 20.1468 93.7356 19.6623 95.0408 18.4395L93.4371 16.4546C93.1019 16.8036 92.6993 17.0799 92.2542 17.2665C91.8091 17.4531 91.3308 17.546 90.8487 17.5395C89.4742 17.5395 88.2593 16.8472 88.0996 15.4387H94.9951C95.1103 14.9861 95.1716 14.5213 95.1777 14.0541C95.1558 11.216 93.208 9.23108 90.2527 9.23108ZM90.2071 11.7465C91.284 11.7465 92.131 12.4158 92.1776 13.5007V13.5227H88.0531C88.1909 12.3698 89.0835 11.7465 90.2071 11.7465Z" fill="#141213" />
-                <path d="M97.0328 16.916C97.0328 19.1087 98.2933 20.1237 100.241 20.1237C100.859 20.1237 101.294 20.0318 101.661 19.87V17.3316C101.44 17.4091 101.208 17.4479 100.974 17.4465C100.194 17.4465 100.08 16.916 100.08 16.3386V5.39807H97.01V16.916H97.0328Z" fill="#141213" />
-                <path d="M107.917 17.4004C106.611 17.4004 105.511 16.3155 105.511 14.6312C105.511 13.0159 106.606 11.931 107.917 11.931C109.291 11.931 110.344 12.9929 110.344 14.6312C110.367 16.3615 109.291 17.4004 107.917 17.4004ZM110.505 19.8928H113.346V5.39978H110.276V10.7083C109.612 9.66936 108.42 9.20783 107.298 9.20783C104.479 9.20783 102.44 11.5614 102.44 14.6772C102.44 17.8849 104.617 20.1236 107.229 20.1236C108.26 20.1236 109.749 19.6639 110.505 18.4154V19.8928Z" fill="#141213" />
-                <path d="M119.578 20.1238C122.053 20.1238 123.726 18.7162 123.726 16.9161C123.726 14.9541 122.236 14.3547 120.472 13.6385C118.938 13.0391 118.364 12.8543 118.364 12.3698C118.364 11.8853 118.938 11.5846 119.601 11.5846C120.564 11.5846 121.182 12.0701 121.549 12.7155L123.493 11.2849C122.854 10.0392 121.385 9.18506 119.667 9.18506C117.399 9.18506 115.543 10.4078 115.543 12.3468C115.543 14.0311 116.665 14.8852 118.751 15.6005C120.309 16.1521 120.926 16.336 120.926 16.9621C120.926 17.4217 120.445 17.6976 119.621 17.6976C118.544 17.6976 117.765 17.0751 117.215 16.1981L115.199 17.7205C116.009 19.2697 117.652 20.1238 119.578 20.1238Z" fill="#141213" />
-                <path d="M37.8624 25.6492C37.8605 25.7545 37.8473 25.8593 37.8232 25.9618H36.0589C36.0982 26.3589 36.4286 26.5676 36.7982 26.5676C36.9218 26.5689 37.0443 26.5444 37.158 26.4956C37.2717 26.4469 37.3742 26.375 37.459 26.2845L37.8131 26.7111C37.6771 26.8495 37.5142 26.9581 37.3345 27.0301C37.1548 27.1021 36.9623 27.1359 36.769 27.1294C35.9403 27.1294 35.3936 26.5483 35.3936 25.8092C35.3936 25.07 35.9311 24.4779 36.6796 24.4779C37.3942 24.477 37.8624 24.979 37.8624 25.6492ZM36.0589 25.5251H37.2409V25.5196C37.2372 25.4488 37.2195 25.3795 37.189 25.3157C37.1584 25.2518 37.1155 25.1948 37.0629 25.1478C37.0102 25.1008 36.9488 25.0649 36.8822 25.0421C36.8156 25.0192 36.7452 25.01 36.675 25.0148C36.5276 25.0069 36.3826 25.0549 36.2685 25.1493C36.1545 25.2438 36.0797 25.3778 36.0589 25.5251Z" fill="#141213" />
-                <path d="M41.0026 25.7879L40.162 24.5366H40.8967L41.3941 25.3558L41.8961 24.5366H42.6263L41.7884 25.7879L42.6464 27.0686H41.9263L41.3941 26.2301L40.862 27.0686H40.1428L41.0026 25.7879Z" fill="#141213" />
-                <path d="M45.7787 24.8942C45.8699 24.7642 45.991 24.6583 46.1317 24.5857C46.2723 24.513 46.4284 24.4756 46.5864 24.4768C47.2372 24.4768 47.773 25.0229 47.773 25.8026C47.773 26.562 47.271 27.1283 46.5864 27.1283C46.2907 27.1283 45.9749 26.9996 45.8225 26.7661V28.0615H45.1836V24.5366H45.7851L45.7787 24.8942ZM45.7933 25.8081C45.7933 26.2678 46.089 26.5528 46.4586 26.5528C46.8137 26.5528 47.124 26.2549 47.124 25.8081C47.124 25.3613 46.8137 25.0533 46.4586 25.0533C46.089 25.0533 45.7933 25.3512 45.7933 25.8081Z" fill="#141213" />
-                <path d="M50.4066 23.5437H51.0455V26.2696C51.0455 26.4287 51.0756 26.5574 51.2673 26.5574C51.3246 26.5583 51.3816 26.5483 51.4352 26.528V27.0741C51.3393 27.1107 51.2375 27.1291 51.135 27.1283C50.7206 27.1283 50.4048 26.9151 50.4048 26.3837L50.4066 23.5437Z" fill="#141213" />
-                <path d="M56.4531 25.8029C56.456 26.0686 56.3804 26.3292 56.236 26.5516C56.0915 26.774 55.8847 26.948 55.6418 27.0518C55.399 27.1555 55.1309 27.1841 54.8719 27.1341C54.6128 27.084 54.3743 26.9575 54.1867 26.7707C53.9991 26.5838 53.8709 26.345 53.8184 26.0846C53.7659 25.8242 53.7914 25.5539 53.8916 25.3081C53.9919 25.0623 54.1624 24.8521 54.3816 24.7041C54.6007 24.5562 54.8586 24.4772 55.1224 24.4772C55.2974 24.4718 55.4716 24.5023 55.6345 24.5668C55.7974 24.6313 55.9456 24.7285 56.0701 24.8525C56.1945 24.9765 56.2927 25.1247 56.3585 25.2881C56.4244 25.4515 56.4566 25.6266 56.4531 25.8029ZM54.4452 25.8029C54.4452 26.2203 54.7308 26.543 55.1251 26.543C55.5194 26.543 55.8051 26.2203 55.8051 25.8029C55.8051 25.3855 55.5194 25.0674 55.1251 25.0674C54.7308 25.0674 54.4424 25.3828 54.4424 25.8029H54.4452Z" fill="#141213" />
-                <path d="M59.7446 24.979C59.7962 24.8302 59.893 24.7017 60.0213 24.6115C60.1496 24.5214 60.3028 24.4743 60.4592 24.477C60.5111 24.4747 60.563 24.4816 60.6126 24.4972V25.1178C60.5681 25.1021 60.5209 25.0952 60.4738 25.0976C60.0257 25.0976 59.7546 25.4359 59.7546 25.9572V27.0687H59.1157V24.5367H59.7464L59.7446 24.979Z" fill="#141213" />
-                <path d="M63.862 23.8021C63.862 23.8997 63.8236 23.9932 63.7551 24.0622C63.6866 24.1311 63.5938 24.1699 63.4969 24.1699C63.4483 24.1716 63.3998 24.1634 63.3545 24.1456C63.3092 24.1278 63.2679 24.1008 63.2333 24.0664C63.1987 24.0319 63.1714 23.9907 63.1532 23.9453C63.135 23.8998 63.1261 23.8511 63.1273 23.8021C63.1262 23.7534 63.1351 23.705 63.1535 23.6599C63.1718 23.6148 63.1992 23.5739 63.2339 23.54C63.2685 23.506 63.3098 23.4796 63.3551 23.4623C63.4003 23.4451 63.4486 23.4375 63.4969 23.4399C63.5447 23.4389 63.5922 23.4476 63.6365 23.4653C63.6809 23.4831 63.7213 23.5097 63.7553 23.5435C63.7893 23.5772 63.8163 23.6175 63.8346 23.6619C63.853 23.7063 63.8623 23.754 63.862 23.8021ZM63.1775 24.5376H63.8164V27.0696H63.1775V24.5376Z" fill="#141213" />
-                <path d="M67.287 24.5366V24.8841C67.4449 24.6211 67.6913 24.4768 68.061 24.4768C68.6524 24.4768 69.0367 24.8648 69.0367 25.535V27.0685H68.3978V25.6095C68.3978 25.2463 68.186 25.0533 67.8903 25.0533C67.4914 25.0533 67.3135 25.4155 67.3135 25.763V27.0685H66.6746V24.5366H67.287Z" fill="#141213" />
-                <path d="M72.0148 26.9095C71.9563 26.8697 71.9089 26.8156 71.877 26.7522C71.845 26.6888 71.8296 26.6183 71.8323 26.5472C71.8323 26.3836 71.9409 26.2347 72.1134 26.1308C71.9851 26.0538 71.8786 25.9449 71.8043 25.8144C71.73 25.684 71.6902 25.5365 71.689 25.3861C71.689 24.8795 72.1453 24.4768 72.724 24.4768C72.8433 24.4765 72.9619 24.4967 73.0745 24.5366H74.0648V25.033H73.676C73.7353 25.1411 73.7667 25.2625 73.7672 25.3861C73.7672 25.9018 73.3109 26.299 72.7222 26.299C72.6577 26.2991 72.5933 26.2942 72.5296 26.2843C72.4967 26.2971 72.4678 26.3186 72.4461 26.3466C72.4244 26.3746 72.4106 26.4081 72.4064 26.4434C72.4064 26.5426 72.5049 26.5923 72.6035 26.5923H73.2351C73.7471 26.5923 74.0921 26.9003 74.0921 27.3223C74.0921 27.7737 73.5847 28.1212 72.8007 28.1212C72.0769 28.1212 71.6141 27.8454 71.6141 27.4262C71.6087 27.1825 71.7812 27.0088 72.0148 26.9095ZM72.808 27.61C73.2415 27.61 73.4633 27.496 73.4633 27.3342C73.4633 27.1724 73.3109 27.1016 73.1384 27.1016H72.4383C72.384 27.1163 72.3355 27.1475 72.2995 27.1909C72.2634 27.2344 72.2414 27.2879 72.2366 27.3443C72.2348 27.5153 72.4712 27.61 72.8061 27.61H72.808ZM72.2695 25.3824C72.2714 25.4402 72.2849 25.497 72.3091 25.5495C72.3332 25.602 72.3676 25.649 72.4102 25.6879C72.4527 25.7267 72.5026 25.7566 72.5568 25.7756C72.611 25.7947 72.6685 25.8026 72.7258 25.7989C72.783 25.8018 72.8401 25.7934 72.894 25.7741C72.9479 25.7547 72.9975 25.7248 73.0399 25.6861C73.0823 25.6474 73.1167 25.6007 73.1411 25.5486C73.1655 25.4964 73.1795 25.44 73.1822 25.3824C73.1822 25.1489 72.9796 24.9696 72.7258 24.9696C72.6687 24.9655 72.6114 24.973 72.5572 24.9917C72.5031 25.0104 72.4532 25.0399 72.4106 25.0784C72.368 25.1169 72.3336 25.1637 72.3093 25.2159C72.2851 25.2682 72.2715 25.3248 72.2695 25.3824Z" fill="#141213" />
-                <path d="M80.6779 23.8021C80.6779 23.8997 80.6395 23.9932 80.571 24.0622C80.5025 24.1311 80.4097 24.1699 80.3129 24.1699C80.2642 24.1716 80.2158 24.1634 80.1704 24.1456C80.1251 24.1278 80.0838 24.1008 80.0492 24.0664C80.0146 24.0319 79.9873 23.9907 79.9691 23.9453C79.9509 23.8998 79.9421 23.8511 79.9432 23.8021C79.9422 23.7534 79.9511 23.705 79.9694 23.6599C79.9877 23.6148 80.0151 23.5739 80.0498 23.54C80.0845 23.506 80.1257 23.4796 80.171 23.4623C80.2162 23.4451 80.2645 23.4375 80.3129 23.4399C80.3606 23.4389 80.4081 23.4476 80.4525 23.4653C80.4968 23.4831 80.5372 23.5097 80.5712 23.5435C80.6053 23.5772 80.6322 23.6175 80.6506 23.6619C80.6689 23.7063 80.6782 23.754 80.6779 23.8021ZM79.9925 24.5376H80.6314V27.0696H79.9925V24.5376Z" fill="#141213" />
-                <path d="M84.1032 24.5367V24.8842C84.2611 24.6213 84.5075 24.4769 84.8771 24.4769C85.4686 24.4769 85.8528 24.8649 85.8528 25.5351V27.0686H85.2139V25.6096C85.2139 25.2464 85.0022 25.0534 84.7065 25.0534C84.3067 25.0534 84.1296 25.4156 84.1296 25.7631V27.0686H83.4907V24.5367H84.1032Z" fill="#141213" />
-                <path d="M89.2826 24.5367V24.8842C89.4405 24.6213 89.6869 24.4769 90.0566 24.4769C90.648 24.4769 91.0323 24.8649 91.0323 25.5351V27.0686H90.3934V25.6096C90.3934 25.2464 90.1816 25.0534 89.8859 25.0534C89.487 25.0534 89.3091 25.4156 89.3091 25.7631V27.0686H88.6702V24.5367H89.2826Z" fill="#141213" />
-                <path d="M96.3157 25.8029C96.3186 26.0686 96.243 26.3292 96.0985 26.5516C95.9541 26.774 95.7473 26.948 95.5044 27.0518C95.2615 27.1555 94.9935 27.1841 94.7344 27.1341C94.4753 27.084 94.2368 26.9575 94.0493 26.7707C93.8617 26.5838 93.7335 26.345 93.681 26.0846C93.6284 25.8242 93.6539 25.5539 93.7542 25.3081C93.8545 25.0623 94.025 24.8521 94.2441 24.7041C94.4633 24.5562 94.7211 24.4772 94.985 24.4772C95.1599 24.4718 95.3342 24.5023 95.4971 24.5668C95.66 24.6313 95.8081 24.7285 95.9326 24.8525C96.0571 24.9765 96.1552 25.1247 96.2211 25.2881C96.2869 25.4515 96.3191 25.6266 96.3157 25.8029ZM94.3077 25.8029C94.3077 26.2203 94.5934 26.543 94.9877 26.543C95.382 26.543 95.6677 26.2203 95.6677 25.8029C95.6677 25.3855 95.382 25.0674 94.9877 25.0674C94.5934 25.0674 94.305 25.3828 94.305 25.8029H94.3077Z" fill="#141213" />
-                <path d="M99.2385 24.5366L99.8893 26.2834L100.535 24.5366H101.195L100.175 27.0686H99.5981L98.575 24.5366H99.2385Z" fill="#141213" />
-                <path d="M105.005 25.4607C105.005 25.1775 104.804 25.0387 104.502 25.0387C104.376 25.0391 104.251 25.0672 104.136 25.1212C104.021 25.1752 103.919 25.2537 103.837 25.3513L103.502 24.9394C103.631 24.789 103.792 24.6696 103.973 24.5901C104.154 24.5105 104.35 24.4728 104.547 24.4797C105.223 24.4797 105.627 24.8474 105.627 25.468V27.0714H105.035V26.7294C104.959 26.858 104.849 26.9634 104.718 27.0341C104.587 27.1049 104.439 27.1384 104.291 27.1312C103.812 27.1312 103.463 26.8232 103.463 26.3865C103.463 26.004 103.749 25.7429 104.284 25.6372L105.009 25.4928L105.005 25.4607ZM105.015 26.0362V25.9268L104.429 26.0408C104.198 26.0858 104.079 26.1851 104.079 26.3442C104.079 26.5179 104.217 26.6319 104.419 26.6319C104.498 26.633 104.575 26.6184 104.648 26.5889C104.72 26.5594 104.786 26.5157 104.842 26.4602C104.897 26.4047 104.941 26.3386 104.971 26.2658C105.001 26.193 105.016 26.1149 105.015 26.0362Z" fill="#141213" />
-                <path d="M108.51 24.5366V23.847H109.131V24.5366H109.727V25.0533H109.131V26.1804C109.131 26.4231 109.249 26.5482 109.48 26.5482C109.59 26.5507 109.698 26.5213 109.791 26.4636V27.0299C109.642 27.1016 109.478 27.1356 109.313 27.1292C108.8 27.1292 108.492 26.8267 108.492 26.2751V25.0533H108.137V24.5366H108.51Z" fill="#141213" />
-                <path d="M113.048 23.8022C113.048 23.8997 113.01 23.9932 112.941 24.0622C112.873 24.1312 112.78 24.1699 112.683 24.1699C112.635 24.1711 112.587 24.1623 112.542 24.1442C112.497 24.1262 112.457 24.0991 112.422 24.0647C112.388 24.0304 112.361 23.9894 112.343 23.9442C112.326 23.8991 112.317 23.8508 112.318 23.8022C112.317 23.7538 112.326 23.7058 112.344 23.661C112.362 23.6163 112.389 23.5757 112.423 23.5418C112.457 23.5078 112.498 23.4813 112.543 23.4638C112.587 23.4463 112.635 23.4382 112.683 23.4399C112.731 23.439 112.778 23.4476 112.823 23.4654C112.867 23.4832 112.907 23.5097 112.941 23.5435C112.975 23.5773 113.002 23.6175 113.021 23.662C113.039 23.7064 113.048 23.7541 113.048 23.8022ZM112.363 24.5377H113.002V27.0696H112.363V24.5377Z" fill="#141213" />
-                <path d="M118.327 25.8027C118.33 26.0684 118.254 26.329 118.11 26.5513C117.966 26.7737 117.759 26.9478 117.516 27.0515C117.273 27.1552 117.005 27.1839 116.746 27.1338C116.487 27.0838 116.248 26.9573 116.061 26.7704C115.873 26.5836 115.745 26.3448 115.692 26.0843C115.64 25.8239 115.665 25.5537 115.766 25.3079C115.866 25.0621 116.036 24.8518 116.256 24.7039C116.475 24.5559 116.733 24.4769 116.996 24.4769C117.171 24.4715 117.346 24.502 117.509 24.5666C117.671 24.6311 117.82 24.7283 117.944 24.8523C118.069 24.9763 118.167 25.1245 118.233 25.2878C118.298 25.4512 118.331 25.6264 118.327 25.8027ZM116.319 25.8027C116.319 26.2201 116.605 26.5428 116.999 26.5428C117.393 26.5428 117.68 26.2201 117.68 25.8027C117.68 25.3853 117.393 25.0672 116.999 25.0672C116.605 25.0672 116.316 25.3825 116.316 25.8027H116.319Z" fill="#141213" />
-                <path d="M121.605 24.5367V24.8842C121.763 24.6213 122.009 24.4769 122.379 24.4769C122.971 24.4769 123.355 24.8649 123.355 25.5351V27.0686H122.716V25.6096C122.716 25.2464 122.504 25.0534 122.208 25.0534C121.81 25.0534 121.632 25.4156 121.632 25.7631V27.0686H120.993V24.5367H121.605Z" fill="#141213" />
-                <path d="M0 29.8134H4.49765C8.63791 29.8134 11.9952 26.3165 11.9952 22.0035V2.08691H7.49756C3.35581 2.08691 0 5.58383 0 9.8968V29.8134Z" fill="#FFD600" />
-                <path d="M25.3905 2.16626V7.28397C25.3905 11.6325 22.2319 15.1585 18.3348 15.1585H13.3953V2.16626H25.3905Z" fill="#FF7800" />
-                <path d="M25.3905 16.9402V22.0579C25.3905 26.4064 22.2319 29.9324 18.3348 29.9324H13.3953V16.9402H25.3905Z" fill="#2D58C0" />
-              </svg>
-      
-              <p class="text-sm text-gray-500">&copy; Copyright 2022 Linkfields. All Rights Reserved.</p>
-            </div>`;
+    return `
+    <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-between border-t bg-stone-900 px-6 py-3 text-center md:flex-row">
+              
+    <div class="flex gap-0 items-center">
+      <div class="flex justify-center items-center px-0.5 pt-1 pb-1 h-[19px] w-[19px]">
+        <svg
+          width="17"
+          height="11"
+          viewBox="0 0 17 11"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-[16px] h-[9px] flex-shrink-0"
+        >
+          <path
+            d="M8.33168 7.32936L4.88184 1.1266C4.83033 1.03399 4.73268 0.976562 4.62671 0.976562H1.98554C1.26433 0.976562 0.806806 1.74941 1.1537 2.38172L5.01234 9.41519C5.50783 10.3184 6.80274 10.3258 7.30857 9.42837L8.33087 7.6146C8.38074 7.52613 8.38105 7.41811 8.33168 7.32936Z"
+            fill="#FFD600"
+          ></path>
+          <path
+            d="M14.027 7.32936L10.5772 1.1266C10.5256 1.03399 10.428 0.976562 10.322 0.976562H7.68085C6.95964 0.976562 6.50212 1.74941 6.84901 2.38172L10.7076 9.41519C11.2031 10.3184 12.4981 10.3258 13.0039 9.42837L14.0262 7.6146C14.0761 7.52613 14.0764 7.41811 14.027 7.32936Z"
+            fill="#FF7900"
+          ></path>
+          <path
+            d="M12.0031 1.40903L13.9488 4.95196C14.0609 5.15604 14.3551 5.15323 14.4632 4.94705L15.8732 2.25924C16.1792 1.67607 15.7562 0.976562 15.0977 0.976562H12.259C12.037 0.976562 11.8963 1.21447 12.0031 1.40903Z"
+            fill="#214ECF"
+          ></path>
+        </svg>
+      </div>
+      <span class="ml-px text-xs font-bold leading-3 text-[#F8F7EF]">
+        linkworks
+      </span>
+    </div>
+    <div class="flex gap-6 items-center">
+      <div class="flex gap-1 items-center">
+        <svg
+          width="16"
+          height="17"
+          viewBox="0 0 16 17"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-[16px] h-[16px]"
+        >
+          <g clip-path="url(#clip0_4228_22362)">
+            <path
+              d="M6.7226 7.7426C6.75594 7.5226 6.82927 7.32927 6.9226 7.1626C7.01594 6.99594 7.14927 6.85594 7.31594 6.74927C7.47594 6.64927 7.67594 6.6026 7.9226 6.59594C8.07594 6.6026 8.21594 6.62927 8.3426 6.6826C8.47594 6.7426 8.59594 6.8226 8.68927 6.9226C8.7826 7.0226 8.85594 7.1426 8.91594 7.27594C8.97594 7.40927 9.0026 7.55594 9.00927 7.7026H10.2026C10.1893 7.38927 10.1293 7.1026 10.0159 6.8426C9.9026 6.5826 9.74927 6.35594 9.54927 6.16927C9.34927 5.9826 9.10927 5.83594 8.82927 5.72927C8.54927 5.6226 8.2426 5.57594 7.9026 5.57594C7.46927 5.57594 7.08927 5.64927 6.76927 5.8026C6.44927 5.95594 6.1826 6.15594 5.96927 6.41594C5.75594 6.67594 5.59594 6.97594 5.49594 7.3226C5.39594 7.66927 5.33594 8.02927 5.33594 8.41594V8.59594C5.33594 8.9826 5.38927 9.3426 5.48927 9.68927C5.58927 10.0359 5.74927 10.3359 5.9626 10.5893C6.17594 10.8426 6.4426 11.0493 6.7626 11.1959C7.0826 11.3426 7.4626 11.4226 7.89594 11.4226C8.20927 11.4226 8.5026 11.3693 8.77594 11.2693C9.04927 11.1693 9.28927 11.0293 9.49594 10.8493C9.7026 10.6693 9.86927 10.4626 9.98927 10.2226C10.1093 9.9826 10.1826 9.72927 10.1893 9.45594H8.99594C8.98927 9.59594 8.95594 9.7226 8.89594 9.8426C8.83594 9.9626 8.75594 10.0626 8.65594 10.1493C8.55594 10.2359 8.4426 10.3026 8.30927 10.3493C8.1826 10.3959 8.04927 10.4093 7.90927 10.4159C7.66927 10.4093 7.46927 10.3626 7.31594 10.2626C7.14927 10.1559 7.01594 10.0159 6.9226 9.84927C6.82927 9.6826 6.75594 9.4826 6.7226 9.2626C6.68927 9.0426 6.66927 8.81594 6.66927 8.59594V8.41594C6.66927 8.1826 6.68927 7.9626 6.7226 7.7426ZM8.0026 1.83594C4.3226 1.83594 1.33594 4.8226 1.33594 8.5026C1.33594 12.1826 4.3226 15.1693 8.0026 15.1693C11.6826 15.1693 14.6693 12.1826 14.6693 8.5026C14.6693 4.8226 11.6826 1.83594 8.0026 1.83594ZM8.0026 13.8359C5.0626 13.8359 2.66927 11.4426 2.66927 8.5026C2.66927 5.5626 5.0626 3.16927 8.0026 3.16927C10.9426 3.16927 13.3359 5.5626 13.3359 8.5026C13.3359 11.4426 10.9426 13.8359 8.0026 13.8359Z"
+              fill="#F8F7EF"
+            ></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_4228_22362">
+              <rect
+                width="16"
+                height="16"
+                fill="white"
+                transform="translate(0 0.5)"
+              ></rect>
+            </clipPath>
+          </defs>
+        </svg>
+        <p class="text-xs text-stone-100">
+          Copyright 2025 Linkfields. All Rights Reserved.
+        </p>
+      </div>
+    </div>
+    </div>
+
+
+    `;
   }
 
   return generateResumeString();

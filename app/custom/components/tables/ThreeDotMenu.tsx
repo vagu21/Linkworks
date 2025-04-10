@@ -46,7 +46,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, item, text, highlighted = fal
         }
       }}
     >
-      <div className="flex w-full gap-2.5 items-center">
+      <div className="flex w-full items-center gap-2.5">
         {icon && <div className="h-4 w-4">{typeof icon === "string" ? <img src={icon} alt="icon" /> : icon}</div>}
         <div className="w-[96%] overflow-hidden truncate text-ellipsis whitespace-nowrap">{text}</div>
       </div>
@@ -63,7 +63,6 @@ interface DropdownMenuProps {
 
 const DropdownCandidateMenu: React.FC<DropdownMenuProps> = ({ item, setLoading, entity, id }) => {
   const mediaValues = item.values.filter((val: any) => val?.media && val.media.length > 0);
-  // const propertyIds = mediaValues.map((item: any) => item.propertyId);
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = useRef(null);
   const toggleDropdown = (e: any) => {
@@ -77,8 +76,18 @@ const DropdownCandidateMenu: React.FC<DropdownMenuProps> = ({ item, setLoading, 
         setIsOpen(false);
       }
     }
+
+    function handleScroll() {
+      setIsOpen(false);
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
   }, []);
 
   return (
@@ -107,7 +116,14 @@ const DropdownCandidateMenu: React.FC<DropdownMenuProps> = ({ item, setLoading, 
               <div className="flex items-center">
                 <div className="w-full rounded-lg border border-gray-300 bg-white shadow-lg">
                   <div className="p-1">
-                    <MenuItem icon="/get_app.png" text="Download Resume" highlighted={true} item={mediaValues[0]} setIsOpen={setIsOpen} setLoading={setLoading} />
+                    <MenuItem
+                      icon="/get_app.png"
+                      text="Download Resume"
+                      highlighted={true}
+                      item={mediaValues[0]}
+                      setIsOpen={setIsOpen}
+                      setLoading={setLoading}
+                    />
                     <MenuItem icon="/get_app.png" text="Download Summary" className="my-1" item={item} setIsOpen={setIsOpen} setLoading={setLoading} />
                   </div>
                 </div>
@@ -130,4 +146,3 @@ const DropdownCandidateMenu: React.FC<DropdownMenuProps> = ({ item, setLoading, 
 };
 
 export default DropdownCandidateMenu;
-

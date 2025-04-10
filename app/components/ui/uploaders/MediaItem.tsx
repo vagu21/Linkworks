@@ -122,7 +122,7 @@ export default function MediaItem({ item, onChangeTitle, onDelete, onDownload, o
           <div className="flex flex-row gap-1">
             {showReuploadButton &&
               <div className="">
-                <button onClick={() => { window.location.reload(); onDelete(); }} className="mr-2 h-[34px] rounded-sm text-body leading-[22px] font-bold border-[0.5px] border-tertiary-foreground text-tertiary-foreground px-4 bg-tertiary">Re-Upload</button>
+                 <button onClick={() => onDelete()} className="mr-2 h-[34px] rounded-sm text-body leading-[22px] font-bold border-[0.5px] border-tertiary-foreground text-tertiary-foreground px-4 bg-tertiary">Re-Upload</button>
               </div>
             }
             <div>

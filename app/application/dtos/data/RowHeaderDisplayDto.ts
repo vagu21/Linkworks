@@ -1,10 +1,12 @@
 import { ReactNode } from "react";
 import { InputType } from "~/application/enums/shared/InputType";
+import { PropertyWithDetails } from "~/utils/db/entities/entities.db.server";
 
 export type RowHeaderDisplayDto<T> = {
   title: string;
   name?: string;
   type?: InputType;
+  property?: PropertyWithDetails;
   value: (item: T, idx: number) => any;
   href?: (item: T) => string | undefined;
   formattedValue?: (item: T, idx?: number) => string | ReactNode;

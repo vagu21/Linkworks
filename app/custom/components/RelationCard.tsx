@@ -101,7 +101,7 @@ export default function RelationCard({ entity, item, columns, layout, allEntitie
 
                   <div className="text-small max-w-full font-medium text-[#121212]">
 
-                    <div className={clsx(!isRichText ? "max-w-[160px] min-w-[180px] truncate" : "", !expandedText && "line-clamp-2")}>
+                  <div title={RowDisplayValueHelper.getRowValue(t, header, item, idx)}  className={clsx(!isRichText ? "max-w-[160px] min-w-[180px] truncate" : "", !expandedText && "line-clamp-2")}>
                       <div>
                         {RowDisplayValueHelper.displayRowValue(t, header, item, idx)}
                       </div>

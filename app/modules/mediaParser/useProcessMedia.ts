@@ -11,7 +11,7 @@ import { useParams } from "@remix-run/react";
 import toast from "react-hot-toast";
 import { PropertyType } from "~/application/enums/entities/PropertyType";
 type ProcessCandidateArgs = {
-  addDynamicRow: (relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) => void;
+  addDynamicRow: (relationship: EntityRelationshipWithDetails, rows: RowWithDetails[],  clearPrevEntities?: boolean) => void;
   childrenEntities: { visible: EntityRelationshipWithDetails[]; hidden: EntityRelationshipWithDetails[] };
   entityName?: string;
   entityProperty?: string;
@@ -201,11 +201,13 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         console.error("Invalid allEducation data structure");
       } else {
         const educationHistoryIds = await saveTenantEducationHistory(educationHistories, allEducationTent, tenantSlug);
+        let selectedEducationList: Array<any> = [];
 
         if (educationHistoryIds.length > 0) {
+          const educationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "education-history");
+
           for (const educationHistoryId of educationHistoryIds) {
             try {
-              const educationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "education-history");
 
               if (educationRelationEntity.length > 0) {
                 const educationSlugEntity = { slug: "education-history", onEdit: null };
@@ -221,12 +223,16 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
                 const selectEducation = allEducation.rowsData.items.filter((id: any) => id.id === educationHistoryId);
 
                 if (selectEducation.length > 0) {
-                  addDynamicRow(educationRelationEntity[0], selectEducation);
+                  selectedEducationList.push(selectEducation[0]);
                 }
               }
             } catch (error) {
               console.error("Error processing education history:", error);
+
             }
+          }
+            if(selectedEducationList.length > 0){
+            addDynamicRow(educationRelationEntity[0], selectedEducationList, true);
           }
         }
       }
@@ -244,9 +250,11 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         const workExperienceIds = await saveTenantWorkExperience(workExperienceHistories, allWorkExperienceTent, tenantSlug);
 
         if (workExperienceIds.length > 0) {
+          const workExperienceRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "work-experience");
+          let selectedWorkExperienceList: Array<any> = [];
+
           for (const workExperienceId of workExperienceIds) {
             try {
-              const workExperienceRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "work-experience");
 
               if (workExperienceRelationEntity.length > 0) {
                 const workExperienceSlugEntity = { slug: "work-experience", onEdit: null };
@@ -261,11 +269,17 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
 
                 const selectWorkExperience = allWorkExperience.rowsData.items.filter((id: any) => id.id === workExperienceId);
 
-                addDynamicRow(workExperienceRelationEntity[0], selectWorkExperience);
+                if (selectWorkExperience.length > 0) {
+                  selectedWorkExperienceList.push(selectWorkExperience[0]);
+                }
               }
             } catch (error) {
               console.error("Error processing work experience:", error);
             }
+          }
+
+          if (selectedWorkExperienceList.length > 0) {
+            addDynamicRow(workExperienceRelationEntity[0], selectedWorkExperienceList, true);
           }
         }
       }
@@ -284,9 +298,10 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         const projectIds = await saveTenantProjects(project, allProjectsTent, tenantSlug);
 
         if (projectIds.length > 0) {
+          const projectRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "project");
+          let selectedProjectList: Array<any> = [];
           for (const projectId of projectIds) {
             try {
-              const projectRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "project");
 
               if (projectRelationEntity.length > 0) {
                 const projectSlugEntity = { slug: "project", onEdit: null };
@@ -301,33 +316,39 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
 
                 const selectProjects = allProjects.rowsData.items.filter((id: any) => id.id === projectId);
 
-                addDynamicRow(projectRelationEntity[0], selectProjects);
+                if (selectProjects.length > 0) {
+                  selectedProjectList.push(selectProjects[0]);
+                }
               }
             } catch (error) {
-              console.error("Error processing work experience:", error);
-            } finally {
-              setIsLoading(false);
-            }
+              console.error("Error processing project:", error);
+            } 
+          }
+
+          if (selectedProjectList.length > 0) {
+            addDynamicRow(projectRelationEntity[0], selectedProjectList, true);
           }
         }
       }
 
       const certifications = extractedJson.certifications || [];
       const certificationSlugEntityTenant = { slug: "certifications", onEdit: null };
-      const allcertificationTent = await entityListData(
+      const allCertificationTent = await entityListData(
         EntityHelper.getRoutes({ routes, entity: certificationSlugEntityTenant })?.list +
         "?view=null?&_data=routes/app.$tenant/g.$group/$entity.__autogenerated/__$entity"
       );
 
-      if (!allcertificationTent || !allcertificationTent.rowsData || !allcertificationTent.rowsData.views) {
-        console.error("Invalid allCertifications data structure:", allcertificationTent);
+      if (!allCertificationTent || !allCertificationTent.rowsData || !allCertificationTent.rowsData.views) {
+        console.error("Invalid allCertifications data structure:", allCertificationTent);
       } else {
-        const certificateIds = await saveTenantCertifications(certifications, allcertificationTent, tenantSlug);
+        const certificateIds = await saveTenantCertifications(certifications, allCertificationTent, tenantSlug);
 
         if (certificateIds.length > 0) {
+          const certificationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "certifications");
+          let selectedCertificationList: Array<any> = [];
+
           for (const certificateId of certificateIds) {
             try {
-              const certificationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "certifications");
 
               if (certificationRelationEntity.length > 0) {
                 const certificationSlugEntity = { slug: "certifications", onEdit: null };
@@ -342,11 +363,17 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
 
                 const selectCertification = allCertification.rowsData.items.filter((id: any) => id.id === certificateId);
 
-                addDynamicRow(certificationRelationEntity[0], selectCertification);
+                if (selectCertification.length > 0) {
+                  selectedCertificationList.push(selectCertification[0]);
+                }
               }
             } catch (error) {
               console.error("Error processing certification:", error);
             }
+          }
+
+          if (selectedCertificationList.length > 0) {
+            addDynamicRow(certificationRelationEntity[0], selectedCertificationList, true);
           }
         }
       }
@@ -394,19 +421,21 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         extractedText = await extractedText.json();
         extractedJson = JSON.parse(extractedText?.extractedData);
         // openAiJson = await generateJsonFromJD(extractedText, false);
+        processExtractedJson(extractedJson, propertyMappings, entity.properties, onChange);
       } else {
         if (!JDUserInput || !JDUserInput.length) {
           toast.error("Please enter Job Description to proceed");
           return; // Check if JDUserInput is not undefined or empty
         }
 
-        // openAiJson = await generateJsonFromJD(JDUserInput, true);
-        // if (openAiJson?.error) {
-        //   toast.error(openAiJson.error);
-        //   return;
-        // }
+        const openAiJson = await generateJsonFromJD(JDUserInput, true);
+        if (openAiJson?.error) {
+          toast.error(openAiJson.error);
+          return;
+        }
+        processExtractedJson(openAiJson, propertyMappings, entity.properties, onChange);
       }
-      processExtractedJson(extractedJson, propertyMappings, entity.properties, onChange);
+   
     } catch (error) {
       console.error("Error parsing job data:", error);
     } finally {

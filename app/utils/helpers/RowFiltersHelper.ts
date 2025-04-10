@@ -157,6 +157,19 @@ function getFilterByDynamicProperty(property: Property, value: string | string[]
         },
       };
     }
+  } else if (property.type === PropertyType.NUMBER) {
+    if (typeof value === "string") {
+      where = {
+        values: {
+          some: {
+            propertyId: property.id,
+            numberValue: {
+              [condition ?? "equals"]: parseFloat(value),
+            },
+          },
+        },
+      };
+    }
   }
   return where;
 }
@@ -166,10 +179,11 @@ function isPropertyFilterable(property?: Property) {
     return true;
   }
   return (
-    property.type === PropertyType.TEXT ||
-    property.type === PropertyType.SELECT ||
-    property.type === PropertyType.BOOLEAN ||
-    property.type === PropertyType.NUMBER
+    property.isFilterable === true
+    // property.type === PropertyType.TEXT ||
+    // property.type === PropertyType.SELECT ||
+    // property.type === PropertyType.BOOLEAN ||
+    // property.type === PropertyType.NUMBER
   );
 }
 

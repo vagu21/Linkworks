@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "@remix-run/react";
 import { PaginationDto } from "~/application/dtos/data/PaginationDto";
 import { RowHeaderDisplayDto } from "~/application/dtos/data/RowHeaderDisplayDto";
 import RowDisplayValueHelper from "~/utils/helpers/RowDisplayValueHelper";
-import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { RowHeaderActionDto } from "~/application/dtos/data/RowHeaderActionDto";
 import ButtonTertiary from "~/components/ui/buttons/ButtonTertiary";
 import DownArrow from "~/components/ui/icons/DownArrow";
@@ -18,12 +18,9 @@ import searchNotFound from "~/assets/custom-images/Search_Not_Found.svg";
 import noDataFound from "~/assets/custom-images/No_Data_Found.svg";
 import filtersNotFound from "~/assets/custom-images/Filters_Not_Found.svg";
 import AddButton from "../button/AddButton";
-import ReactDOM from "react-dom";
 import UserCard from "./ItemDetails";
 import { EntityWithDetails } from "~/utils/db/entities/entities.db.server";
 import { usePopper } from "react-popper";
-import RowHelper from "~/utils/helpers/RowHelper";
-import EntityOverViewCard from "../RowOverviewRoute/components/EntityOverView";
 
 interface Props<T> {
   headers: RowHeaderDisplayDto<T>[];
@@ -59,7 +56,7 @@ export default function DataTable<T>(props: Props<T>) {
   return <Table {...props} />;
 }
 
-function Table<T extends any>({
+function Table<T>({
   headers,
   items,
   entity,
@@ -85,14 +82,6 @@ function Table<T extends any>({
   const [currentSortBy, setCurrentSortBy] = useState<"asc" | "desc" | null | undefined>(null);
   const [tableItems, setTableItems] = useState<Array<T>>([]);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (currentSortBy) {
-      handleSort(currentSortBy);
-    } else {
-      setTableItems(items);
-    }
-  }, [items]);
 
   useEffect(() => {
     let sort = searchParams.get("sort");
@@ -126,7 +115,7 @@ function Table<T extends any>({
   const [isHoveringCard, setIsHoveringCard] = useState<boolean>(false);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "left",
+    placement: "right",
     modifiers: [
       {
         name: "preventOverflow",
@@ -134,17 +123,11 @@ function Table<T extends any>({
           boundary: "window",
         },
       },
-      {
-        name: "offset",
-        options: {
-          offset: [0, 650],
-        },
-      },
     ],
   });
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const handleScroll = (event) => {
+  const handleScroll = (event:any) => {
     const { scrollLeft } = event.target;
     setIsScrolled(scrollLeft > 0);
   };
@@ -158,7 +141,7 @@ function Table<T extends any>({
     setIndeterminate(isIndeterminate);
     // @ts-ignore
     checkbox.current.indeterminate = isIndeterminate;
-  }, [onSelected, selectedRows]);
+  }, [items.length, onSelected, selectedRows]);
 
   function toggleAll() {
     if (!selectedRows || !onSelected) {
@@ -194,20 +177,29 @@ function Table<T extends any>({
   }
 
   const handleSort = useCallback(
-    (order: "asc" | "desc" | "none") => {
-      let sorted = [...items.filter((item: any) => item?.values?.some((value: any) => value?.textValue))];
+    (order: "asc" | "desc" | "none", columnName?: string,type?:number) => {
+      let sorted = [...items];
+
       const getTextValue = (item: any) => {
-        for (let i = 0; i < item?.values?.length; i++) {
-          const value = item?.values[i]?.textValue;
-          if (value) {
-            return value.toLowerCase();
-          }
+        const target = item?.values?.find((v: any) => v?.propertyId === columnName);
+        if (!target) return "";
+
+        switch (type) {
+          case 0:
+            return target.numberValue?.toString?.() || "";
+          case 1:
+            return target.textValue?.toLowerCase?.() || "";
+          case 2:
+            return new Date(target.dateValue)?.toISOString?.() || "";
+          case 10:
+            return target.booleanValue !== undefined ? target.booleanValue.toString() : "";
+          default:
+            return "";
         }
-        return "";
       };
 
       if (order === "asc") {
-        sorted.sort((a: any, b: any) => {
+        sorted.sort((a, b) => {
           const aValue = getTextValue(a);
           const bValue = getTextValue(b);
           return aValue.localeCompare(bValue);
@@ -218,7 +210,7 @@ function Table<T extends any>({
           setCurrentSortBy(null);
         }
       } else if (order === "desc") {
-        sorted.sort((a: any, b: any) => {
+        sorted.sort((a, b) => {
           const aValue = getTextValue(a);
           const bValue = getTextValue(b);
           return bValue.localeCompare(aValue);
@@ -237,6 +229,14 @@ function Table<T extends any>({
     },
     [items]
   );
+
+  useEffect(() => {
+    if (currentSortBy) {
+      handleSort(currentSortBy);
+    } else {
+      setTableItems(items);
+    }
+  }, [currentSortBy, handleSort, items]);
 
   return (
     <div
@@ -276,13 +276,13 @@ function Table<T extends any>({
                 {headers
                   .filter((f) => !f.hidden)
                   .map((header, idxHeader) => {
+                    const isSortable = header?.property?.isSortable;
                     return (
                       <th
                         key={idxHeader}
                         scope="col"
                         onClick={() => onHeaderClick(header)}
                         className={clsx(
-                          "w-48 ",
                           "whitespace-nowrap px-3 py-3 pr-0 tracking-wider",
                           "border-b-2 border-t-2 border-[#eaeaea]",
                           "sticky top-0 z-10  bg-white/75 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter",
@@ -294,8 +294,9 @@ function Table<T extends any>({
 
                           header.sortBy && "cursor-pointer",
                           idxHeader == 0 && "sticky left-0 z-20 bg-white",
-                          idxHeader === headers.length - 1 && "sticky right-0 z-20 bg-inherit",
-                          idxHeader === headers.length - 1 && entityTitle === "Candidate" && "!w-20"
+                          idxHeader === headers.length - 1 && "sticky right-0 z-20 !w-20 bg-inherit",
+                          idxHeader === headers.length - 1 && entityTitle === "Job" && "!w-32",
+                          "w-48 "
                         )}
                       >
                         <div className="flex flex-row items-center justify-between gap-2">
@@ -318,7 +319,12 @@ function Table<T extends any>({
                               "h-[28px] border-r-[2px] border-[#eaeaea]": idxHeader < headers.length - 1,
                             })}
                           >
-                            {idxHeader === 0 && <SortDropdown onSort={handleSort} />}
+                            {isSortable && (
+                              <SortDropdown
+                                onSort={(order) => handleSort(order, header.property?.id || "", header.property?.type || 1)}
+                                type={header.property?.type || 1}
+                              />
+                            )}
                           </div>
                         </div>
                       </th>
@@ -401,12 +407,12 @@ function Table<T extends any>({
                             className={clsx(
                               "text-text-strong cursor-pointer whitespace-nowrap border-b-2 border-[#eaeaea] text-sm font-normal ",
                               idxHeader == 0 && "sticky left-0 bg-inherit",
-                              idxHeader === headers.length - 1 && "sticky right-0 z-10 bg-inherit",
-                              idxHeader === headers.length - 1 && entityTitle === "Candidate" && "flex !w-20 justify-center",
+                              idxHeader === headers.length - 1 && "sticky right-0 z-10  bg-inherit",
+                              idxHeader === headers.length - 1 && entityTitle === "Job" && "!w-32",
                               padding,
                               "w-48"
                             )}
-                            ref={(el) => hoveredRow === idxRow && setReferenceElement(el)}
+                            ref={(el) => hoveredRow === idxRow && idxHeader === 0 && setReferenceElement(el)}
                             onMouseEnter={
                               idxHeader === 0
                                 ? () => {
@@ -430,7 +436,6 @@ function Table<T extends any>({
                             }
                           >
                             {RowDisplayValueHelper.displayRowValue(t, header, item, idxRow)}
-
                           </td>
                         ))}
                       <ActionsCells actions={actions.filter((f) => !f.firstColumn)} className={className} item={item} idxRow={idxRow} />
@@ -457,24 +462,23 @@ function Table<T extends any>({
 
           if (systemView) {
             entity.properties?.forEach((property) => {
-              const systemViewProperty = systemViewProperties?.find((f: any) => f.propertyId === property.id);
+              const systemViewProperty = systemViewProperties?.find((f: any) => f?.propertyId === property.id);
               property.isHidden = !systemViewProperty;
             });
           }
 
           const propertyIds = systemViewProperties?.reduce((acc: any, item: any) => {
-            acc[item.name] = item.propertyId;
+            acc[item.name] = item?.propertyId;
             return acc;
           }, {} as Record<string, string>);
 
           const extractedValues = Object.fromEntries(
             Object.entries(propertyIds || {}).map(([key, id]) => [
               key,
-              tableItems[hoveredRow]?.values.find((val: { propertyId: string }) => val.propertyId === id)?.textValue || "N/A",
+              tableItems[hoveredRow]?.values.find((val: { propertyId: string }) => val?.propertyId === id)?.textValue || "N/A",
             ])
         );
         const href = onClickRoute?.(hoveredRow, tableItems[hoveredRow]);
-        
           return (
             <div
               ref={setPopperElement}
@@ -482,7 +486,7 @@ function Table<T extends any>({
                 ...styles.popper,
               }}
               {...attributes.popper}
-              className="absolute left-32 z-50"
+              className="absolute z-50"
               onMouseEnter={() => {
                 if (hideTimeoutRef.current) {
                   clearTimeout(hideTimeoutRef.current);
@@ -506,7 +510,22 @@ function Table<T extends any>({
   );
 }
 
-function SortDropdown({ onSort }: { onSort: (order: "asc" | "desc" | "none") => void }) {
+const SortDropdown = React.memo(function SortDropdown({ onSort, type }: { onSort: (order: "asc" | "desc" | "none") => void; type: number }) {
+  const getLabel = (order: "asc" | "desc") => {
+    switch (type) {
+      case 0:
+        return order === "asc" ? "Low to High" : "High to Low";
+      case 1:
+        return order === "asc" ? "A to Z" : "Z to A";
+      case 2:
+        return order === "asc" ? "Oldest First" : "Newest First";
+      case 10:
+        return order === "asc" ? "True First" : "False First";
+      default:
+        return order === "asc" ? "Asc" : "Desc";
+    }
+  };
+
   return (
     <div className="relative !z-50">
       <Menu>
@@ -517,20 +536,20 @@ function SortDropdown({ onSort }: { onSort: (order: "asc" | "desc" | "none") => 
           <MenuItem>
             {({ active }) => (
               <button className={`!z-40 block w-full px-4 py-3 text-left text-sm ${active ? "rounded-md bg-[#FFEFC9]" : ""}`} onClick={() => onSort("asc")}>
-                A to Z
+                {getLabel("asc")}
               </button>
             )}
           </MenuItem>
           <MenuItem>
             {({ active }) => (
               <button className={`!z-40 block w-full px-4 py-3 text-left text-sm ${active ? "rounded-md bg-[#FFEFC9]" : ""}`} onClick={() => onSort("desc")}>
-                Z to A
+                {getLabel("desc")}
               </button>
             )}
           </MenuItem>
           <MenuItem>
             {({ active }) => (
-              <button className={`  !z-40 block w-full px-4 py-3 text-left text-sm ${active ? "rounded-md bg-[#FFEFC9]" : ""}`} onClick={() => onSort("none")}>
+              <button className={`!z-40 block w-full px-4 py-3 text-left text-sm ${active ? "rounded-md bg-[#FFEFC9]" : ""}`} onClick={() => onSort("none")}>
                 Reset Sort
               </button>
             )}
@@ -539,7 +558,8 @@ function SortDropdown({ onSort }: { onSort: (order: "asc" | "desc" | "none") => 
       </Menu>
     </div>
   );
-}
+})
+
 
 function ActionsCells<T>({
   item,
@@ -552,7 +572,7 @@ function ActionsCells<T>({
   idxRow: number;
   className?: (idx: number, item: T) => string;
 }) {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const refConfirm = useRef<RefConfirmModal>(null);
   function onConfirmed({ action, item }: { action: RowHeaderActionDto<T>; item: T }) {
     if (action.onClick) {

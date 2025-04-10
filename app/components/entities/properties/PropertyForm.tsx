@@ -54,6 +54,9 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
     }) ?? []
   );
   const [isRequired, setIsRequired] = useState<boolean>(item?.isRequired ?? true);
+  const [isFilterable, setIsFilterable] = useState<boolean>(item?.isFilterable ?? true);
+  const [isSearchable, setIsSearchable] = useState<boolean>(item?.isSearchable ?? true);
+  const [isSortable, setIsSortable] = useState<boolean>(item?.isSortable ?? true);
   const [isUnique, setIsUnique] = useState<boolean>(item?.isUnique ?? true);
   const [showInCreate, setShowInCreate] = useState<boolean>(item?.showInCreate ?? true);
   const [isHidden, setIsHidden] = useState<boolean>(item?.isHidden ?? false);
@@ -121,6 +124,9 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
     if (type === PropertyType.FORMULA) {
       setShowAdvancedOptions(false);
       setIsRequired(false);
+      setIsFilterable(false);
+      setIsSearchable(false);
+      setIsSortable(false);
       setIsUnique(false);
       setIsReadOnly(true);
       setShowInCreate(false);
@@ -310,6 +316,43 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
                 setValue={setIsRequired}
               />
             </div>
+            {(type === PropertyType.NUMBER ||
+              type === PropertyType.TEXT ||
+              type === PropertyType.DATE ||
+              type === PropertyType.BOOLEAN ||
+              type === PropertyType.SELECT) && (
+              <div className="w-full">
+                <InputCheckboxWithDescription
+                  name="is-filterable"
+                  title={t("models.property.isFilterable")}
+                  description="Make the property as filterable"
+                  value={isFilterable}
+                  setValue={setIsFilterable}
+                />
+              </div>
+            )}
+            {(type === PropertyType.NUMBER || type === PropertyType.TEXT || type === PropertyType.DATE) && (
+              <div className="w-full">
+                <InputCheckboxWithDescription
+                  name="is-searchable"
+                  title={t("models.property.isSearchable")}
+                  description="Make the property as searchable"
+                  value={isSearchable}
+                  setValue={setIsSearchable}
+                />
+              </div>
+            )}
+            {(type === PropertyType.NUMBER || type === PropertyType.TEXT || type === PropertyType.DATE) && (
+              <div className="w-full">
+                <InputCheckboxWithDescription
+                  name="is-sortable"
+                  title={t("models.property.isSortable")}
+                  description="Make the property as sortable"
+                  value={isSortable}
+                  setValue={setIsSortable}
+                />
+              </div>
+            )}
             <div className="w-full">
               <InputCheckboxWithDescription
                 name="is-hidden"

@@ -82,6 +82,7 @@ function displayProperty(entity: EntityWithDetails, property: PropertyWithDetail
   return {
     name: property.name,
     title: property.title,
+    property:property,
     value: (item) => RowHelper.getPropertyValue({ entity, item, property }),
     formattedValue: (item) => {
       const propertyId = (item?.values ?? []).find((v: any) => v?.textValue === RowHelper.getPropertyValue({ entity, item, property }))?.propertyId;

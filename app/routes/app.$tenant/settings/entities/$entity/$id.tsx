@@ -62,6 +62,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   const subtype = form.get("subtype")?.toString() ?? null;
   const order = Number(form.get("order"));
   let isRequired = Boolean(form.get("is-required"));
+  let isSortable = Boolean(form.get("is-sortable"));
+  let isSearchable = Boolean(form.get("is-searchable"));
+  let isFilterable = Boolean(form.get("is-filterable"));
   const isHidden = Boolean(form.get("is-hidden"));
   const isDisplay = Boolean(form.get("is-display"));
   const isReadOnly = Boolean(form.get("is-read-only"));
@@ -116,6 +119,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         order,
         isDefault: existing?.isDefault ?? false,
         isRequired,
+        isSortable,
+        isSearchable,
+        isFilterable,
         isHidden,
         isDisplay,
         isReadOnly,

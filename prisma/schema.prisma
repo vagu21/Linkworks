@@ -662,6 +662,9 @@ model Property {
   subtype              String?
   isDefault            Boolean                   @default(false)
   isRequired           Boolean                   @default(false)
+  isSortable           Boolean                   @default(false)
+  isSearchable         Boolean                   @default(false)
+  isFilterable         Boolean                   @default(false)
   isHidden             Boolean                   @default(false)
   isDisplay            Boolean                   @default(false)
   isUnique             Boolean                   @default(false) // TODO: Validate uniqueness

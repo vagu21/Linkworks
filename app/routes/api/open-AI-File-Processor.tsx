@@ -427,6 +427,18 @@ export const action: ActionFunction = async ({ request }) => {
             extractedData: await promisify(),
         };
 
+        try {
+            await openai.beta.assistants.del(assistant.id);
+            await openai.beta.threads.del(thread.id);
+
+        } catch (error: any) {
+            console.error("Error:", error);
+            throw error.message;
+        }
+
+
+
+
         return json(response);
     } catch (error) {
         console.error(error);

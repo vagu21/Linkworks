@@ -392,7 +392,7 @@ export async function register(data: {
       azureId,
       locale,
       defaultTenantId,
-      roles:roles.length?roles:undefined
+      roles:roles?.length?roles:undefined
     },
   });
   await CrmService.createContact({

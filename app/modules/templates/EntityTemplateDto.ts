@@ -41,6 +41,9 @@ export type TemplateEntityDto = {
     type: TemplateEntityPropertyTypeDto;
     subtype?: string | null;
     isRequired?: boolean;
+    isSortable?: boolean;
+    isSearchable?: boolean;
+    isFilterable?: boolean;
     isDisplay?: boolean;
     showInCreate?: boolean;
     isReadOnly?: boolean;

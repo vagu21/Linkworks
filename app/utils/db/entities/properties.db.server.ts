@@ -46,6 +46,9 @@ export async function createProperty(data: {
   order: number;
   isDefault: boolean;
   isRequired: boolean;
+  isSortable:boolean;
+  isSearchable:boolean;
+  isFilterable:boolean;
   isHidden: boolean;
   isDisplay: boolean;
   isReadOnly: boolean;
@@ -72,6 +75,9 @@ export type CreatePropertyDto = {
   type: PropertyType;
   subtype: string | null;
   isRequired?: boolean;
+  isSortable: boolean;
+  isSearchable: boolean;
+  isFilterable: boolean;
   isDefault?: boolean;
   isHidden?: boolean;
   isDisplay?: boolean;
@@ -98,6 +104,9 @@ export async function createProperties(entityId: string, fields: CreatePropertyD
         type: field.type,
         subtype: field.subtype ?? null,
         isRequired: field.isRequired ?? true,
+        isSortable: field.isSortable ?? true,
+        isSearchable: field.isSearchable ?? true,
+        isFilterable: field.isFilterable ?? true,
         isDefault: field.isDefault ?? false,
         isHidden: field.isHidden ?? false,
         isDisplay: field.isDisplay ?? false,
@@ -140,6 +149,9 @@ export async function updateProperty(
     order?: number;
     isDefault?: boolean;
     isRequired?: boolean;
+    isSortable: boolean;
+    isSearchable: boolean;
+    isFilterable: boolean;
     isHidden?: boolean;
     isDisplay?: boolean;
     isReadOnly?: boolean;

@@ -13,6 +13,9 @@ export namespace PropertiesApi {
     order,
     isDefault,
     isRequired,
+    isSortable,
+    isSearchable,
+    isFilterable,
     isHidden,
     isDisplay,
     isReadOnly,
@@ -32,6 +35,9 @@ export namespace PropertiesApi {
     order?: number;
     isDefault?: boolean;
     isRequired?: boolean;
+    isSortable?:boolean;
+    isSearchable?:boolean;
+    isFilterable?:boolean;
     isHidden?: boolean;
     isDisplay?: boolean;
     isReadOnly?: boolean;
@@ -55,6 +61,9 @@ export namespace PropertiesApi {
       order,
       isDefault: isDefault ?? false,
       isRequired: isRequired ?? false,
+      isSortable: isSortable??false,
+      isSearchable:isSearchable??false,
+      isFilterable:isFilterable??false,
       isHidden: isHidden ?? false,
       isDisplay: isDisplay ?? false,
       isReadOnly: isReadOnly ?? false,
@@ -110,6 +119,9 @@ export namespace PropertiesApi {
       order: maxOrder + 1,
       isDefault: existingProperty.isDefault,
       isRequired: existingProperty.isRequired,
+      isSortable:existingProperty.isSortable,
+      isSearchable:existingProperty.isSearchable,
+      isFilterable:existingProperty.isFilterable,
       isHidden: existingProperty.isHidden,
       isDisplay: existingProperty.isDisplay,
       isReadOnly: existingProperty.isReadOnly,

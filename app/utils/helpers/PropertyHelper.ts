@@ -37,6 +37,9 @@ export const defaultProperties: {
   parentId?: string | null;
   isDefault: boolean;
   isRequired: boolean;
+  isSortable: boolean;
+  isSearchable: boolean;
+  isFilterable: boolean;
   isHidden: boolean;
   isDisplay: boolean;
   isUnique: boolean;
@@ -49,6 +52,9 @@ export const defaultProperties: {
     // options: [],
     isDefault: true,
     isRequired: false,
+    isSortable: false,
+    isSearchable: false,
+    isFilterable: false,
     isHidden: true,
     // formula: undefined,
     isDisplay: false,
@@ -62,6 +68,9 @@ export const defaultProperties: {
     // options: [],
     isDefault: true,
     isRequired: false,
+    isSortable: false,
+    isSearchable: false,
+    isFilterable: false,
     isHidden: true,
     // formula: undefined,
     isDisplay: false,
@@ -75,6 +84,9 @@ export const defaultProperties: {
     // options: [],
     isDefault: true,
     isRequired: false,
+    isSortable: false,
+    isSearchable: false,
+    isFilterable: false,
     isHidden: true,
     // formula: undefined,
     isDisplay: false,

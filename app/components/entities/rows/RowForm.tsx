@@ -338,21 +338,26 @@ const RowForm = (
     setRelatedRows(newRelatedRows);
   }
 
-  function addDynamicRow(relationship: EntityRelationshipWithDetails, rows: RowWithDetails[]) {
+  function addDynamicRow(
+    relationship: EntityRelationshipWithDetails,
+    rows: RowWithDetails[],
+    clearPrevEntities?: boolean
+  ) {
     setRelatedRows((prevRelatedRows) => {
       const newRelatedRows = [...prevRelatedRows];
       const existing = newRelatedRows.find((f) => f.relationship.id === relationship.id);
       if (existing) {
-        if (relationship.parentId === entity.id) {
+        if ( !clearPrevEntities && relationship.parentId === entity.id) {
           const nonExistingRows = rows.filter((f) => !existing.rows.find((ff) => ff.id === f.id));
           existing.rows = [...existing.rows, ...nonExistingRows];
-        } else {
+        } 
+        else {
           existing.rows = rows;
         }
       } else {
         newRelatedRows.push({ relationship, rows });
       }
-
+  
       allEntities.forEach((rel) => {
         if (!newRelatedRows.find((f) => f.relationship.id === rel.id)) {
           newRelatedRows.push({ relationship: rel as any, rows: [] });
@@ -586,7 +591,7 @@ const RowForm = (
               <section className="w-full">
                 <div className=" p-4 w-full bg-white rounded-xl border shadow-lg border-zinc-100">
                   <div className="mb-3">
-                    <h3 className="text-body text-label truncate font-bold">
+                  <h3 className="text-[16px] text-[#121212] truncate font-bold leading-[19px]">
                       <div className="flex items-center space-x-1">
                         <div>
                           <span className="text-[16px] font-bold leading-[19px] text-[#121212] "></span>{" "}
@@ -669,6 +674,7 @@ const RowForm = (
         open={searchingRelationshipRows !== undefined}
         onClose={() => setSearchingRelationshipRows(undefined)}
         size="5xl"
+        childClassName="mb-16"
       >
         {selectedRelatedEntity && searchingRelationshipRows && (
           <RowListFetcher
@@ -688,6 +694,7 @@ const RowForm = (
             multipleSelection={selectedRelatedEntity.multiple}
             allEntities={allEntities.filter(e => e.id !== entity.id)} // Exclude current entity from the list
             distinct={searchingRelationshipRows.distinct}
+            onClose={() => setSearchingRelationshipRows(undefined)}
           />
         )}
       </SlideOverWideEmpty>

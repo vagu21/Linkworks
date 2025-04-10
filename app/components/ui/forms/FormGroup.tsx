@@ -139,7 +139,7 @@ const FormGroup = (
   function remove() {
     setShowDeletePopup(true);
   }
-  
+
   function handleDeleteConfirm() {
     if (onDelete) {
       onDelete();
@@ -154,7 +154,7 @@ const FormGroup = (
     }
     setShowDeletePopup(false);
   }
-  
+
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.stopPropagation();
@@ -209,7 +209,7 @@ const FormGroup = (
 
             />
             {showAIPrompt && (
-              <div className="absolute  top-14 right-0 z-50">
+              <div className="absolute  right-0 top-14 z-50">
                 <AIPrompt
                   showPrompt={showAIPrompt}
                   setShowAIPrompt={setShowAIPrompt}
@@ -224,9 +224,12 @@ const FormGroup = (
           </div>
         )}
         {children}
-        
         {(!id || editing) && canSubmit && (
-          <div className={clsx(classNameFooter, "flex justify-between space-x-2")}>
+          <div
+            className={clsx(classNameFooter, "flex justify-between space-x-2",  {
+              " absolute bg-white bottom-0 left-0 right-0 mt-3 border-t border-[#D9D9D9] pr-[20px] px-3 py-3": isDrawer, 
+            })}
+          >
             <div className="flex items-center space-x-2 pl-4">
               {id && canDelete && (
                 <ButtonSecondary disabled={loading || !canDelete} destructive={true} type="button" onClick={remove}>
@@ -235,7 +238,7 @@ const FormGroup = (
               )}
             </div>
 
-            <div className="flex items-center gap-2 relative">
+            <div className="relative flex items-center gap-2">
               {onCancel && (
                 <ButtonSecondary onClick={onCancel} disabled={loading}>
                   <div>{t("shared.cancel")}</div>
@@ -265,11 +268,13 @@ const FormGroup = (
         )}
       </div>
       <ConfirmModal ref={confirmSubmit} onYes={yesSubmit} />
-      {showDeletePopup && createPortal(
-  <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black bg-opacity-50">
-    <DeleteTaskPopup onDelete={handleDeleteConfirm} onCancel={() => setShowDeletePopup(false)} />
-  </div>,document.body
-)}
+      {showDeletePopup &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+            <DeleteTaskPopup onDelete={handleDeleteConfirm} onCancel={() => setShowDeletePopup(false)} />
+          </div>,
+          document.body
+        )}
       {withErrorModal && canSubmit && <ErrorModal ref={errorModal} />}
     </Form>
   );

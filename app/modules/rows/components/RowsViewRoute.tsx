@@ -128,8 +128,34 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   }, [searchParams]);
 
   function filteredItems() {
+    const isSearchable = rowsData.entity.properties.filter((item)=>item.isSearchable).map((item)=>item.id)
     if (!searchInput) return items;
-    return items.filter((item) => item?.values?.some((value) => value?.textValue?.toLowerCase().includes(searchInput.toLowerCase().trim())));
+    return items.filter((item) =>
+      item?.values?.some((value) => {
+        const id = value?.propertyId;
+        const type  = rowsData.entity.properties.filter((item)=>item.id===id).map((item)=>item.type)
+        if (!isSearchable.includes(id)) return false;
+        const input = searchInput.toLowerCase().trim();
+        switch (type[0]) {
+          case 0:
+            return String(value?.numberValue ?? "")
+              .toLowerCase()
+              .includes(input);
+          case 1:
+            return value?.textValue?.toLowerCase().includes(input);
+          case 2:
+            return String(value?.dateValue ?? "")
+              .toLowerCase()
+              .includes(input);
+          case 10:
+            return String(value?.booleanValue ?? "")
+              .toLowerCase()
+              .includes(input);
+          default:
+            return false;
+        }
+      })
+    );
   }
 
   function onCreateView() {
@@ -317,9 +343,11 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
           className="sm:max-w-2xl"
           open={showCustomViewModal}
           onClose={() => setShowCustomViewModal(false)}
+          childClassName="mb-16"
         >
           {showCustomViewModal && (
             <EntityViewForm
+            isDrawer={true}
               entity={rowsData.entity}
               tenantId={appData.currentTenant?.id ?? null}
               userId={currentSession?.user.id ?? null}

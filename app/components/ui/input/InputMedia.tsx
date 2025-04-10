@@ -156,7 +156,7 @@ export default function InputMedia({
                   </div>
                 );
               })}
-              <span className="text-[#FF7800] text-xs font-semibold"> (Max file size : {maxSize} mb)</span>
+               <span className="text-[#FF7800] text-xs font-semibold"> (Max file size : {maxSize}mb)</span>
             </div>
           ) : (
             <></>

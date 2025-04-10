@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { FormEvent, Fragment, useEffect, useState } from "react";
+import { FormEvent, Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, useSearchParams } from "@remix-run/react";
 import { Colors } from "~/application/enums/shared/Colors";
@@ -11,7 +11,6 @@ import InputCheckboxInline from "./InputCheckboxInline";
 import InputSelect from "./InputSelect";
 import { Input } from "../input";
 import { Button } from "../button";
-import { useOuterClick } from "~/utils/shared/KeypressUtils";
 
 export type FilterDto = {
   name: string;
@@ -34,13 +33,13 @@ interface Props {
 
 export default function InputFilters({ filters, withSearch = true }: Props) {
   const { t } = useTranslation();
-
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [opened, setOpened] = useState(false);
   const [items, setItems] = useState<FilterValueDto[]>([]);
   const [filteredItems, setFilteredItems] = useState<number>(0);
   const [searchInput, setSearchInput] = useState("");
+  const [dropdownOptionSelected, setDropdownOptionSelected] = useState(false);
+  const divRef = useRef(null);
 
   useEffect(() => {
     const items: FilterValueDto[] = filters.map((item) => {
@@ -88,8 +87,7 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     setSearchParams(searchParams);
   }
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function handleFormSubmit() {
     items.forEach((item) => {
       if (item.selected && item.value?.trim()) {
         searchParams.set(item.name, item.value?.toString().trim() ?? "");
@@ -97,21 +95,49 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
         searchParams.delete(item.name);
       }
     });
+
     if (searchInput) {
       searchParams.set("q", searchInput);
     } else {
       searchParams.delete("q");
     }
+
     searchParams.delete("page");
     setSearchParams(searchParams);
     setOpened(false);
   }
 
-  const clickOutside = useOuterClick(() => setOpened(false));
+
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    handleFormSubmit();
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (divRef.current && !divRef?.current?.contains(event.target)) {
+        setOpened(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+  if (dropdownOptionSelected) {
+      handleFormSubmit();
+      setDropdownOptionSelected(false);
+    }
+   }, [dropdownOptionSelected]);
+
+  // const clickOutside = useOuterClick(() => setOpened(false));
 
   return (
     <Fragment>
-      <div className="relative" ref={clickOutside}>
+      <div className="relative" ref={divRef}>
         <button
           onClick={() => setOpened(!opened)}
           className="focus:border-bg-gray-50 relative z-0 inline-flex !rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-0 "
@@ -154,7 +180,7 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
           <Form
             onSubmit={onSubmit}
             method="get"
-            className="absolute right-0 z-40 mt-2 h-60 overflow-y-auto w-64 origin-top-right divide-y divide-gray-200 overflow-visible rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="absolute right-0 z-40 mt-2 h-fit max-h-60 w-64 origin-top-right divide-y divide-gray-200 overflow-visible overflow-y-auto rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="flex items-center justify-between px-2 py-2 text-sm">
               <Button type="button" variant="outline" onClick={onClear}>
@@ -167,92 +193,93 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
             </div>
             <div className="divide-y divide-gray-200 rounded-b-md bg-white text-sm">
               {items.map((filter) => {
-                  const idx = items.findIndex((item) => item.name === filter.name);
-                  return (
-                    <div key={filter.name} className="divide-y divide-gray-200">
-                      <div className="divide-y divide-gray-300 px-2 py-2">
-                        <InputCheckboxInline
-                          name={"filter-" + filter.name}
-                          title={filter.title.includes(".") ? t(filter.title) : filter.title}
-                          value={filter.selected}
-                          setValue={(e) => {
-                            updateItemByIdx(items, setItems, idx, {
-                              selected: Boolean(e),
-                            });
-                          }}
-                        />
-                      </div>
-                      {filter.selected && (
-                        <div className="bg-gray-50 px-2 py-1">
-                          {filter.options && filter.options.length > 0 ? (
-                            <div className="flex items-center space-x-2">
-                              <InputSelect
-                                // withSearch={!filter.hideSearch}
-                                name={filter.name}
-                                title={""}
-                                // withColors={true}
-                                placeholder={t("shared.select") + "..."}
-                                options={filter.options.map((item) => {
-                                  return {
-                                    value: item.value,
-                                    name: item.name && item.name.includes(".") ? t(item.name) : item.name,
-                                    color: item.color,
-                                  };
-                                })}
-                                value={filter.value}
-                                withLabel={false}
-                                setValue={(e) => {
-                                  updateItemByIdx(items, setItems, idx, {
-                                    value: e,
-                                  });
-                                }}
-                                className="bg-background w-full pb-1"
-                              />
-                            </div>
-                          ) : filter.isBoolean ? (
-                            <div className="flex items-center space-x-2">
-                              <InputSelect
-                                name={filter.name}
-                                title={""}
-                                placeholder={t("shared.select") + "..."}
-                                options={[
-                                  { name: t("shared.yes"), value: "true" },
-                                  { name: t("shared.no"), value: "false" },
-                                ]}
-                                value={filter.value}
-                                withLabel={false}
-                                setValue={(e) => {
-                                  updateItemByIdx(items, setItems, idx, {
-                                    value: e,
-                                  });
-                                }}
-                                className="bg-background w-full pb-1"
-                              />
-                            </div>
-                          ) : (
-                            <div className="flex items-center space-x-2">
-                              <div className="flex-shrink-0 truncate text-gray-500">contains</div>
-                              <Input
-                                type="text"
-                                name={filter.name}
-                                autoComplete="off"
-                                className="focus:border-accent-500 focus:ring-accent-500 bg-background block w-full min-w-0 flex-1 rounded-md border-gray-300 p-1 text-sm"
-                                required
-                                value={filter.value ?? ""}
-                                onChange={(e) => {
-                                  updateItemByIdx(items, setItems, idx, {
-                                    value: e.currentTarget.value,
-                                  });
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
+                const idx = items.findIndex((item) => item.name === filter.name);
+                return (
+                  <div key={filter.name} className="divide-y divide-gray-200">
+                    <div className="divide-y divide-gray-300 px-2 py-2">
+                      <InputCheckboxInline
+                        name={"filter-" + filter.name}
+                        title={filter.title.includes(".") ? t(filter.title) : filter.title}
+                        value={filter.selected}
+                        setValue={(e) => {
+                          updateItemByIdx(items, setItems, idx, {
+                            selected: Boolean(e),
+                          });
+                        }}
+                      />
                     </div>
-                  );
-                })}
-              
+                    {filter.selected && (
+                      <div className="bg-gray-50 px-2 py-1">
+                        {filter.options && filter.options.length > 0 ? (
+                          <div className="flex items-center space-x-2">
+                            <InputSelect
+                              // dropdownRef={selectRef}
+                              // withSearch={!filter.hideSearch}
+                              name={filter.name}
+                              title={""}
+                              // withColors={true}
+                              placeholder={t("shared.select") + "..."}
+                              options={filter.options.map((item) => {
+                                return {
+                                  value: item.value,
+                                  name: item.name && item.name.includes(".") ? t(item.name) : item.name,
+                                  color: item.color,
+                                };
+                              })}
+                              value={filter.value}
+                              withLabel={false}
+                              setValue={(e) => {
+                                updateItemByIdx(items, setItems, idx, {
+                                  value: e,
+                                });
+                                setDropdownOptionSelected(true);
+                              }}
+                              className="bg-background w-full pb-1"
+                            />
+                          </div>
+                        ) : filter.isBoolean ? (
+                          <div className="flex items-center space-x-2">
+                            <InputSelect
+                              name={filter.name}
+                              title={""}
+                              placeholder={t("shared.select") + "..."}
+                              options={[
+                                { name: t("shared.yes"), value: "true" },
+                                { name: t("shared.no"), value: "false" },
+                              ]}
+                              value={filter.value}
+                              withLabel={false}
+                              setValue={(e) => {
+                                updateItemByIdx(items, setItems, idx, {
+                                  value: e,
+                                });
+                              }}
+                              className="bg-background w-full pb-1"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <div className="flex-shrink-0 truncate text-gray-500">contains</div>
+                            <Input
+                              type="text"
+                              name={filter.name}
+                              autoComplete="off"
+                              className="focus:border-accent-500 focus:ring-accent-500 bg-background block w-full min-w-0 flex-1 rounded-md border-gray-300 p-1 text-sm"
+                              required
+                              value={filter.value ?? ""}
+                              onChange={(e) => {
+                                updateItemByIdx(items, setItems, idx, {
+                                  value: e.currentTarget.value,
+                                });
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </Form>
         </Transition>

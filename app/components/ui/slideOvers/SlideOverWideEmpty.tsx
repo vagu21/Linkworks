@@ -15,6 +15,7 @@ export default function SlideOverWideEmpty({
   withClose = true,
   overflowYScroll,
   position = 5,
+  childClassName,
   size = "2xl",
 }: {
   title?: string | ReactNode;
@@ -23,6 +24,7 @@ export default function SlideOverWideEmpty({
   children: ReactNode;
   onClose: () => void;
   className?: string;
+  childClassName?: string
   buttons?: ReactNode;
   withTitle?: boolean;
   withClose?: boolean;
@@ -84,7 +86,7 @@ export default function SlideOverWideEmpty({
                     size === "full" && "max-w-full"
                   )}
                 >
-                  <div className="bg-background flex h-full flex-col overflow-y-auto pt-4 shadow-xl">
+                  <div className="bg-background relative flex h-full flex-col overflow-y-auto pt-4 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between sticky top-0 bg-white z-10">
                         {withTitle ? (
@@ -110,7 +112,7 @@ export default function SlideOverWideEmpty({
                       </div>
                     </div>
 
-                    <div className={clsx("min-h-full relative mt-3 flex-1 border-t px-4 pb-6 pt-5 sm:px-6", overflowYScroll && "overflow-y-scroll")}>{children}</div>
+                    <div className={clsx("mt-3 flex-1 border-t pb-3 overflow-y-auto pt-5 px-6 ",overflowYScroll && "overflow-y-scroll", childClassName)}>{children}</div>
                   </div>
                 </DialogPanel>
               </TransitionChild>

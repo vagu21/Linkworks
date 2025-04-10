@@ -32,9 +32,10 @@ interface Props {
   allEntities: EntityWithDetails[];
   distinct: boolean;
   titleop?: string | ReactNode;
+  onClose?:any;
 }
 
-export default function RowListFetcher({ titleop, currentView, listUrl, newUrl, parentEntity, onSelected, multipleSelection, allEntities, distinct = false }: Props) {
+export default function RowListFetcher({ titleop,onClose, currentView, listUrl, newUrl, parentEntity, onSelected, multipleSelection, allEntities, distinct = false ,className=''}: Props) {
   const { t } = useTranslation();
   const fetcher = useTypedFetcher<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
   const [data, setData] = useState<{ rowsData: RowsApi.GetRowsData; routes: EntitiesApi.Routes }>();
@@ -100,6 +101,7 @@ export default function RowListFetcher({ titleop, currentView, listUrl, newUrl, 
             onSelected([newRow]);
           }}
           allEntities={allEntities}
+          onClose={onClose}
         />
         </>
     );
@@ -208,8 +210,9 @@ export default function RowListFetcher({ titleop, currentView, listUrl, newUrl, 
         open={adding}
         onClose={() => setAdding(false)}
         size="5xl"
+        childClassName="mb-16"
       >
-        <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} allEntities={allEntities} />
+        <RowNewFetcher url={newUrl} parentEntity={parentEntity} onCreated={onCreated} onClose={() => setAdding(false)} allEntities={allEntities} />
       </SlideOverWideEmpty>
     </div>
   );

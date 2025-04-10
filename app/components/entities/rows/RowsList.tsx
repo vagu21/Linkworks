@@ -644,7 +644,7 @@ function RemoveButton({
     setShowDeleteModal(false);
   }
 
-  const deleteLabel = `${t("shared.delete")} ${entity?.parentEntities?.[0]?.child?.title || ""}`;
+  const deleteLabel = `${t("shared.delete")} ${entity?.parentEntities?.[0]?.child?.title || entity?.childEntities?.[0]?.parent?.title || ""}`;
 
   const EditIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">

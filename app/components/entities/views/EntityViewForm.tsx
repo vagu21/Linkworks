@@ -43,6 +43,7 @@ interface Props {
   userId: string | null;
   isSystem: boolean;
   showViewType: boolean;
+  isDrawer?:boolean;
 }
 
 export default function EntityViewForm({
@@ -55,6 +56,7 @@ export default function EntityViewForm({
   tenantId,
   userId,
   showViewType,
+  isDrawer
 }: Props & { entity: EntityWithDetails }) {
   const { t } = useTranslation();
 
@@ -255,7 +257,7 @@ export default function EntityViewForm({
   }
 
   return (
-    <FormGroup id={item?.id} onCancel={onClose} editing={true} canDelete={canDelete} actionNames={actionNames} className="text-gray-800">
+    <FormGroup isDrawer={isDrawer} id={item?.id} onCancel={onClose} editing={true} canDelete={canDelete} actionNames={actionNames} className="text-gray-800">
       <input type="hidden" name="id" value={item?.id} hidden readOnly />
       <input type="hidden" name="entityId" value={entity.id} hidden readOnly />
       <input type="hidden" name="isSystem" value={isSystem ? "true" : "false"} hidden readOnly />
