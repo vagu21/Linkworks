@@ -136,6 +136,7 @@ export const action: ActionFunction = async ({ request }) => {
                         },
                         Education: {
                             type: "array",
+                            rule:"Sort the work expeirences in order from most recent to oldest",
                             items: {
                                 type: "object",
                                 properties: {
@@ -161,6 +162,7 @@ export const action: ActionFunction = async ({ request }) => {
                         },
                         Employment: {
                             type: "array",
+                            rule:"Sort the work expeirences in order from most recent to oldest",
                             items: {
                                 type: "object",
                                 properties: {
@@ -196,6 +198,7 @@ export const action: ActionFunction = async ({ request }) => {
                         },
                         certifications: {
                             type: "array",
+                            rule:"Sort the work expeirences in order from most recent to oldest",
                             items: {
                                 type: "object",
                                 properties: {
@@ -213,6 +216,7 @@ export const action: ActionFunction = async ({ request }) => {
                         },
                         Projects: {
                             type: "array",
+                            rule:"Sort the work expeirences in order from most recent to oldest",
                             items: {
                                 type: "object",
                                 properties: {

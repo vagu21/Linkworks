@@ -18,7 +18,7 @@ const KeywordTags = ({tags}:any) => {
         {tags.map((tag:any, index:any) => (
           <span
             key={`filled-${index}`}
-            className="flex gap-1 self-stretch px-2 py-px my-auto leading-loose rounded bg-zinc-100 text-stone-800"
+            className="inline-block gap-1 self-stretch px-2 py-px my-auto leading-loose rounded bg-zinc-100 text-stone-800 max-w-[100px] truncate"
           >
             {tag}
           </span>

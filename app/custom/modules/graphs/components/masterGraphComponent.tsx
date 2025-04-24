@@ -75,7 +75,6 @@ const MasterGraphComponent = ({ chartConfig }: any) => {
   }
 
   const groupedRows = greedyPairGraphs(chartConfig);
-  console.log("groupedRows", groupedRows);
 
   return (
     <div className="flex flex-col gap-4">

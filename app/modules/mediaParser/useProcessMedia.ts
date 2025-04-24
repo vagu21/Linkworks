@@ -201,10 +201,9 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         console.error("Invalid allEducation data structure");
       } else {
         const educationHistoryIds = await saveTenantEducationHistory(educationHistories, allEducationTent, tenantSlug);
-        let selectedEducationList: Array<any> = [];
-
+        const educationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "education-history");
+        let selectedEducationList: Array<any> = []; 
         if (educationHistoryIds.length > 0) {
-          const educationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "education-history");
 
           for (const educationHistoryId of educationHistoryIds) {
             try {
@@ -234,6 +233,9 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
             if(selectedEducationList.length > 0){
             addDynamicRow(educationRelationEntity[0], selectedEducationList, true);
           }
+        }else{
+          addDynamicRow(educationRelationEntity[0], [], true);
+          
         }
       }
 
@@ -248,9 +250,10 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         console.error("Invalid allWorkExperience data structure:", allWorkExperienceTent);
       } else {
         const workExperienceIds = await saveTenantWorkExperience(workExperienceHistories, allWorkExperienceTent, tenantSlug);
+        const workExperienceRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "work-experience");
+
 
         if (workExperienceIds.length > 0) {
-          const workExperienceRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "work-experience");
           let selectedWorkExperienceList: Array<any> = [];
 
           for (const workExperienceId of workExperienceIds) {
@@ -281,6 +284,8 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
           if (selectedWorkExperienceList.length > 0) {
             addDynamicRow(workExperienceRelationEntity[0], selectedWorkExperienceList, true);
           }
+        }else{
+          addDynamicRow(workExperienceRelationEntity[0], [], true);
         }
       }
 
@@ -293,12 +298,12 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
       );
 
       if (!allProjectsTent || !allProjectsTent.rowsData || !allProjectsTent.rowsData.views) {
-        console.error("Invalid allWorkExperience data structure:", allProjectsTent);
+        console.error("Invalid allProjects data structure:", allProjectsTent);
       } else {
         const projectIds = await saveTenantProjects(project, allProjectsTent, tenantSlug);
+        const projectRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "project");
 
         if (projectIds.length > 0) {
-          const projectRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "project");
           let selectedProjectList: Array<any> = [];
           for (const projectId of projectIds) {
             try {
@@ -328,6 +333,8 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
           if (selectedProjectList.length > 0) {
             addDynamicRow(projectRelationEntity[0], selectedProjectList, true);
           }
+        }else{
+          addDynamicRow(projectRelationEntity[0], [], true);
         }
       }
 
@@ -342,9 +349,10 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
         console.error("Invalid allCertifications data structure:", allCertificationTent);
       } else {
         const certificateIds = await saveTenantCertifications(certifications, allCertificationTent, tenantSlug);
+        const certificationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "certifications");
+
 
         if (certificateIds.length > 0) {
-          const certificationRelationEntity = childrenEntities.visible.filter((f: any) => f.child.slug === "certifications");
           let selectedCertificationList: Array<any> = [];
 
           for (const certificateId of certificateIds) {
@@ -375,6 +383,8 @@ export const useProcessMediaFile = ({ addDynamicRow = () => { }, childrenEntitie
           if (selectedCertificationList.length > 0) {
             addDynamicRow(certificationRelationEntity[0], selectedCertificationList, true);
           }
+        } else {
+          addDynamicRow(certificationRelationEntity[0], [], true);
         }
       }
     } catch (error) {

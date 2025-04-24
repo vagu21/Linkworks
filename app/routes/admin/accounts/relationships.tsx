@@ -144,7 +144,7 @@ export default function AdminTenantsRoute() {
       title={t("models.relationship.plural")}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} />
+          <InputFilters filters={data.filterableProperties} formClass="left-0"/>
           <ButtonPrimary to="new">{t("shared.new")}</ButtonPrimary>
         </>
       }

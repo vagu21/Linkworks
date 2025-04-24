@@ -28,9 +28,11 @@ import DownloadCSVButton from "~/custom/components/button/DownloadCSVButton";
 import BreadcrumbCustom from "~/custom/components/breadcrumbs/Breadcrumb";
 import EntityIcon from "~/components/layouts/icons/EntityIcon";
 import MasterGraphComponent from "~/custom/modules/graphs/components/masterGraphComponent";
+import { useAppOrAdminData } from "~/utils/data/useAppOrAdminData";
+import InputSelect from "~/components/ui/input/InputSelect";
 
 interface Props {
-  data?:any
+  data?: any
   title?: ReactNode;
   rowsData: RowsApi.GetRowsData;
   items: RowWithDetails[];
@@ -46,13 +48,13 @@ interface Props {
     isSuperAdmin: boolean;
   } | null;
 }
-export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow, onEditRow, saveCustomViews, permissions, currentSession,data }: Props) {
+export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow, onEditRow, saveCustomViews, permissions, currentSession, data }: Props) {
   const { t } = useTranslation();
   const actionData = useTypedActionData<Rows_List.ActionData>();
   const appData = useAppData();
   const submit = useSubmit();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const confirmDeleteRows = useRef<RefConfirmModal>(null);
 
@@ -67,13 +69,17 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   const [selectedRows, setSelectedRows] = useState<RowWithDetails[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
 
+  const [tableFilterOptions, setTableFilterOptions] = useState<any[]>([]);
+  const [selectedTableFilters, setSelectedTableFilters] = useState<any>();
   const params: any = useParams();
+  const appOrAdminData = useAppOrAdminData();
+  const group = appOrAdminData.entityGroups.find((f) => f.slug === params.group);
   const menuItems = [
     {
       title: params.group?.charAt(0).toUpperCase() + params.group?.slice(1),
       routePath: `/app/${params.tenant}/g/${params.group}`,
       icon: rowsData?.entity?.icon ? (
-        <EntityIcon className="h-4 w-4" icon={rowsData?.entity?.icon} />
+        <EntityIcon className="h-4 w-4" icon={group?.icon} />
       ) : rowsData?.entity?.icon === null || rowsData?.entity?.icon === undefined ? (
         <EntityIcon className="h-4 w-4" icon={undefined} />
       ) : (
@@ -128,12 +134,12 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   }, [searchParams]);
 
   function filteredItems() {
-    const isSearchable = rowsData.entity.properties.filter((item)=>item.isSearchable).map((item)=>item.id)
+    const isSearchable = rowsData.entity.properties.filter((item) => item.isSearchable).map((item) => item.id)
     if (!searchInput) return items;
     return items.filter((item) =>
       item?.values?.some((value) => {
         const id = value?.propertyId;
-        const type  = rowsData.entity.properties.filter((item)=>item.id===id).map((item)=>item.type)
+        const type = rowsData.entity.properties.filter((item) => item.id === id).map((item) => item.type)
         if (!isSearchable.includes(id)) return false;
         const input = searchInput.toLowerCase().trim();
         switch (type[0]) {
@@ -188,6 +194,36 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
     return false;
   }
 
+  function capitalize(str: string) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  useEffect(() => {
+    let tableFilters = rowsData.entity.properties
+      .filter((item) => item.isTableFilter)
+      .map((item) => ({ name: item.name, options: item.options.map((option) => ({ value: `${option.value}`, name: ` ${option.value}` })) })).slice(0, 2);
+    tableFilters.map((item) => {
+      item.options = [{ value: "", name: t("shared.all") }, ...item.options];
+      return item;
+    });
+    setTableFilterOptions(tableFilters);
+  }, [])
+
+  const handleTableFilter = (e: any, name: string) => {
+    const updatedFilters = { ...selectedTableFilters };
+
+    if (e === "fallback_value") {
+      delete updatedFilters[name];
+    } else {
+      updatedFilters[name] = e;
+    }
+    setSelectedTableFilters(updatedFilters);
+    const searchParams = new URLSearchParams(updatedFilters).toString();
+    setSearchParams(searchParams);
+  };
+
+
   function onDeleteSelectedRows() {
     confirmDeleteRows.current?.show(t("shared.confirmDelete"), t("shared.delete"), t("shared.cancel"), t("shared.warningCannotUndo"));
   }
@@ -205,7 +241,7 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
   return (
     <div className="mx-auto max-w-[1920px] gap-5 px-4 py-5 sm:px-6">
      
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-[14px]">
         <div className="flex flex-row items-center justify-between gap-5 max-[769px]:flex-col max-[769px]:items-start">
           <div className="flex flex-col gap-4">
             <div className="pt-3">
@@ -230,16 +266,17 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
                   {canUpdateCurrentView() ? (
                     <div className="flex flex-row gap-3">
                       <ViewButton
-                        className="text-button-secondary-text-text text-sm font-normal"
+                        className="text-sm font-normal text-[#000000] text-opacity-80"
+                        onClick={onCreateView}
+                        label={t("models.view.actions.create")}
+                      />
+                      <ViewButton
+                        className="text-button-secondary-text-text text-sm font-normal hover:bg-[#F2F2F2]"
                         disabled={!canUpdateCurrentView()}
                         onClick={onUpdateView}
                         label={t("models.view.actions.update")}
                       />
-                      {/* <ViewButton
-                        className="text-sm font-normal text-[#000000] text-opacity-80"
-                        onClick={onCreateView}
-                        label={t("models.view.actions.create")}
-                      /> */}
+
                     </div>
                   ) : (
                     <ViewButton
@@ -303,7 +340,28 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
                 <TableSearch value={searchInput} setValue={setSearchInput} placeholder={`Search ${rowsData.entity.title}`} />
               </div>
 
+
+
               <div className="-mr-3 flex flex-row gap-3 max-sm:mr-0">
+                <div className="flex gap-[10px]">
+                  {
+                    tableFilterOptions.map((item) => {
+                      return (
+                        <div key={item.name} className="w-44">
+                          <InputSelect
+                           name="tableFilter-1"
+                           prefixLabel={capitalize(item.name)}
+                          //  title={capitalize(item.name)}
+                           value={selectedTableFilters?.[item.name] || ''}
+                           setValue={(e) => { handleTableFilter(e, item.name) }}
+                           options={item.options}
+                           disabled={false}
+                          />
+                        </div>
+                      );
+                    })
+                  }
+                </div>
                 <DownloadCSVButton rowsData={rowsData} routes={routes} searchParams={searchParams.toString()} />
                 {filters.length > 0 && <InputFilters filters={filters} />}
                 <RunPromptFlowButtons type="list" promptFlows={rowsData.promptFlows} className="p-0.5" />
@@ -347,7 +405,7 @@ export default function RowsViewRoute({ title, rowsData, items, routes, onNewRow
         >
           {showCustomViewModal && (
             <EntityViewForm
-            isDrawer={true}
+              isDrawer={true}
               entity={rowsData.entity}
               tenantId={appData.currentTenant?.id ?? null}
               userId={currentSession?.user.id ?? null}

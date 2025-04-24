@@ -55,6 +55,8 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
   );
   const [isRequired, setIsRequired] = useState<boolean>(item?.isRequired ?? true);
   const [isFilterable, setIsFilterable] = useState<boolean>(item?.isFilterable ?? true);
+  const [isTableFilter, setIsTableFilter] = useState<boolean>(item?.isTableFilter ?? true);
+  const [tableFilterPropertyCount, setTableFilterPropertyCount] = useState(0);
   const [isSearchable, setIsSearchable] = useState<boolean>(item?.isSearchable ?? true);
   const [isSortable, setIsSortable] = useState<boolean>(item?.isSortable ?? true);
   const [isUnique, setIsUnique] = useState<boolean>(item?.isUnique ?? true);
@@ -68,6 +70,11 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
   // const [formula, setFormula] = useState<string>();
 
   const [titleEnabled, setTitleEnabled] = useState(false);
+
+  useEffect(() => {
+    const count = properties.filter(property => property.isTableFilter).length;
+    setTableFilterPropertyCount(count);
+  }, [properties])
 
   useEffect(() => {
     if (!item) {
@@ -321,16 +328,37 @@ export default function PropertyForm({ item, properties, entities, formulas }: P
               type === PropertyType.DATE ||
               type === PropertyType.BOOLEAN ||
               type === PropertyType.SELECT) && (
-              <div className="w-full">
-                <InputCheckboxWithDescription
-                  name="is-filterable"
-                  title={t("models.property.isFilterable")}
-                  description="Make the property as filterable"
-                  value={isFilterable}
-                  setValue={setIsFilterable}
-                />
-              </div>
-            )}
+                <div className="w-full">
+                  <InputCheckboxWithDescription
+                    name="is-filterable"
+                    title={t("models.property.isFilterable")}
+                    description="Make the property as filterable"
+                    value={isFilterable}
+                    setValue={setIsFilterable}
+                  />
+                  {type === PropertyType.SELECT && (
+                    <>
+                      <InputCheckboxWithDescription
+                        name="is-tableFilter"
+                        title={t("models.property.isTableFilter")}
+                        description="Make the property as Table Filter"
+                        value={isTableFilter}
+                        setValue={setIsTableFilter}
+                        disabled={tableFilterPropertyCount >= 3}
+                      />
+                      {tableFilterPropertyCount >= 3 && (
+                        <div className="mt-2 rounded-md bg-yellow-100 px-4 py-2 text-sm text-yellow-800">
+                          ⚠️ You can only make a maximum of 3 properties Table filterable.
+                        </div>
+
+                      )}
+                    </>
+                  )
+                  }
+
+
+                </div>
+              )}
             {(type === PropertyType.NUMBER || type === PropertyType.TEXT || type === PropertyType.DATE) && (
               <div className="w-full">
                 <InputCheckboxWithDescription

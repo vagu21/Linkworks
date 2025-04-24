@@ -104,6 +104,12 @@ export default () => {
           iconSelected: <GraphIconFilled className="h-5 w-5" />,
         },
         {
+          name: "Actions",
+          href: "/admin/entities/actions/actions",
+          icon: <GraphIcon className="h-5 w-5" />,
+          iconSelected: <GraphIconFilled className="h-5 w-5" />,
+        },
+        {
           name: "Fake Rows",
           href: "/admin/entities/fake-rows",
           icon: (

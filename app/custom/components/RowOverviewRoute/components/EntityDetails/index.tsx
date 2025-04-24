@@ -280,7 +280,7 @@ const EntityDetails = ({
   const getFormattedTextValue = (subType: string | null, value: string, editorType: string | null) => {
     if (!value) return "N/A";
 
-    const className = "flex items-center gap-5 text-sm text-orange-500 my-auto self-stretch underline decoration-solid decoration-auto underline-offset-auto";
+    const className = "inline-block  truncate   items-center gap-5 text-sm text-orange-500 my-auto self-stretch underline decoration-solid decoration-auto underline-offset-auto";
     if (value === "N/A") return "N/A";
     switch (subType) {
       case "email":
@@ -301,7 +301,7 @@ const EntityDetails = ({
         );
       case "url":
         return (
-          <div className="flex items-center gap-5 text-sm text-orange-500">
+          <div className="flex max-w-[180px]  items-center gap-5 text-sm text-orange-500">
             <a href={value} rel="noreferrer" target="_blank" className={className}>
               {value}
             </a>
@@ -364,10 +364,10 @@ const EntityDetails = ({
         return rowValue?.numberValue || "N/A";
 
       case PropertyType.DATE:
-        return rowValue?.dateValue ? DateUtils.dateMonthDayYear(rowValue.dateValue) : "";
+        return rowValue?.dateValue ? DateUtils.dateMonthDayYear(rowValue.dateValue) : "N/A";
       case PropertyType.RANGE_DATE:
-        const minDate = rowValue?.range?.dateMin ? DateUtils.dateMonthDayYear(rowValue?.range?.dateMin) : "";
-        const maxDate = rowValue?.range?.dateMax ? DateUtils.dateMonthDayYear(rowValue?.range?.dateMax) : "";
+        const minDate = rowValue?.range?.dateMin ? DateUtils.dateMonthDayYear(rowValue?.range?.dateMin) : "N/A";
+        const maxDate = rowValue?.range?.dateMax ? DateUtils.dateMonthDayYear(rowValue?.range?.dateMax) : "N/A";
         return `${minDate} - ${maxDate}`;
 
       case PropertyType.MEDIA:

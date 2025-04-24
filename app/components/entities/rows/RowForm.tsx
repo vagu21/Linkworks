@@ -1067,7 +1067,7 @@ function RowGroups({
   }, [hasCountry, groups]);
   
 
-  function isVisible(rowValue: RowValueDto) {
+   function isVisible(rowValue: RowValueDto) {
     if (rowValue.property.name === "specialization" || rowValue.property.name === "ndaDocument") {
       const firstNameValue = rowValues.find((f) => f.property.name === "isSupplier")?.textValue;
       if (firstNameValue !== "Supplier") {
@@ -1076,6 +1076,18 @@ function RowGroups({
     }
     return true;
   }
+
+  function getPropertyColumnSpan(property: PropertyWithDetails) {
+    const columns = PropertyAttributeHelper.getPropertyAttributeValue_Number(property, PropertyAttributeName.Columns);
+    if (columns === undefined || isNaN(columns) || columns < 1 || columns > 12) {
+      return "col-span-12";
+    }
+    return `col-span-${columns}`;
+  }
+
+  
+
+
 
   function onChange(rowValue: RowValueDto) {
     setHeaders((prev) => {
@@ -1146,24 +1158,16 @@ function RowGroups({
               isDrawer={isSlideOverOrRowList}
               lineStyle={!isLast?{height:"calc(100% + 6rem)"}:{display:'none'}}
             >
-              <div className="flex flex-col md:flex-row flex-wrap items-start gap-y-[20px] gap-[24px] self-stretch">
+              <div className="grid grid-cols-12 gap-[12px] gap-y-[24px] w-full">
                 {headers.map((detailValue, idxDetailValue) => {
                   if (!isVisible(detailValue)) {
                     return null;
                   }
-                  const isFieldTextEditor = detailValue?.property?.attributes?.some((attribute) => ["EditorSize", "editor", "EditorLanguage"].includes(attribute.name)) || false;
                   
                   return (
                     <div
                       key={detailValue.propertyId}
-                      // getPropertyColumnSpan(detailValue.property)
-                      className={clsx(
-                        `w-full  ${
-                          detailValue?.property?.type == PropertyType.MEDIA || detailValue?.property?.subtype == "radioGroupCards" || isFieldTextEditor
-                            ? "w-full"
-                            : "md:w-[calc(50%-20px)]"
-                        }`
-                      )}
+                     className={clsx("w-full", getPropertyColumnSpan(detailValue.property))}
                     >
                       <RowValueInput
                         ref={rowValueInput}

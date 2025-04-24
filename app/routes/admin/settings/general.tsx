@@ -11,7 +11,6 @@ import { useAdminData } from "~/utils/data/useAdminData";
 import { AppConfiguration, getAppConfiguration, getOrCreateAppConfiguration, updateAppConfiguration } from "~/utils/db/appConfiguration.db.server";
 import { getUserHasPermission } from "~/utils/helpers/PermissionsHelper";
 import { verifyUserHasPermission } from "~/utils/helpers/.server/PermissionsService";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { promiseHash } from "~/utils/promises/promiseHash";
 import { defaultThemes } from "~/utils/theme/defaultThemes";
 import InputSelect from "~/components/ui/input/InputSelect";
@@ -19,6 +18,7 @@ import clsx from "clsx";
 import { useTypedActionData } from "remix-typedjson";
 import { createUserSession, getUserInfo } from "~/utils/session.server";
 import toast from "react-hot-toast";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.title }];
 
@@ -58,11 +58,11 @@ export const action: ActionFunction = async ({ request }) => {
     };
 
     const { storedLogo, storedLogoDarkMode, storedIcon, storedIconDarkMode, storedFavicon } = await promiseHash({
-      storedLogo: logo ? storeSupabaseFile({ bucket: "branding", content: logo, id: "logo" }) : Promise.resolve(""),
-      storedLogoDarkMode: logoDarkMode ? storeSupabaseFile({ bucket: "branding", content: logoDarkMode, id: "logo-dark-mode" }) : Promise.resolve(""),
-      storedIcon: icon ? storeSupabaseFile({ bucket: "branding", content: icon, id: "icon" }) : Promise.resolve(""),
-      storedIconDarkMode: iconDarkMode ? storeSupabaseFile({ bucket: "branding", content: iconDarkMode, id: "icon-dark-mode" }) : Promise.resolve(""),
-      storedFavicon: favicon ? storeSupabaseFile({ bucket: "branding", content: favicon, id: "favicon" }) : Promise.resolve(""),
+      storedLogo: logo ? storeS3File({ bucket: "branding", content: logo, id: "logo" }) : Promise.resolve(""),
+      storedLogoDarkMode: logoDarkMode ? storeS3File({ bucket: "branding", content: logoDarkMode, id: "logo-dark-mode" }) : Promise.resolve(""),
+      storedIcon: icon ? storeS3File({ bucket: "branding", content: icon, id: "icon" }) : Promise.resolve(""),
+      storedIconDarkMode: iconDarkMode ? storeS3File({ bucket: "branding", content: iconDarkMode, id: "icon-dark-mode" }) : Promise.resolve(""),
+      storedFavicon: favicon ? storeS3File({ bucket: "branding", content: favicon, id: "favicon" }) : Promise.resolve(""),
     });
 
     const headScripts = form.get("headScripts")?.toString() ?? "";

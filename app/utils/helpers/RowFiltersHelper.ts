@@ -179,7 +179,8 @@ function isPropertyFilterable(property?: Property) {
     return true;
   }
   return (
-    property.isFilterable === true
+    property.isFilterable === true ||
+    property.isTableFilter === true 
     // property.type === PropertyType.TEXT ||
     // property.type === PropertyType.SELECT ||
     // property.type === PropertyType.BOOLEAN ||

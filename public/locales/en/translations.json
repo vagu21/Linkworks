@@ -1284,6 +1284,7 @@
       "isSortable": "Sortable",
       "isSearchable": "Searchable",
       "isFilterable": "Filterable",
+      "isTableFilter":" Table filter",
       "isHidden": "Hidden",
       "isDisplay": "Display",
       "isReadOnly": "Read only",

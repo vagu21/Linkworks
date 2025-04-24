@@ -50,15 +50,33 @@ function displayRowValue<T>(t: TFunction, header: RowHeaderDisplayDto<T>, item: 
             >
               <span>{header.formattedValue ? header.formattedValue(item, idxRow) : header.value(item, idxRow)}</span>
             </Link>
-          ) : (
-            <span>
-            {header.name === "endDate" && !header.value(item, idxRow)
-              ? "N/A"
-              : header.formattedValue
-              ? header.formattedValue(item, idxRow)
-              : header.value(item, idxRow)}
-          </span>
-          )}
+          )
+            : header.property?.subtype === "url" && header.value(item, idxRow) ? (
+              <div className="max-w-xs truncate underline hover:text-[#FF7800] ">
+              <a
+                href={header.value(item, idxRow)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  window.open(header.value(item, idxRow), "_blank");
+                }}
+              >
+                {header.value(item, idxRow)}
+              </a>
+              </div>
+
+            ) :
+              (
+                <span>
+                  {header.name === "endDate" && !header.value(item, idxRow)
+                    ? "N/A"
+                    : header.formattedValue
+                      ? header.formattedValue(item, idxRow)
+                      : header.value(item, idxRow)}
+                </span>
+              )}
         </>
       ) : (
         <>

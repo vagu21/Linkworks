@@ -242,7 +242,7 @@ function getDisplayedHeaders({
           value: (item) => (
             <ul className="flex max-h-20 max-w-lg flex-col space-y-1 overflow-auto">
               {!item.childRows?.length || item.childRows.length === 0 ? (
-                <div className="px-1 pb-0.5 pt-1 text-sm text-gray-300">-</div>
+                <div className="px-1 pb-0.5 pt-1 text-sm text-[#737373]">N/A</div>
               ) : (
                 <Fragment>
                   {childEntity.properties.filter((f) => !f.isDefault && f.isDisplay).length === 0 ? (

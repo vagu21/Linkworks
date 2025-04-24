@@ -139,6 +139,17 @@ export namespace EntitiesApi {
         publicUrl: getBaseURL(request) + `/public/:entity/:id`,
       };
       return routes;
+    } else if (url.pathname.startsWith(`/admin/entities/actions`)) {
+      const routes: EntitiesApi.Routes = {
+        list: `/admin/entities/actions/:entity`,
+        new: `/admin/entities/actions/:entity/new`,
+        overview: `/admin/entities/actions/:entity/:id`,
+        edit: `/admin/entities/actions/:entity/:id/edit`,
+        import: `/admin/entities/actions/:entity/import`,
+        export: `/admin/entities/actions/:entity/export`,
+        publicUrl: getBaseURL(request) + `/public/:entity/:id`,
+      };
+      return routes;
     } else if (url.pathname.startsWith("/admin/")) {
       const routes: EntitiesApi.Routes = {
         list: `/admin/entities/:entity/no-code/:entity`,

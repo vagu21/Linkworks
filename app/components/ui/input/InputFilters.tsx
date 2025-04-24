@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { FormEvent, Fragment, useEffect, useRef, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, useSearchParams } from "@remix-run/react";
 import { Colors } from "~/application/enums/shared/Colors";
@@ -29,17 +29,16 @@ interface Props {
   filters: FilterDto[];
   withSearch?: boolean;
   withName?: boolean;
+  formClass?: string
 }
 
-export default function InputFilters({ filters, withSearch = true }: Props) {
+export default function InputFilters({ filters, withSearch = true, formClass }: Props) {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [opened, setOpened] = useState(false);
   const [items, setItems] = useState<FilterValueDto[]>([]);
   const [filteredItems, setFilteredItems] = useState<number>(0);
   const [searchInput, setSearchInput] = useState("");
-  const [dropdownOptionSelected, setDropdownOptionSelected] = useState(false);
-  const divRef = useRef(null);
 
   useEffect(() => {
     const items: FilterValueDto[] = filters.map((item) => {
@@ -87,7 +86,8 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     setSearchParams(searchParams);
   }
 
-  function handleFormSubmit() {
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     items.forEach((item) => {
       if (item.selected && item.value?.trim()) {
         searchParams.set(item.name, item.value?.toString().trim() ?? "");
@@ -107,37 +107,11 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
     setOpened(false);
   }
 
-
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    handleFormSubmit();
-  }
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (divRef.current && !divRef?.current?.contains(event.target)) {
-        setOpened(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-  if (dropdownOptionSelected) {
-      handleFormSubmit();
-      setDropdownOptionSelected(false);
-    }
-   }, [dropdownOptionSelected]);
-
   // const clickOutside = useOuterClick(() => setOpened(false));
 
   return (
     <Fragment>
-      <div className="relative" ref={divRef}>
+      <div className="relative">
         <button
           onClick={() => setOpened(!opened)}
           className="focus:border-bg-gray-50 relative z-0 inline-flex !rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-0 "
@@ -180,8 +154,8 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
           <Form
             onSubmit={onSubmit}
             method="get"
-            className="absolute right-0 z-40 mt-2 h-fit max-h-60 w-64 origin-top-right divide-y divide-gray-200 overflow-visible overflow-y-auto rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
-          >
+            className={clsx("absolute right-0 z-40 mt-2 h-fit max-h-60 w-64 origin-top-right divide-y divide-gray-200 overflow-visible overflow-y-auto rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none",
+              formClass )}>
             <div className="flex items-center justify-between px-2 py-2 text-sm">
               <Button type="button" variant="outline" onClick={onClear}>
                 {t("shared.clear")}
@@ -232,7 +206,6 @@ export default function InputFilters({ filters, withSearch = true }: Props) {
                                 updateItemByIdx(items, setItems, idx, {
                                   value: e,
                                 });
-                                setDropdownOptionSelected(true);
                               }}
                               className="bg-background w-full pb-1"
                             />

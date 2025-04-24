@@ -41,7 +41,7 @@ export default function WorkflowsExecutionsView() {
       withHome={false}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} />
+          <InputFilters filters={data.filterableProperties} formClass="left-0"/>
         </>
       }
     >

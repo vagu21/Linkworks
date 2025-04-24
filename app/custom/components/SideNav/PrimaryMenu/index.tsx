@@ -72,7 +72,7 @@ const PrimaryMenu: React.FC<PrimaryMenuProps> = ({ layout, logo, logoIcon, menuI
     <div>
       <nav
         className={clsx(
-          "z-20 flex w-full min-w-[72px] flex-col overflow-hidden border-r border-zinc-300 pb-3 transition-all",
+          "z-20 flex w-full min-w-[72px] flex-col overflow-hidden border-r border-[#E6E6E6] pb-3 transition-all",
           isNavCollapsed ? "max-w-[220px] bg-[linear-gradient(180deg,#F8F7EE_0%,#FFFDF0_100%)]" : "max-w-[72px] bg-transparent",
           layout === "admin" ? "dark" : "dark",
           "fixed bottom-0 left-0 top-0"
@@ -80,7 +80,7 @@ const PrimaryMenu: React.FC<PrimaryMenuProps> = ({ layout, logo, logoIcon, menuI
       >
         <div className="w-full">
           {/* fix image height to 58px at max */}
-          <header className="overflow-hidden border-b border-solid border-black border-opacity-10">
+          <header className="overflow-hidden border-b border-solid border-[#E6E6E6]">
             <Link to={"/"}>
               <img
                 loading="lazy"

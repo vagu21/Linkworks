@@ -62,6 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 const defaultTemplates: { title: string; template: EntitiesTemplateDto }[] = [
   { title: "Default: CRM", template: DefaultEntityTemplates.CRM_ENTITIES_TEMPLATE },
+  { title: "Default: ACTIONS", template: DefaultEntityTemplates.ACTION_ENTITY_TEMPLATE },
   { title: "Default: Tenant Settings", template: DefaultEntityTemplates.TENANT_SETTINGS_ENTITIES_TEMPLATE },
   { title: "Example: Employee", template: DefaultEntityTemplates.EMPLOYEES_ENTITIES_TEMPLATE },
   { title: "Example: Contracts", template: DefaultEntityTemplates.CONTRACTS_ENTITIES_TEMPLATE },

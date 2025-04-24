@@ -11,7 +11,6 @@ import HeaderBlock from "~/modules/pageBlocks/components/blocks/marketing/header
 import UserProfileSettings from "~/modules/users/components/UserProfileSettings";
 import { db } from "~/utils/db.server";
 import { UserWithoutPassword, getUser, updateUserPassword, updateUserProfile } from "~/utils/db/users.db.server";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { deleteUserWithItsTenants } from "~/utils/services/userService";
 import { getUserInfo } from "~/utils/session.server";
 import bcrypt from "bcryptjs";
@@ -19,6 +18,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import Tabs from "~/components/ui/tabs/Tabs";
 import { getAppConfiguration } from "~/utils/db/appConfiguration.db.server";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 type LoaderData = {
   user: UserWithoutPassword;
@@ -85,7 +85,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return json({ error: `Form not submitted correctly.` }, { status: 400 });
       }
 
-      let avatarStored = avatar ? await storeSupabaseFile({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
+      let avatarStored = avatar ? await storeS3File({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
       const profile = await updateUserProfile({ firstName, lastName, avatar: avatarStored }, userInfo?.userId);
       if (!profile) {
         return json({ error: `Something went wrong.` }, { status: 400 });

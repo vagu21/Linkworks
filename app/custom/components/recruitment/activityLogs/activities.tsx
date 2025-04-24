@@ -102,7 +102,7 @@ export default function Activities({ items, hasActivity = true, hasComments, onS
                           "block w-full rounded-md border border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 sm:text-sm",
                           (isAdding || !appOrAdminData.user) && "cursor-not-allowed bg-gray-100"
                         )}
-                        placeholder="Ex : I have 3+ years of experience"
+                        placeholder="Ex : I have edited..."
                         defaultValue={""}
                         disabled={isAdding || !appOrAdminData.user}
                       />

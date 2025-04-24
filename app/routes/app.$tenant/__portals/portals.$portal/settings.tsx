@@ -20,13 +20,13 @@ import clsx from "clsx";
 import InputImage from "~/components/ui/input/InputImage";
 import InputCheckboxWithDescription from "~/components/ui/input/InputCheckboxWithDescription";
 import { promiseHash } from "~/utils/promises/promiseHash";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { useRootData } from "~/utils/data/useRootData";
 import JsonPropertyValuesInput from "~/modules/jsonProperties/components/JsonPropertyValuesInput";
 import { JsonPropertiesValuesDto } from "~/modules/jsonProperties/dtos/JsonPropertiesValuesDto";
 import { getAppConfiguration } from "~/utils/db/appConfiguration.db.server";
 import JsonPropertiesUtils from "~/modules/jsonProperties/utils/JsonPropertiesUtils";
 import { requireAuth } from "~/utils/loaders.middleware";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 type LoaderData = {
   item: PortalWithDetails & { portalUrl?: string };
@@ -103,8 +103,8 @@ export let action = async ({ request, params }: ActionFunctionArgs) => {
     const seoThumbnail = form.get("seoThumbnail")?.toString();
 
     const { storedSeoImage, storedSeoThumbnail } = await promiseHash({
-      storedSeoImage: seoImage ? storeSupabaseFile({ bucket: "seo", content: seoImage, id: `${item.id}-seo-image.png` }) : Promise.resolve(""),
-      storedSeoThumbnail: seoThumbnail ? storeSupabaseFile({ bucket: "seo", content: seoThumbnail, id: `${item.id}-thumbnail.png` }) : Promise.resolve(""),
+      storedSeoImage: seoImage ? storeS3File({ bucket: "seo", content: seoImage, id: `${item.id}-seo-image.png` }) : Promise.resolve(""),
+      storedSeoThumbnail: seoThumbnail ? storeS3File({ bucket: "seo", content: seoThumbnail, id: `${item.id}-thumbnail.png` }) : Promise.resolve(""),
     });
 
     await updatePortal(item, {
@@ -128,15 +128,15 @@ export let action = async ({ request, params }: ActionFunctionArgs) => {
     let favicon = form.get("favicon")?.toString();
 
     const { storedLogo, storedLogoDarkMode, storedIcon, storedIconDarkMode, storedFavicon } = await promiseHash({
-      storedLogo: logo ? storeSupabaseFile({ bucket: "branding", content: logo, id: `${item.id}-logo.png` }) : Promise.resolve(""),
+      storedLogo: logo ? storeS3File({ bucket: "branding", content: logo, id: `${item.id}-logo.png` }) : Promise.resolve(""),
       storedLogoDarkMode: logoDarkMode
-        ? storeSupabaseFile({ bucket: "branding", content: logoDarkMode, id: `${item.id}-logo-dark-mode.png` })
+        ? storeS3File({ bucket: "branding", content: logoDarkMode, id: `${item.id}-logo-dark-mode.png` })
         : Promise.resolve(""),
-      storedIcon: icon ? storeSupabaseFile({ bucket: "branding", content: icon, id: `${item.id}-icon.png` }) : Promise.resolve(""),
+      storedIcon: icon ? storeS3File({ bucket: "branding", content: icon, id: `${item.id}-icon.png` }) : Promise.resolve(""),
       storedIconDarkMode: iconDarkMode
-        ? storeSupabaseFile({ bucket: "branding", content: iconDarkMode, id: `${item.id}-icon-dark-mode.png` })
+        ? storeS3File({ bucket: "branding", content: iconDarkMode, id: `${item.id}-icon-dark-mode.png` })
         : Promise.resolve(""),
-      storedFavicon: favicon ? storeSupabaseFile({ bucket: "branding", content: favicon, id: `${item.id}-favicon.ico` }) : Promise.resolve(""),
+      storedFavicon: favicon ? storeS3File({ bucket: "branding", content: favicon, id: `${item.id}-favicon.ico` }) : Promise.resolve(""),
     });
 
     await updatePortal(item, {

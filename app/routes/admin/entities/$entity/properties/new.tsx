@@ -53,6 +53,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   let isSortable = Boolean(form.get("is-sortable"));
   let isSearchable = Boolean(form.get("is-searchable"));
   let isFilterable = Boolean(form.get("is-filterable"));
+  let isTableFilter= Boolean(form.get("is-tableFilter"));
   const isHidden = Boolean(form.get("is-hidden"));
   const isDisplay = Boolean(form.get("is-display"));
   const isUnique = Boolean(form.get("is-unique"))
@@ -106,6 +107,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         isSortable,
         isSearchable,
         isFilterable,
+        isTableFilter,
         isHidden,
         isDisplay,
         isReadOnly,

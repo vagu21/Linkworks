@@ -262,7 +262,7 @@ export default function AdminUsersRoute() {
       title={t("models.user.plural")}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} />
+          <InputFilters filters={data.filterableProperties} formClass="left-0" />
           <ButtonPrimary to="new">
             <span className="sm:text-sm">+</span>
           </ButtonPrimary>

@@ -5,19 +5,18 @@ import { generateJD } from "~/modules/mediaExport/Job/utils";
 
 export let action: ActionFunction = async ({ request }) => {
   const { id, type } = await request.json();
-
   let html = "";
 
   switch (type) {
-    case "resume":
+    case "Candidate":
       html = (await generateResume(id)) || "";
       break;
-    case "job":
+    case "Job":
       html = (await generateJD(id)) || "";
       break;
     default:
       html = "";
-      console.warn(`Unhandled type: ${type}`);
+      console.warn(`Unhandled Entity: ${entityName}`);
   }
 
   try {
@@ -26,7 +25,11 @@ export let action: ActionFunction = async ({ request }) => {
       headless: true,
       executablePath: "/var/lib/snapd/snap/bin/chromium",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    } : {}
+    } : {
+      headless: true,
+      executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    }
     );
     const page = await browser.newPage();
 

@@ -81,29 +81,15 @@ export default function RowsListAndTable({
       t,
     });
 
-    const actions = getConditionalActions(entity, onRemove, setLoading);
-    
     if (actions.length > 0) {
       headers.push({
         name: "actions",
         title: "Action",
         value: (item) => (
           <div>
-            {getConditionalActions(entity, onRemove, setLoading).map((action, index) => {
-              if (action.title === "ResumeAction") {
+            {actions.map((action, index) => {
                 return <DropdownCandidateMenu key={index} item={item} setLoading={setLoading} entity={entity} id={id} />;
-              }
-              else{return (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    action?.onClick(null, item);
-                  }}
-                >
-                  {action.title}
-                </button>
-              );}
+              
               
             })}
           </div>
@@ -115,12 +101,24 @@ export default function RowsListAndTable({
       headers = [...leftHeaders, ...headers];
     }
     if (rightHeaders) {
-      headers = [...headers, ...rightHeaders];
+      setHeaders([...headers, ...rightHeaders]);
+    } else {
+      setHeaders(headers);
     }
-    setHeaders(headers);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entity, columns,leftHeaders, rightHeaders, routes, allEntities, onFolioClick, onEditClick, onRelatedRowClick, t, onRemove, setLoading]);
+  }, [actions, entity, columns, leftHeaders, rightHeaders, routes, allEntities, onFolioClick, onEditClick, onRelatedRowClick, t, onRemove, setLoading]);
 
+
+  useEffect(() => {
+    const fetchActions = async () => {
+      setLoading(true);
+      const fetchedActions = await getConditionalActions(entity, onRemove, setLoading);
+      setActions(fetchedActions);
+      setLoading(false);
+    };
+
+    fetchActions();
+  }, [entity, onRemove]);
+  
   useEffect(() => {
     const actions: RowHeaderActionDto<RowWithDetails>[] = [];
     if (onRemove) {

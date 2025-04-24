@@ -30,6 +30,7 @@ interface Props {
   placeholder?: string;
   withColors?: boolean;
   withSearch?: boolean;
+  prefixLabel?: string | ReactNode;
 }
 export default function InputSelect({
   name,
@@ -49,6 +50,7 @@ export default function InputSelect({
   placeholder,
   withColors,
   withSearch = true,
+  prefixLabel,
 }: Props) {
   const { t } = useTranslation();
   const refSearch = useRef<HTMLInputElement>(null);
@@ -101,9 +103,14 @@ export default function InputSelect({
           //   }
           // }}
           >
-            
-            <SelectValue placeholder={withLabel ? placeholder || `${t("shared.select")}...` : title || `${t("shared.select")}...`} />
-          
+
+            <div className="flex items-center gap-1">
+              {prefixLabel && (
+                <span className="text-[#737373] text-sm max-w-[60px] truncate">{prefixLabel} :</span>
+              )}
+              <SelectValue className="max-w-[60px] truncate"   placeholder={withLabel ? placeholder || `${t("shared.select")}...` : title || `${t("shared.select")}...`} />
+            </div>
+
           </SelectTrigger>
           <SelectContent className="max-h-64 overflow-auto">
             {withSearch && options.length > 0 && (
@@ -115,7 +122,7 @@ export default function InputSelect({
                 className="mb-1 px-2 py-1.5 rounded-lg"
                 placeholder={t("shared.search")}
                 value={inputSearch}
-                onChange={(e) => setInputSearch(e.target.value)}
+                onChange={(e) => {setInputSearch(e.target.value)}}
                 onKeyDown={(e) => e.stopPropagation()}
                 onKeyDownCapture={(e) => e.stopPropagation()}
                 onKeyUp={(e) => e.stopPropagation()}

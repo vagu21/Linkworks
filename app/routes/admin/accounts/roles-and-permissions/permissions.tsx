@@ -92,7 +92,7 @@ export default function AdminRolesRoute() {
         <div className="flex-grow">
           <InputSearchWithURL />
         </div>
-        <InputFilters filters={data.filterableProperties} />
+        <InputFilters filters={data.filterableProperties} formClass="left-0"/>
         <ButtonPrimary to="new">
           <div className="sm:text-sm">+</div>
         </ButtonPrimary>

@@ -213,7 +213,7 @@ export default function () {
       menu={[{ title: "Knowledge Bases", routePath: "/admin/knowledge-base/bases" }, { title: "Articles" }]}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} />
+          <InputFilters filters={data.filterableProperties} formClass="left-0"/>
           <Dropdown
             right={false}
             // onClick={() => alert("Dropdown click")}

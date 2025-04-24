@@ -31,6 +31,26 @@ async function validate(tenantId: string | null = null) {
     })
   );
 }
+async function validateActions(tenantId: string | null = null) {
+  const actionsEntities = ["Actions"];
+  if (tenantId === null) {
+    actionsEntities.push("Actions");
+  }
+  const entities = await getEntitiesByName(actionsEntities);
+  await Promise.all(
+    actionsEntities.map(async (actionsEntities) => {
+      const entity = entities.find((i) => i.name === actionsEntities);
+      if (!entity) {
+        throw new Error(`Actions is not configured: Entity "${actionsEntities}" is required. Go to /admin/entities/templates/manual and load the template.`);
+      }
+      if (tenantId === null && ![DefaultEntityTypes.All, DefaultEntityTypes.AdminOnly].find((f) => f.toString() === entity.type)) {
+        throw new Error(`Actions is not configured: Entity "${actionsEntities}" must be "All" or "Admin"`);
+      } else if (tenantId !== null && ![DefaultEntityTypes.All, DefaultEntityTypes.AppOnly].find((f) => f.toString() === entity.type)) {
+        throw new Error(`Actions is not configured: Entity "${actionsEntities}" must be "All" or "App"`);
+      }
+    })
+  );
+}
 
 async function getContactsInRowIds(rowIds: string[]): Promise<ContactDto[]> {
   const contactsEntity = await getEntityByName({ tenantId: null, name: "contact" });
@@ -628,6 +648,7 @@ async function fetchConvertKitUsers_AllPages() {
 
 export default {
   validate,
+  validateActions,
   getContactsInRowIds,
   getContact,
   getContacts,

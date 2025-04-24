@@ -66,7 +66,7 @@ function Table<T>({
   selectedRows,
   onSelected,
   className,
-  padding = "px-3 py-3",
+  padding = "px-3 py-2",
   noRecords,
   emptyState,
   darkMode,
@@ -127,7 +127,7 @@ function Table<T>({
   });
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const handleScroll = (event:any) => {
+  const handleScroll = (event: any) => {
     const { scrollLeft } = event.target;
     setIsScrolled(scrollLeft > 0);
   };
@@ -177,7 +177,7 @@ function Table<T>({
   }
 
   const handleSort = useCallback(
-    (order: "asc" | "desc" | "none", columnName?: string,type?:number) => {
+    (order: "asc" | "desc" | "none", columnName?: string, type?: number) => {
       let sorted = [...items];
 
       const getTextValue = (item: any) => {
@@ -248,7 +248,7 @@ function Table<T>({
       )}
     >
       <div className="relative flex flex-col">
-        <div className="relative h-[calc(100vh-320px)] w-full overflow-x-auto overflow-y-auto" onScroll={handleScroll}>
+        <div className="relative h-[calc(100vh-270px)] w-full overflow-x-auto overflow-y-auto" onScroll={handleScroll}>
           <table className="whitespace-no-wrap w-full table-fixed border-separate border-spacing-0">
             <thead
               className={clsx(
@@ -259,10 +259,10 @@ function Table<T>({
                 darkMode && ""
               )}
             >
-              <tr className={clsx("tracking-wide", darkMode && "")}>
+              <tr className={clsx("tracking-wide relative", darkMode && "")}>
                 {actions.filter((f) => f.firstColumn).length > 0 && <th scope="col" className="px-2 py-1"></th>}
                 {onSelected && (
-                  <th scope="col" className="relative w-10 border-b-2 border-t-2 border-[#eaeaea] px-3 py-3 sm:px-6">
+                  <th scope="col" className="sticky top-0 w-10 border-b-2 border-t-2 border-[#eaeaea] px-3 py-3 sm:px-6">
                     <Checkbox
                       title="Select all"
                       ref={checkbox}
@@ -283,9 +283,9 @@ function Table<T>({
                         scope="col"
                         onClick={() => onHeaderClick(header)}
                         className={clsx(
-                          "whitespace-nowrap px-3 py-3 pr-0 tracking-wider",
+                          "whitespace-nowrap px-3 py-2 pr-0 tracking-wider",
                           "border-b-2 border-t-2 border-[#eaeaea]",
-                          "sticky top-0 z-10  bg-white/75 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter",
+                          "sticky top-0 z-10  bg-white/75 text-left text-xs font-bold text-[#737373] backdrop-blur backdrop-filter",
                           header.breakpoint === "sm" && "hidden sm:table-cell",
                           header.breakpoint === "md" && "mg:table-cell hidden",
                           header.breakpoint === "lg" && "hidden lg:table-cell",
@@ -398,40 +398,43 @@ function Table<T>({
                           <td
                             key={idxHeader}
                             style={
-                              (idxHeader === 0 || idxHeader === headers.length - 1) && isScrolled
-                                ? {
-                                    boxShadow: "10px 0px 15px -5px rgba(181, 181, 181, 0.25)",
-                                  }
+                              isScrolled
+                                ? idxHeader === 0
+                                  ? { boxShadow: "10px 0px 15px -5px rgba(181, 181, 181, 0.25)" } 
+                                  : idxHeader === headers.length - 1
+                                    ? { boxShadow: "-10px 0px 15px -5px rgba(181, 181, 181, 0.25)" } 
+                                    : {}
                                 : {}
                             }
                             className={clsx(
-                              "text-text-strong cursor-pointer whitespace-nowrap border-b-2 border-[#eaeaea] text-sm font-normal ",
+                              "text-[#121212] cursor-pointer whitespace-nowrap border-b-2 border-[#eaeaea] text-sm font-normal",
                               idxHeader == 0 && "sticky left-0 bg-inherit",
                               idxHeader === headers.length - 1 && "sticky right-0 z-10  bg-inherit",
                               idxHeader === headers.length - 1 && entityTitle === "Job" && "!w-32",
                               padding,
+                              "h-12",
                               "w-48"
                             )}
                             ref={(el) => hoveredRow === idxRow && idxHeader === 0 && setReferenceElement(el)}
                             onMouseEnter={
                               idxHeader === 0
                                 ? () => {
-                                    if (hideTimeoutRef.current) {
-                                      clearTimeout(hideTimeoutRef.current);
-                                    }
-                                    setHoveredRow(idxRow);
+                                  if (hideTimeoutRef.current) {
+                                    clearTimeout(hideTimeoutRef.current);
                                   }
+                                  setHoveredRow(idxRow);
+                                }
                                 : undefined
                             }
                             onMouseLeave={
                               idxHeader === 0
                                 ? () => {
-                                    hideTimeoutRef.current = setTimeout(() => {
-                                      if (!isHoveringCard) {
-                                        setHoveredRow(null);
-                                      }
-                                    }, 200);
-                                  }
+                                  hideTimeoutRef.current = setTimeout(() => {
+                                    if (!isHoveringCard) {
+                                      setHoveredRow(null);
+                                    }
+                                  }, 200);
+                                }
                                 : undefined
                             }
                           >
@@ -460,12 +463,12 @@ function Table<T>({
           const systemView: any = entity.views.find((f) => f.isSystem);
           const systemViewProperties = systemView?.properties;
 
-          if (systemView) {
-            entity.properties?.forEach((property) => {
-              const systemViewProperty = systemViewProperties?.find((f: any) => f?.propertyId === property.id);
-              property.isHidden = !systemViewProperty;
-            });
-          }
+          // if (systemView) {
+          //   entity.properties?.forEach((property) => {
+          //     const systemViewProperty = systemViewProperties?.find((f: any) => f?.propertyId === property.id);
+          //     property.isHidden = !systemViewProperty;
+          //   });
+          // } 
 
           const propertyIds = systemViewProperties?.reduce((acc: any, item: any) => {
             acc[item.name] = item?.propertyId;
@@ -477,8 +480,8 @@ function Table<T>({
               key,
               tableItems[hoveredRow]?.values.find((val: { propertyId: string }) => val?.propertyId === id)?.textValue || "N/A",
             ])
-        );
-        const href = onClickRoute?.(hoveredRow, tableItems[hoveredRow]);
+          );
+          const href = onClickRoute?.(hoveredRow, tableItems[hoveredRow]);
           return (
             <div
               ref={setPopperElement}
@@ -583,7 +586,7 @@ function ActionsCells<T>({
     <>
       {actions.length > 0 && (
         <td className={clsx("whitespace-nowrap px-2 py-1", className && className(idxRow, item))}>
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             {actions.map((action, idx) => (
               <ButtonTertiary
                 key={idx}
@@ -598,7 +601,7 @@ function ActionsCells<T>({
                 {action.title}
               </ButtonTertiary>
             ))}
-          </div>
+          </div> */}
         </td>
       )}
       <ConfirmModal ref={refConfirm} onYes={onConfirmed} />

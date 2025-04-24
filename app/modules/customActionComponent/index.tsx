@@ -9,32 +9,13 @@ function ActionButton({ buttonTitle }: { buttonTitle: string }) {
   );
 }
 
-export function getConditionalActions(entity: any, onRemove: any, setLoading: any) {
+export async function getConditionalActions(entity: any, onRemove: any, setLoading: any) {
   const actions = [];
-  switch (entity.name) {
-    case "Candidate":
-      actions.push({
-        title: "ResumeAction",
-      });
-      break;
-    case "Job":
-      actions.push({
-        title: <ActionButton buttonTitle={"Download JD"} />,
-        onClick: async (_: any, item: any) => {
-          try {
-            setLoading(true);
-            await downloadAction(item.id, "job");
-            setLoading(false);
-          } catch (error) {
-            console.error(error);
-            setLoading(false);
-          }
-        },
-      });
-      break;
-    default:
-      break;
-  }
+  const res = await fetch(`/api/getAllRows?entity=${entity.name}&trigger=On Tables`);
+  const data = await res.json();
+    if (data.items.length > 0) {
+      actions.push({});
+    }
 
   return actions;
 }

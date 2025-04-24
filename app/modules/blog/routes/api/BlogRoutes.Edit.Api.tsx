@@ -6,7 +6,6 @@ import { getTranslations } from "~/locale/i18next.server";
 import { BlogApi } from "~/utils/api/.server/BlogApi";
 import FormHelper from "~/utils/helpers/FormHelper";
 import { verifyUserHasPermission } from "~/utils/helpers/.server/PermissionsService";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { getUserInfo } from "~/utils/session.server";
 import { BlogPostWithDetails, getBlogPost, updateBlogPost, deleteBlogPost } from "../../db/blog.db.server";
 import { getAllBlogCategories } from "../../db/blogCategories.db.server";
@@ -14,6 +13,7 @@ import { getAllBlogTags } from "../../db/blogTags.db.server";
 import { getTenantIdOrNull } from "~/utils/services/.server/urlService";
 import UrlUtils from "~/utils/app/UrlUtils";
 import { requireAuth } from "~/utils/loaders.middleware";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 export namespace BlogRoutesEditApi {
   export const meta: MetaFunction<typeof loader> = ({ data }) => data?.metatags || [];
@@ -90,7 +90,7 @@ export namespace BlogRoutesEditApi {
           title,
           description,
           date: new Date(date),
-          image: await storeSupabaseFile({ bucket: "blog", content: image, id: slug }),
+          image: await storeS3File({ bucket: "blog", content: image, id: slug }),
           content,
           readingTime,
           published,

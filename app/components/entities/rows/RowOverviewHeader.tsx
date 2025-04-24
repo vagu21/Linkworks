@@ -17,7 +17,6 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import EntityContactInfo from "~/custom/components/RowOverviewRoute/components/EntityInfo";
 
-
 export default function RowOverviewHeader({
   rowData,
   item,
@@ -127,6 +126,7 @@ export default function RowOverviewHeader({
                     <TrashEmptyIcon className="h-4 w-4 text-gray-500" />
                   </ButtonSecondary>
                 )}
+
                 <RunPromptFlowButtons type="edit" row={item} promptFlows={rowData.promptFlows} />
               </Fragment>
             ) : appOrAdminData.isSuperAdmin ? (

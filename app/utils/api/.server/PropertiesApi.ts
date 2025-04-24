@@ -16,6 +16,7 @@ export namespace PropertiesApi {
     isSortable,
     isSearchable,
     isFilterable,
+    isTableFilter,
     isHidden,
     isDisplay,
     isReadOnly,
@@ -44,6 +45,7 @@ export namespace PropertiesApi {
     isUnique?: boolean;
     canUpdate?: boolean;
     showInCreate?: boolean;
+    isTableFilter?: boolean;
     formulaId?: string | null;
     options?: { order: number; value: string; name?: string | null; color?: Colors }[];
     attributes?: { name: string; value: string }[];
@@ -64,6 +66,7 @@ export namespace PropertiesApi {
       isSortable: isSortable??false,
       isSearchable:isSearchable??false,
       isFilterable:isFilterable??false,
+      isTableFilter: isTableFilter ?? false,
       isHidden: isHidden ?? false,
       isDisplay: isDisplay ?? false,
       isReadOnly: isReadOnly ?? false,

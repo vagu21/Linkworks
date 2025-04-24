@@ -59,8 +59,8 @@ export default function SecondaryMenu({ title, icon, menuItems, children }: Seco
     <div className="flex flex-row">
       <section
         className={clsx(
-          "h-screen w-full flex-shrink-0 border-r border-zinc-300 bg-transparent px-2 text-sm text-black transition-all",
-          isCollapsed ? "max-w-12" : "max-w-52"
+          "h-screen w-full flex-shrink-0 bg-transparent px-2 text-sm text-black transition-all",
+          isCollapsed ? "max-w-12 border-r border-[#E6E6E6]" : "max-w-52"
         )}
       >
         <header className="mb-7 flex h-20 w-full justify-between gap-5 whitespace-nowrap text-lg">

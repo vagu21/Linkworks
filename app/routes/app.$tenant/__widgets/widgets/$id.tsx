@@ -23,6 +23,7 @@ import ConfirmModal, { RefConfirmModal } from "~/components/ui/modals/ConfirmMod
 import Modal from "~/components/ui/modals/Modal";
 import SettingSection from "~/components/ui/sections/SettingSection";
 import TableSimple from "~/components/ui/tables/TableSimple";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 import { getTranslations } from "~/locale/i18next.server";
 import JsonPropertyValuesInput from "~/modules/jsonProperties/components/JsonPropertyValuesInput";
 import JsonPropertiesUtils from "~/modules/jsonProperties/utils/JsonPropertiesUtils";
@@ -32,7 +33,6 @@ import UrlUtils from "~/utils/app/UrlUtils";
 import { useRootData } from "~/utils/data/useRootData";
 import { db } from "~/utils/db.server";
 import { getAppConfiguration } from "~/utils/db/appConfiguration.db.server";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { promiseHash } from "~/utils/promises/promiseHash";
 import { getTenantIdFromUrl } from "~/utils/services/.server/urlService";
 import { defaultTheme, defaultThemes } from "~/utils/theme/defaultThemes";
@@ -115,7 +115,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     console.log({ hiddenInUrls, visibleInUrls });
 
     const { storedLogo } = await promiseHash({
-      storedLogo: logo ? storeSupabaseFile({ bucket: "widgets", content: logo, id: `${item.id}-logo.png` }) : Promise.resolve(""),
+      storedLogo: logo ? storeS3File({ bucket: "widgets", content: logo, id: `${item.id}-logo.png` }) : Promise.resolve(""),
     });
 
     const appearance: WidgetDto["appearance"] = {

@@ -209,7 +209,7 @@ export default function AdminTenantsRoute() {
       title={t("models.tenant.plural")}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} />
+          <InputFilters filters={data.filterableProperties} formClass="left-0"/>
           <ButtonPrimary disabled={!getUserHasPermission(appOrAdminData, "admin.accounts.create")} onClick={() => setCreatingNewAccount(true)}>
             {t("shared.new")}
           </ButtonPrimary>

@@ -665,6 +665,7 @@ model Property {
   isSortable           Boolean                   @default(false)
   isSearchable         Boolean                   @default(false)
   isFilterable         Boolean                   @default(false)
+  isTableFilter        Boolean?                   @default(false)
   isHidden             Boolean                   @default(false)
   isDisplay            Boolean                   @default(false)
   isUnique             Boolean                   @default(false) // TODO: Validate uniqueness

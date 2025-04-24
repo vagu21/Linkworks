@@ -154,7 +154,7 @@ export default function () {
       }
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} withSearch={false} />
+          <InputFilters filters={data.filterableProperties} withSearch={false} formClass="left-0"/>
           <Dropdown
             right={false}
             button={<span>{t("shared.add")} view</span>}

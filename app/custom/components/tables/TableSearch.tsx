@@ -26,14 +26,14 @@ export default function TableSearch({
 
   return (
     <div className={clsx("flex justify-between space-x-2", className)}>
-      <div className="relative flex w-full flex-auto items-center rounded-md border border-#[f0f0f0] bg-background-subtle shadow-sm">
+     <div className="relative flex w-full flex-auto items-center rounded-md bg-background-subtle shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <SearchTableIcon/>
 
         </div>
         <input
           type="text"
-          className="pl-9 max-w-[342px] w-full text-sm rounded-md focus:ring-0 placeholder-[#BFBFBF] border-black"
+          className="pl-9 max-w-[342px] w-full text-sm rounded-md focus:ring-0 placeholder-[#BFBFBF] border border-[#D9D9D9] focus-visible:border-[#121212]"
           placeholder={placeholder ?? t("shared.searchDot")}
           value={value}
           onChange={(e) => setValue(e.target.value)}

@@ -38,7 +38,7 @@ const getFieldTitle = (field: Property, _ = false): string => {
 function getFilters({ t, entity, pagination }: { t: TFunction; entity: EntityWithDetails; pagination?: PaginationDto }) {
   const filters: FilterDto[] = [
     ...entity.properties
-      .filter((f) => RowFiltersHelper.isPropertyFilterable(f))
+      .filter((f) => RowFiltersHelper.isPropertyFilterable(f)  && (!f.isTableFilter && f.isFilterable))
       .map((item) => {
         const filter: FilterDto = {
           name: item.name,

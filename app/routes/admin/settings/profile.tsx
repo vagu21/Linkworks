@@ -18,8 +18,8 @@ import { useAdminData } from "~/utils/data/useAdminData";
 import { deleteUserWithItsTenants } from "~/utils/services/userService";
 import EventsService from "~/modules/events/services/.server/EventsService";
 import { UserProfileUpdatedDto } from "~/modules/events/dtos/UserProfileUpdatedDto";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { requireAuth } from "~/utils/loaders.middleware";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.title }];
 
@@ -108,7 +108,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         });
       }
 
-      const avatarStored = avatar ? await storeSupabaseFile({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
+      const avatarStored = avatar ? await storeS3File({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
       const profile = await updateUserProfile({ firstName, lastName, avatar: avatarStored }, userInfo?.userId);
 
       if (!profile) {

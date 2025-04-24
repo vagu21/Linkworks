@@ -97,7 +97,7 @@ export default function () {
       title={t("models.subscription.plural")}
       buttons={
         <>
-          <InputFilters filters={data.filterableProperties} withSearch={false} />
+          <InputFilters filters={data.filterableProperties} withSearch={false} formClass="left-0"/>
         </>
       }
     >

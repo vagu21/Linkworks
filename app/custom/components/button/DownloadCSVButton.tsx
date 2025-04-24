@@ -14,7 +14,7 @@ export default function DownloadCSVButton({ rowsData, routes, searchParams }: Do
   return (
     <button>
       <Link
-        className="flex flex-col justify-center items-center h-[35px] max-sm:h-[42px] gap-2 px-3 rounded bg-background-subtle border border-border shadow-sm"
+        className="flex flex-col justify-center items-center h-[35px] max-sm:h-[42px] gap-2 px-3 rounded bg-background-subtle border border-border shadow-sm hover:bg-[#F2F2F2]"
         style={{ boxShadow: "0px 2px 0px 0 rgba(0,0,0,0.02)" }}
         to={EntityHelper.getRoutes({ routes, entity: rowsData.entity })?.export + "?" + searchParams}
         reloadDocument

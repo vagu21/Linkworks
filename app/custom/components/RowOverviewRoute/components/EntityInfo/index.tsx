@@ -31,7 +31,7 @@ interface EntityContactInfoProps {
 
 const EntityContactInfo = ({ rowData, item }: EntityContactInfoProps) => {
   const [loading, setLoading] = useState(false);
-  const { id } = useParams(); 
+  const { id } = useParams();
 
   const { t } = useTranslation();
   const [contactInfo, setContactInfo] = useState<EntityContactInfoState>({
@@ -69,7 +69,6 @@ const EntityContactInfo = ({ rowData, item }: EntityContactInfoProps) => {
     });
   }, [rowData?.entity, item, t]);
 
-  if (!contactInfo.phoneNumber && !contactInfo.email) return null; // Avoid rendering empty sections
   return (
     <>
       <FloatingLoader loading={loading} />
@@ -79,7 +78,14 @@ const EntityContactInfo = ({ rowData, item }: EntityContactInfoProps) => {
           {contactInfo.email && <ContactItem icon={<LucideMail className="aspect-square w-5" />} content={contactInfo.email} />}
         </div>
         <div>
-          <DropdownMenu item={item} setLoading={setLoading} entity={rowData?.entity} id={id} />
+            <DropdownMenu
+              item={item}
+              setLoading={setLoading}
+              entity={rowData?.entity}
+              id={id}
+              flag={true}
+            />
+
         </div>
       </section>
     </>

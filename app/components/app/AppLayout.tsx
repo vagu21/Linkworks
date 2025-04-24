@@ -3,6 +3,9 @@ import SidebarLayout from "../layouts/SidebarLayout";
 import CommandPalette from "../ui/commandPalettes/CommandPalette";
 import NewSidebarLayout from "../layouts/NewSidebarLayout";
 import { useSearchParams } from "@remix-run/react";
+import Dreamer from "../ui/icons/background/DreamerIcon";
+import CenterBackground from "../ui/icons/background/CenterBackgroundIcon";
+import TreeSwing from "../ui/icons/background/TreeSwingIcon";
 
 interface Props {
   layout: "app" | "admin" | "docs";
@@ -19,7 +22,22 @@ export default function AppLayout({ layout, children, type = "new" }: Props) {
     type = "old";
   }
   return (
-    <div >
+    <div className="relative">
+      {/* Fixed top-right icon */}
+      <div className="fixed top-4 right-0 z-[-1] pointer-events-none">
+        <Dreamer />
+      </div>
+
+      {/* Center background icon */}
+      <div className="fixed bottom-8 left-0 z-[-1] pointer-events-none">
+          <CenterBackground/>
+      </div>
+
+
+      {/* Fixed bottom-left icon */}
+      <div className="fixed bottom-0 left-0 z-[-1] pointer-events-none">
+        <TreeSwing />
+      </div>
       {/* style={{ backgroundImage: `url(${AppBg})`, backgroundSize: 'cover' }} */}
       {/* <img className="fixed inset-0 object-cover z-[-1] h-screen w-screen" src={AppBg} alt="app background" /> */}
       <CommandPalette key={layout} layout={layout}>

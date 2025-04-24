@@ -20,7 +20,6 @@ import { getActiveTenantSubscriptions } from "~/utils/services/.server/subscript
 import { useTypedLoaderData } from "remix-typedjson";
 import { RowsApi } from "~/utils/api/.server/RowsApi";
 import { EntityWithDetails, findEntityByName } from "~/utils/db/entities/entities.db.server";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import { TenantType } from "@prisma/client";
 import { getAllTenantTypes } from "~/utils/db/tenants/tenantTypes.db.server";
 import EditPageLayout from "~/components/ui/layouts/EditPageLayout";
@@ -28,6 +27,7 @@ import SettingSection from "~/components/ui/sections/SettingSection";
 import { AccountUpdatedDto } from "~/modules/events/dtos/AccountUpdatedDto";
 import { AccountDeletedDto } from "~/modules/events/dtos/AccountDeletedDto";
 import toast from "react-hot-toast";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 type LoaderData = {
   title: string;
@@ -130,7 +130,7 @@ export const action: ActionFunction = async ({ request, params }) => {
           updateDetailsError: "Slug already taken",
         });
       }
-      let iconStored = icon ? await storeSupabaseFile({ bucket: "accounts-icons", content: icon, id: tenantId }) : icon;
+      let iconStored = icon ? await storeS3File({ bucket: "accounts-icons", content: icon, id: tenantId }) : icon;
       await updateTenant(existing, { name, icon: iconStored, slug });
       await EventsService.create({
         request,
@@ -146,7 +146,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       });
       return redirect(`/app/${slug}/settings/account`);
     } else {
-      let iconStored = icon ? await storeSupabaseFile({ bucket: "accounts-icons", content: icon, id: tenantId }) : icon;
+      let iconStored = icon ? await storeS3File({ bucket: "accounts-icons", content: icon, id: tenantId }) : icon;
       await updateTenant(existing, { name, icon: iconStored, slug });
       await EventsService.create({
         request,

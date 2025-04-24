@@ -1,15 +1,13 @@
 import { rowFetcher } from "../rowFetcher";
 
 function getTopSkills(skills: { skillName: string; proficiency: number }[]) {
-  return skills.sort((a, b) => b.proficiency - a.proficiency).slice(0, 7);
+  return skills.sort((a, b) => b.proficiency - a.proficiency);
 }
 
 export async function generateResume(id: any) {
   const data = await rowFetcher(id, "Candidate");
-  
 
   const skillMapping = data?.skills?.map((skill: any) => {
-  
     return {
       skillName: skill,
     };
@@ -29,7 +27,7 @@ export async function generateResume(id: any) {
         </head>
         <body class="bg-[#F8F7EF] w-[205mm] !h-[calc(100vh-0px)]">
           <!-- Container -->
-          <div class=" rounded-lg bg-[#F8F7EF] shadow-md w-[205mm] h-[297mm] ">
+          <div class=" rounded-lg bg-[#F8F7EF] shadow-md w-[205mm] min-h-[297mm]">
             <!-- Header Section -->
            ${headerSection()}
       
@@ -57,49 +55,41 @@ export async function generateResume(id: any) {
       </html>`;
   }
 
-  function calculateCareerBreak(data : any) {
+  function calculateCareerBreak(data: any) {
     const workExperiences = data?.["Work Experience"] || [];
     if (!Array.isArray(workExperiences) || workExperiences.length === 0) return "0";
-  
-    const sorted = workExperiences
-      .filter((exp) => exp?.startDate)
-      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-  
+
+    const sorted = workExperiences.filter((exp) => exp?.startDate).sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
     let totalGap = 0;
     for (let i = 1; i < sorted.length; i++) {
       const prev = sorted[i - 1];
       const curr = sorted[i];
-  
-      const prevEndDate = prev.currentlyWorkingInThisRole
-        ? new Date()
-        : prev.endDate
-          ? new Date(prev.endDate)
-          : new Date(prev.startDate);
-  
+
+      const prevEndDate = prev.currentlyWorkingInThisRole ? new Date() : prev.endDate ? new Date(prev.endDate) : new Date(prev.startDate);
+
       const currStartDate = new Date(curr.startDate);
-  
+
       if (!isNaN(prevEndDate.getTime()) && !isNaN(currStartDate.getTime())) {
         const gap = currStartDate.getTime() - prevEndDate.getTime();
-  
+
         if (gap > 30 * 24 * 60 * 60 * 1000) {
           totalGap += gap;
         }
       }
     }
-  
+
     const years = totalGap / (365.25 * 24 * 60 * 60 * 1000);
     return years.toFixed(1);
   }
-  
-  
-  function headerSection() {
 
+  function headerSection() {
     const careerBreakYears = calculateCareerBreak(data);
 
     return `
      
       <div class="">
-        <header class="mx-auto shadow-md">
+        <header class="mx-auto">
           <section class="px-6 pt-5 pb-3 w-full bg-[#F7E47F] max-md:px-5 max-md:max-w-full">
             <div class="flex flex-wrap gap-2.5 items-center w-full max-md:max-w-full">
               <div class="flex items-center justify-center gap-3 self-stretch px-3 my-auto w-11 h-11 text-base font-semibold whitespace-nowrap bg-[#0B0A09] min-h-11 rounded-[1100px] text-[#F8F8F8]">
@@ -246,15 +236,19 @@ export async function generateResume(id: any) {
         ${
           data?.linkedinProfileUrl
             ? `<a href="${data.linkedinProfileUrl}" target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">LinkedIn</a>`
-            : ""
+            : `<span class="text-[8px] leading-4 font-normal text-[#1C1C1C]">LinkedIn: N/A</span>`
         }
         ${
           data?.portfolio
             ? `<a href="${data.portfolio}"  target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">Portfolio</a>`
-            : ""
+            : `<span class="text-[8px] leading-4 font-normal text-[#1C1C1C]">Portfolio: N/A</span>`
         }
          
-             ${data?.other ? `<a href="${data.other}"  target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">Others</a>` : ""}
+             ${
+               data?.other
+                 ? `<a href="${data.other}"  target="_blank" class="gap-2 text-[8px] leading-4 font-normal underline text-[#1C1C1C]">Others</a>`
+                 : `<span class="text-[8px] leading-4 font-normal text-[#1C1C1C]">Others: N/A</span>`
+             }
         </nav>
       </section>
 

@@ -8,7 +8,6 @@ import { db } from "~/utils/db.server";
 import bcrypt from "bcryptjs";
 import { getTranslations } from "~/locale/i18next.server";
 import { deleteUserWithItsTenants } from "~/utils/services/userService";
-import { storeSupabaseFile } from "~/utils/integrations/supabaseService";
 import EditPageLayout from "~/components/ui/layouts/EditPageLayout";
 import EventsService from "~/modules/events/services/.server/EventsService";
 import { UserProfileUpdatedDto } from "~/modules/events/dtos/UserProfileUpdatedDto";
@@ -20,6 +19,7 @@ import { UserProfileDeletedDto } from "~/modules/events/dtos/UserProfileDeletedD
 import UserProfileSettings from "~/modules/users/components/UserProfileSettings";
 import toast from "react-hot-toast";
 import { requireAuth } from "~/utils/loaders.middleware";
+import { storeS3File } from "~/custom/utils/integrations/s3Service";
 
 type LoaderData = {
   title: string;
@@ -87,7 +87,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         return json({ error: `Form not submitted correctly.` }, { status: 400 });
       }
 
-      let avatarStored = avatar ? await storeSupabaseFile({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
+      let avatarStored = avatar ? await storeS3File({ bucket: "users-icons", content: avatar, id: userInfo?.userId }) : avatar;
       const profile = await updateUserProfile({ firstName, lastName, avatar: avatarStored }, userInfo?.userId);
       if (!profile) {
         return json({ error: `Something went wrong.` }, { status: 400 });
