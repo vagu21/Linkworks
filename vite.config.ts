@@ -7,7 +7,12 @@ import viteCompression from 'vite-plugin-compression';
 import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
-  server: { hmr: process.env.NODE_ENV === 'development', port: 3000 },
+  server: { 
+    hmr: process.env.NODE_ENV === 'development', 
+    port: 3000,
+    host: '0.0.0.0',
+    allowedHosts: true
+  },
   plugins: [
     tsconfigPaths(),
     remix({

@@ -75,6 +75,20 @@ export const AppSidebar = ({ t, tenantId, entities, entityGroups, appConfigurati
     });
   }
 
+  // Add Shoprite Loyalty module
+  const shopriteItems: SideBarItem[] = [
+    {
+      title: "Summary",
+      path: `${currentTenantUrl}/shoprite`,
+      icon: SvgIcon.DASHBOARD,
+    },
+    {
+      title: "Agents",
+      path: `${currentTenantUrl}/shoprite/agents`,
+      icon: SvgIcon.USERS,
+    },
+  ];
+
   const appItem: SideBarItem = {
     title: "",
     path: "",
@@ -127,6 +141,11 @@ export const AppSidebar = ({ t, tenantId, entities, entityGroups, appConfigurati
   return [
     appItem,
     ...sectionItems,
+    {
+      title: "Loyalty",
+      path: "",
+      items: shopriteItems,
+    },
     {
       title: "",
       path: "",
